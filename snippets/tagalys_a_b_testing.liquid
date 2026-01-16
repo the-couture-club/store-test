@@ -1,0 +1,50 @@
+{%- liquid
+  assign tagalys_app_namespace = "app--3369055--tagalys"
+  if request.page_type == 'collection'
+    if collection.metafields[tagalys_app_namespace].a_b_test_configuration
+      assign primary_collection = collection
+    else
+      if collection.metafields[tagalys_app_namespace].a_b_test_primary_variant
+        assign primary_collection = collection.metafields[tagalys_app_namespace].a_b_test_primary_variant.value
+      else
+        assign primary_collection = collection
+      endif
+    endif
+  endif
+-%}
+
+{% if call == "canonical_url" -%}
+  {% if request.page_type == 'collection' -%}
+    <link rel="canonical" href="{{ canonical_url | replace: collection.url, primary_collection.url }}">
+  {% else %}
+    <link rel="canonical" href="{{ canonical_url }}">
+  {% endif %}
+{%- endif %}
+
+{% if call == "script" -%}
+  <script src="https://storage.googleapis.com/tagalys-public-assets/tagalys-a-b-testing.min.js"></script>
+  <script>
+    var TagalysABTestingCustomizations = {
+      collectionPageUrl: function(collection){
+        return `${window.location.origin}{{ routes.collections_url }}/${collection.handle}`
+      }
+    }
+    {% if shop.metafields[tagalys_app_namespace].a_b_testing_redirects %}
+      TagalysABTesting.Collections.setUpRedirects({
+        redirects: {{ shop.metafields[tagalys_app_namespace].a_b_testing_redirects }},
+        collectionPageUrl: TagalysABTestingCustomizations.collectionPageUrl
+      })
+    {%- endif %}
+  </script>
+
+  {% if request.page_type == 'collection' %}
+    {% if primary_collection.metafields[tagalys_app_namespace].a_b_test_configuration %}
+      <script>
+        TagalysABTesting.Collections.init({
+          configuration: {{ primary_collection.metafields[tagalys_app_namespace].a_b_test_configuration }},
+          collectionPageUrl: TagalysABTestingCustomizations.collectionPageUrl
+        })
+      </script>
+    {%- endif %}
+  {% endif %}
+{%- endif %}

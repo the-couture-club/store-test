@@ -1,0 +1,1798 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js"></script>
+
+<!-- The following plugins are only available for Club GSAP members.--> 
+<script src="{{ 'ScrollSmoother.min.js' | asset_url }}"></script>
+<script src="{{ 'SplitText.min.js' | asset_url }}"></script>
+
+{% assign codeUsed = false %}
+
+{% for order in customer.orders %}
+    {%- for discount_application in order.cart_level_discount_applications -%}
+    {% if settings.clubhouse_code == discount_application.title %} {% assign codeUsed = true %} {% endif %}
+    {% endfor %}
+{% endfor %}
+
+{% if customer and customer.tags contains 'clubhouse-member' %}
+<clubhouse-room>
+    <div data-contain="height" aria-room="content">
+
+        <img src="{{ section.settings.background | img_url: '3000x' }}">
+        {% if template == 'page.clubhouse-home' and settings.tv_content != null %}
+        <img class="clubhouse-home-tv" src="{{ settings.tv_content | img_url: '400x' }}">
+        {% endif %}
+        <backdrop></backdrop>
+        <loading>
+            <video autoplay playsinline muted>
+            <source media="(min-width: 768px)" data-view="desktop" src="https://cdn.shopify.com/videos/c/o/v/33707c79b57d497c8af49c292f15c9cb.mp4" type="video/mp4" />
+            <source media="(max-width: 767px)" data-view="mobile" src="https://cdn.shopify.com/videos/c/o/v/d706a01e49be424ba4a22aeaf4fe5f9b.mp4" type="video/mp4" />
+            </video>
+        </loading>
+        <span style="opacity: 0; visibility: hidden;" class="pop-up__title">Welcome {{ customer.first_name }}</span>
+        <menu>
+            {% for room in shop.metaobjects['clubhouse_rooms'].values %}
+                {% if room['room_enabled_disabled'] %}
+                    <a {% if room['room_url'].value.handle == page.handle %} aria-active {% else %} href="{{ room['room_url'].value.url }}" {% endif %} aria-locked="false"> {{ room['room_title'] }} </a>
+                {% endif %}
+            {% endfor %}
+            {% for room in shop.metaobjects['clubhouse_rooms'].values %}
+                {% unless room['room_enabled_disabled'] %}
+                    <a  aria-locked="true"> {{ room['room_title'] }} </a>
+                {% endunless %}
+            {% endfor %}
+        </menu>
+        {% for block in section.blocks %}
+        {% case block.type %}
+            {% when "url" %}
+
+                <div {% if block.settings.liquid != null %} aria-popup {% endif %} aria-container="{{ block.settings.title | handleize }}">
+                
+                    <div style="left: {{ block.settings.x_position }}%;bottom: {{ block.settings.y_position }}%;" button="{{ block.settings.title | handleize }}" class="ring-container">
+                        <div class="ringring"></div>
+                        <div class="circle"></div>
+                        <a {% if block.settings.url != null and block.settings.liquid == null %}href="{{ block.settings.url }}"{% endif %} class="ring-container-popup">{{ block.settings.title }}
+                            <span class="material-symbols-outlined">arrow_right_alt</span>
+                        </a>
+                    </div>
+
+                    {% if block.settings.liquid != null %}
+                    <custom aria-name="{{ block.settings.title | handleize }}" style="opacity: 0; visibility: hidden;">
+                        {{ block.settings.liquid }}
+                    </custom>
+                    {% endif %}
+                    
+                </div>   
+
+            {% when "page" %}
+
+                <div aria-container="room">
+            
+                <div {% if block.settings.reverse %} aria-rotated {% endif %} style="left: {{ block.settings.x_position }}%; bottom: {{ block.settings.y_position }}%;" button="room" class="ring-container">
+
+                        <div class="circle">
+                            <span class="material-symbols-outlined">arrow_right_alt</span>
+                        </div>
+
+                        <a href="{{ block.settings.url }}" class="ring-container-popup">
+                            {{ block.settings.title  }}
+                            <span style="" class="material-symbols-outlined">arrow_right_alt</span>
+                        </a>
+
+                    </div>
+                    
+                </div>
+                
+            {% endcase %}
+
+        {% endfor %}
+
+    </div>
+
+</clubhouse-room>
+
+<style>
+
+    html {
+        overflow: hidden;
+    }
+
+    [data-contain="height"] {
+        height: 100%;
+    }
+
+    [data-contain="width"] {
+        width: 100%;
+    }
+
+    clubhouse-room {
+        display: block;
+        height: 100vh;
+        height: 100svh;
+        width: 100%;
+        display: block;
+        background: black;
+        overscroll-behavior: none;
+        overflow: scroll;
+    }
+
+    
+    clubhouse-room [aria-room="content"] {
+        position: relative;
+        aspect-ratio: 2560 / 1440;
+    }
+
+    clubhouse-room img { 
+        min-height: 100%;
+        max-width: inherit;
+        height: 100%;
+    }
+
+    clubhouse-room menu {
+        position: fixed;
+        bottom: 50px;
+        left: 50px;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0px;
+        cursor: pointer;
+        line-height: 2;
+    }
+
+    clubhouse-room menu a {
+        color: white;
+        font-family: 'Work Sans Family';
+        font-weight: 300;
+        filter: drop-shadow(0px 0px 7px #000000);
+    }
+
+    clubhouse-room menu a[aria-active] {
+        cursor: default;
+    }
+
+    clubhouse-room menu a[aria-active]:before {
+        content: ' - ';
+    }
+
+    clubhouse-room [aria-locked="true"] {
+        cursor: default;
+        opacity: 0.25;
+    }
+
+    clubhouse-room loading {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        height: 100vh;
+        overflow: hidden;
+        width: 100%;
+        z-index: 13;
+        background: white;
+    }
+
+    clubhouse-room loading.loaded {
+        background: none;
+    }
+
+    clubhouse-room loading video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    clubhouse-room:not([aria-load]) backdrop {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    clubhouse-room:not([aria-load]) loading {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .js-section__footer {
+        display: none;
+    }
+
+    .ring-container {
+        position: absolute;
+        display: block;
+        height: 25px;
+        width: 25px;
+        transition: 0.3s;
+    }
+    .ring-container:hover {
+        cursor: pointer;
+        transform: scale(1.5);
+    }
+    .circle {
+        width: 10px;
+        height: 10px;
+        background-color: #fff;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -webkit-box-shadow: 0px 0px 15px 5px #00000030;
+        box-shadow: 0px 0px 15px 5px #00000030;
+        opacity: 1;
+    }
+    [button="room"] .circle {
+        border: 1px solid white;
+        background: transparent;
+        height: 25px;
+        width: 25px;
+    }
+    [button="room"] .circle span {
+        width: 100%;
+        height: 100%;
+        font-size: 15px;
+        text-align: center;
+        align-content: center;
+        color: white;
+    }
+    [aria-rotated][button="room"] .circle span {
+        transform: rotate(180deg);
+    }
+    .ringring {
+        border: 1px solid #fff;
+        -webkit-border-radius: 30px;
+        height: 25px;
+        width: 25px;
+        position: absolute;
+        -webkit-animation: pulsate 1s ease-out;
+        -webkit-animation-iteration-count: infinite;
+        opacity: 0;
+    }
+    .ring-container-popup {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        top: 5px;
+        transform: translate(-50%, 0%);
+        left: 50%;
+        background: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        line-height: 1;
+        width: max-content;
+        font-size: calc((var(--font--size-grid) / var(--font--size-base)) * 0.75rem)!important;
+        transition: all .2s ease-in-out;
+    }
+    [aria-rotated] .ring-container-popup {
+        flex-direction: row-reverse;
+    }
+    .ring-container-popup span {
+        font-size: 10px;
+    }
+    [aria-rotated] .ring-container-popup span {
+        transform: rotate(180deg);
+    }
+    .ring-container:hover .ring-container-popup {
+        opacity: 1;
+        visibility: visible;
+    }
+    .ring-container:hover .ringring {
+        border: 0px solid #fff;
+    }
+    .ring-container:hover .circle {
+        opacity: 0;
+    }
+    @-webkit-keyframes pulsate {
+        0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.0;}
+        50% {opacity: 1.0;}
+        100% {-webkit-transform: scale(2, 2); opacity: 0.0;}
+    }
+    custom {
+        cursor: default;
+        position: fixed;
+        width: 50%;
+        z-index: 999;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+    }
+    backdrop {
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        height: 100svh;
+        top: 0px;
+        left: 0;
+        -webkit-backdrop-filter: blur(5px)!important;
+        backdrop-filter: blur(5px)!important;
+        background: #00000040;
+        z-index: 12;
+    }
+    transition {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    transition video {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+    .announcement__wrapper {
+        display: none;
+    }
+    pop-up {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        z-index: 12;
+        width: 100%;
+        max-width: 600px;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .pop-up__title {
+        font-size: 55px;
+        font-weight: 600;
+        text-transform: uppercase;
+        text-align: center;
+        line-height: 1;
+        z-index: 12;
+        position: fixed;
+        top: 50%;
+        color: white;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .pop-up__content a {
+        color: white;
+        text-decoration: underline;
+    }
+    .img_loader {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 200px;
+        min-height: auto;
+        height: auto;
+        max-width: 25%;
+        transform: translate(-50%, -50%);
+        filter: invert(1) brightness(2);
+        z-index: 12;
+    }
+    .pop-up__content p {
+        margin: 0;
+    }
+    [data-countdown] {
+        font-weight: 600;
+    }
+
+    .item-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        color: white;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .item-attended, .item-upcoming {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .item-event {
+        background: white;
+        color: black;
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+        width: 100%;
+        gap: 10px;
+        border-radius: 10px;
+        line-height: 1.5;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .item-event img {
+        max-height: 100px;
+        min-height: 100px;
+        align-self: center;
+        position: absolute;
+        rotate: 330deg;
+        opacity: 0.05;
+    }
+
+    .item-event_content {
+        flex-grow: 1;
+        text-align: left;
+        align-content: center;
+    }
+
+    .item-event_content--info {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .item-event_content--info[hidden] {
+        display: none;
+    }
+
+    .item-event_content--info .material-symbols-outlined {
+        font-size: 12px;
+    }
+
+    .item-event_content--cta, [aria-name="clubhouse-information"] .item-event span p a {
+        align-content: center;
+        background: #efefef;
+        padding: 5px 10px;
+        border-radius: 10px;
+        margin: 10px 0px;
+    }
+
+    .item-title, .pop-up__content-title {
+        font-weight: 500;
+        text-transform: uppercase;
+        font-family: 'Work Sans Family';
+    }
+
+    custom:has(.item-container) {
+        max-width: 400px;
+    }
+
+    [aria-name="clubhouse-information"] .item-event span p a {
+        margin: 0;
+        color: black;
+        text-decoration: none;
+    }
+
+    [aria-name="clubhouse-information"] .item-event {
+        margin-bottom: 10px;
+        height: 60px;
+    }
+
+    [aria-name="clubhouse-information"] pop-up {
+        max-width: 400px;
+    }
+
+    .item-attended:not(:has(div)), .item-upcoming:not(:has(div)) {
+    display: none;
+    }
+
+    .item-event [data-loaded] {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .item-event [data-loaded][hidden] {
+        display: none;
+    }
+
+    [aria-name="clubhouse-information"] .item-event span {
+        width: 100%;
+    }
+
+    .item-event span p {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        place-items: center;
+    }
+
+    [aria-type="discount"] {
+        margin-bottom: 30px !important;
+    }
+
+    [aria-type="discount"] span.item-event_content--title {
+        display: flex;
+        align-items: center;
+    }
+
+    [aria-name="register-vip-card"] {
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        width: auto;
+    }
+
+    .formful__branding {
+        display: none !important;
+    }
+
+    @media screen and (max-width: 768px) {
+        custom {
+            width: 90% !important;
+            max-height: 80%;
+            overflow: scroll;
+
+        }
+        clubhouse-room menu {
+            bottom: 25px;
+            left: 25px;        
+        }
+        .pop-up__title {
+          font-size: 20px;
+        }
+    }
+
+    {% if template == 'page.clubhouse-home' and settings.tv_content != null %}
+
+    .clubhouse-home-tv {
+        position: absolute;
+        left: 4.8%;
+        top: 26.2%;
+        width: 9%;
+        transform: skew(3deg, 348deg) scaleX(1) scaleY(1);
+        aspect-ratio: 16 / 9;
+        min-height: auto;
+        height: auto;
+    }
+
+    {% endif %}
+
+    
+</style>
+
+<script>
+
+    if (sessionStorage.getItem("initialLoad") == null) {
+        window.Shopify.initalLoad = true
+    } else {
+        window.Shopify.initalLoad = false
+    }
+
+    window.addEventListener('DOMContentLoaded', function(event) {
+        roomResize();
+        document.querySelector('header').setAttribute('data-transparent-header', 'true');
+    })
+
+    window.addEventListener('resize', function(event) {
+        roomResize();
+    })
+
+    function roomResize() {
+        const container = document.querySelector('[aria-room="content"]');
+        const page = document.querySelector('clubhouse-room');
+        
+        if (container.clientWidth > page.clientWidth || container.clientHeight < page.clientHeight ) {
+            container.setAttribute('data-contain', 'height');
+        } else {
+            container.setAttribute('data-contain', 'width');
+        }
+    }
+
+    const transition = 0.5;
+
+    const popupElems = document.querySelectorAll('[aria-popup]');
+    const backdropElem = document.querySelector('backdrop');
+
+    var video = document.getElementsByTagName('video')[0];
+    var loading = document.getElementsByTagName('video')[0].closest('loading');
+
+
+    if (window.Shopify.initalLoad == true) {
+
+        document.querySelector('clubhouse-room').setAttribute('aria-load', 'initial');
+
+        video.onended = function(e) {
+            loading.classList.add('loaded');
+            gsap.to(video, {
+                autoAlpha: 0,
+                duration: 1
+            })
+            gsap.to(loading, {
+                autoAlpha: 0,
+                delay: 1
+            })
+        };
+
+
+        gsap.to(document.querySelector('.pop-up__title'), {
+            autoAlpha: 1,
+            delay: 4,
+            duration: transition
+        })
+        gsap.to(document.querySelector('.pop-up__title'), {
+            autoAlpha: 0,
+            delay: 8,
+            duration: transition
+        })
+        gsap.to(document.querySelector('backdrop'), {
+            autoAlpha: 0,
+            delay: 8,
+            duration: transition,
+            onComplete: function(){
+                
+                document.querySelector('pop-up[aria-active=false]').setAttribute('aria-active', false)
+
+                backdropElem.addEventListener('click', () => {
+                    var popup = document.querySelector('pop-up[aria-active=true], custom[aria-active=true]');
+                    gsap.to(popup, {
+                        autoAlpha: 0,
+                        duration: transition,
+                        onComplete: function(){ popup.setAttribute('aria-active', false) }
+                    }),
+                    gsap.to(backdropElem, {
+                        autoAlpha: 0,
+                        duration: transition,
+                        onComplete: function(){ backdropElem.setAttribute('aria-active', false) }
+                    })
+                });
+
+            }
+        })
+
+        sessionStorage.setItem("initialLoad", "loaded");
+
+    } else {
+
+        backdropElem.addEventListener('click', () => {
+            var popup = document.querySelector('pop-up[aria-active=true], custom[aria-active=true]');
+            gsap.to(popup, {
+                autoAlpha: 0,
+                duration: transition,
+                onComplete: function(){ popup.setAttribute('aria-active', false) }
+            }),
+            gsap.to(backdropElem, {
+                autoAlpha: 0,
+                duration: transition,
+                onComplete: function(){ backdropElem.setAttribute('aria-active', false) }
+            })
+        });
+
+    }
+
+    popupElems.forEach((elem) => {
+ 
+        elem.addEventListener('click', () => {
+
+            var popup = elem.querySelector('custom');
+
+            gsap.to(popup, {
+                autoAlpha: 1,
+                duration: transition,
+                onComplete: function(){ popup.setAttribute('aria-active', true) }
+            }),
+            gsap.to(backdropElem, {
+                autoAlpha: 1,
+                duration: transition,
+                onComplete: function(){ backdropElem.setAttribute('aria-active', true) }
+            })
+        });
+    });
+
+</script>
+
+{% else %}
+
+<div id="clubhouse-signup">
+
+    <div class="navigation-menu">
+        <span aria-page="1" aria-scroll="0" aria-active="true">Video</span>
+        <span aria-page="2" aria-scroll="1">Introduction</span>
+        <span aria-page="3" aria-scroll="3">Our Community</span>
+        <span aria-page="4" aria-scroll="4">Benefits</span>
+        <span aria-page="5" aria-scroll="5">Join</span>
+    </div>
+
+    <div data-section='signup'>
+    <div {% if settings.clubhouse_enable_countdown %} aria-countdown="{{ settings.clubhouse_countdown_type }}" {% endif %} class="container-form fade-in">
+
+
+    {% for block in section.blocks %}
+        {% case block.type %}
+            {% when '@app' %}
+
+            {% if block.id contains 'GmQ8Td' %}
+
+                <div class="form">
+                    <h1>Clubhouse Registration</h1>
+                    <h3>Join the community now & become a clubhouse member</h3>
+                    {% render block %}
+                    <p>Please note, you have to of placed an order with us to become a member under the email address you're applying with - Those who haven't will be automatically rejected.</p>
+                </div>
+
+                {% if settings.clubhouse_enable_countdown %}
+                <div class="form-countdown">
+                    <span>
+                        {% if settings.clubhouse_countdown_type == 'opens' %} {{ "custom.clubhouse-signup.opens-in" | t }} {% elsif settings.clubhouse_countdown_type == 'closes' %} {{ "custom.clubhouse-signup.closes-in" | t }} {% endif %}
+                    </span>
+                    <a data-time="{{ settings.clubhouse_countdown_timer }}" data-countdown-type="clubhouse-signup" class="inline--content_countdown countdown-container">
+                        <span data-countdown></span>
+                    </a>
+                </div>
+                {% endif %}
+
+            {% endif %}
+                
+        {% endcase %}
+    {% endfor %}
+
+    <form-overlay></form-overlay>
+
+</div>
+    </div>
+
+    <div data-section='benefits'>
+        <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>Perk</th>
+                <th>Clubhouse Member</th>
+                <th>VIP Member (Invite Only)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <div>
+                        15% off your first order when you join
+                    </div>
+                </td>
+                <td active></td>
+                <td info>15% off every order</td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Invitations to our brand event &amp; experiences
+                    </div>
+                </td>
+                <td active></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Early access to new releases
+                    </div>
+                </td>
+                <td active></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Member exclusive products
+                    </div>
+                </td>
+                <td active></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Early access to sale
+                    </div>
+                </td>
+                <td active></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Pre-order access on in-demand products
+                    </div>
+                </td>
+                <td active></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Member only competitions
+                    </div>
+                </td>
+                <td active></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Access to a private instagram community page
+                    </div>
+                </td>
+                <td active></td>
+                <td active></td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div>
+                        Birthday discount
+                    </div>
+                </td>
+                <td></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Priority access to brand events
+                    </div>
+                </td>
+                <td></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Customised engraved Clubhouse card
+                    </div>
+                </td>
+                <td></td>
+                <td active></td>
+            </tr>
+            <tr>
+                <td>
+                    <div>
+                        Free gift at Christmas
+                    </div>
+                </td>
+                <td></td>
+                <td active></td>
+            </tr>
+        </tbody>
+        </table>
+        </div>
+    </div>
+
+    <div data-section='our-community'>
+        <content>
+            <div class="community-header">
+                <img src="https://cdn.shopify.com/s/files/1/0242/6047/6980/files/clubhouse-brown.png?v=1719404591">
+                <span>Introducing The Clubhouse.</span>
+            </div>
+            <div class="community-content">
+                <div>A new era of loyalty platform designed to bring like-minded individuals together & to reward our community with a host of exclusive member only benefits.</div>
+                <div>You’ll have the opportunity to feed back into the brand & have access to unrivalled behind the scenes footage.</div>
+                <div>The Clubhouse. Dedicated to the community, committed to the culture.</div>
+                <div>See the full-list of benefits below.</div>
+            </div>
+        </content>
+    </div>
+
+    <div data-section='introduction'>
+        <content>
+            <div class="introduction_title">DEDICATED TO THE <span>COMMUNITY</span>, COMMITTED TO THE CULTURE.</div>
+            <div class="introduction_main">
+                <span aria-snippet="1" class="introduction_main--snippet">Dedicated to building our community.</span>
+                <span aria-snippet="2" class="introduction_main--snippet">Committed to changing the culture of loyalty platforms.</span>
+                <span aria-snippet="3" class="introduction_main--snippet">Built to create moments that will shape our future.</span>
+            </div>
+        </content>
+    </div>
+
+    <div data-section='video'>
+        <video autoplay loop playsinline muted src="https://cdn.shopify.com/videos/c/o/v/a3e96c07ab2c41079913363e6790c3f7.mp4"></video>
+        <span class="member-cta">Become a member</span>
+        {% unless customer %}
+            <a href="/account/login?redirect={{page.handle}}" class="login-cta">Log In</a>
+        {% endunless %}
+    </div>
+
+    <div data-section='loading-screen'>
+        <content>
+            <img src="https://cdn.shopify.com/s/files/1/0242/6047/6980/files/clubhouse-brown.png?v=1719404591">
+        </content>
+    </div>
+
+    
+</div>
+
+<style>
+
+:root {
+    --heading-text-color: white !important;
+}
+
+body.header-stuck header {
+    opacity: 0;
+    transition: 0.2s;
+}
+
+#clubhouse-signup {
+    position: absolute;
+    top: 0px;
+    height: 700vh !important;
+    max-height: 700vh !important;
+    width: 10%;
+    overflow: hidden;
+}
+
+[data-section] {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background-color: #8d807b;
+    color: white;
+    font-size: medium;
+    font-family: "Work Sans Family";
+    line-height: 1.5;
+}
+
+.navigation-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: calc(var(--header-height) + 5%);
+    right: 5%;
+    z-index: 2;
+    color: white;
+    text-transform: uppercase;
+    text-align: end;
+    transition: 0.2s;
+    font-family: "Work Sans Family";
+}
+
+.navigation-menu span {
+    cursor: pointer;
+    font-weight: 300;
+}
+
+.navigation-menu [aria-active] {
+    font-weight: 600;
+}
+
+.header-stuck .navigation-menu {
+    top: 5% !important;
+    line-height: 1.5;
+}
+
+[data-section='loading-screen'] {
+    position: fixed;
+    background-color: #8d807b;
+    z-index: 3;
+}
+
+[data-section='loading-screen'] content {
+    visibility: hidden;
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+[data-section='introduction'] content {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 8vh;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 80%;
+    max-width: 1015px;
+}
+
+[data-section='introduction'] .introduction_title {
+    font-size: 55px;
+    line-height: 1;
+}
+
+[data-section='introduction'] .introduction_title span {
+    color: #414141;
+    font-weight: 600;
+}
+
+[data-section='introduction'] .introduction_main {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+[data-section='introduction'] .introduction_main--snippet {
+    scale: 0.95;
+    visibility: hidden;
+    opacity: 0;
+}
+
+[data-section='loading-screen'] img {
+    max-width: 150px;
+    filter: brightness(100)
+}
+
+[data-section='loading-screen'] span {
+    text-wrap: wrap;
+    font-size: x-large;
+    color: white;
+    width: 100%;
+}
+
+[data-section='video'] .member-cta {
+    font-size: 13.2px;
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+    text-transform: uppercase;
+    color: white;
+    cursor: pointer;
+}
+
+[data-section='video'] .login-cta {
+    font-size: 13.2px;
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    text-transform: uppercase;
+    color: white;
+    cursor: pointer;
+}
+
+[data-section='video'] video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+[data-section="our-community"] content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    gap: 40px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+}
+
+[data-section="our-community"] content .community-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+[data-section="our-community"] content .community-header img {
+    max-width: 50px;
+    filter: brightness(100);
+}
+
+[data-section="our-community"] content .community-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+}
+
+[data-section='content'] {
+    background-color: #26ab14;
+}
+
+.announcement__wrapper, footer {
+    display: none !important;
+}
+
+[data-section="benefits"]:before {
+    content: '';
+    opacity: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    visibility: inherit;
+    background: url('https://cdn.shopify.com/s/files/1/0242/6047/6980/files/240807_MEMBERS_ISO_UPDATE_3.jpg?v=1723194617');
+    background-size: cover;
+    opacity: 10%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+[data-section='benefits'] .table-container {
+    border: 10px solid #8d807b;
+    border-top: 0px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: small;
+    transform: translate(-50%, -50%);
+}
+
+[data-section='benefits'] td,[data-section='benefits'] th,[data-section='benefits'] tr {
+    background-color: #8d807b !important;
+    color: white;
+}
+
+[data-section='benefits'] table {
+    margin: 0;
+}
+
+[data-section='benefits'] .table-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    margin: 0;
+    border: 1px solid var(--color--text-lightest);
+}
+
+[data-section='benefits'] .table-container::-webkit-scrollbar {
+  display: none;
+}
+
+[data-section='benefits'] td {
+    position: relative;
+    border: 0px solid white;
+    padding: 10px;
+}
+
+[data-section='benefits'] tr th:nth-child(2), [data-section='benefits'] tr td:nth-child(2) {
+ border-right: 1px solid var(--color--text-lightest);
+}
+
+[data-section='benefits'] .table-container td:first-child, [data-section='benefits'] .table-container tr th:first-child {
+    position: sticky;
+    left: 0px;
+    background: #8d807b;
+    z-index: 2;
+    border-right: 1px solid var(--color--text-lightest);
+    padding-left: 10px;
+}
+
+[data-section='benefits'] .table-container td[active]:after {
+    content: '';
+    position: absolute;
+    display: block;
+    left: 50%;
+    top: 50%;
+    width: 15px;
+    transform: translate(-50%, -50%);
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+}
+
+[data-section='benefits'] .table-container td:not(:first-child), [data-section='benefits'] .table-container thead th:last-child, [data-section='benefits'] .table-container tr td:last-child {
+    text-align: center;
+}
+
+[data-section='benefits'] .table-container thead {
+    position: sticky;
+    top: 0px;
+    z-index: 10;
+}
+
+[data-section='benefits'] .table-container thead tr {
+    position: sticky;
+    top: 0px;
+    background: #8d807b;
+    z-index: 3;
+}
+
+[data-section='benefits'] .table-container th {
+    font-weight: 500;
+}
+
+[data-section='benefits'] .table-container td:not(td:first-child):not([active]):not([info]):after {
+    content: '';
+    position: absolute;
+    display: block;
+    left: 50%;
+    top: 50%;
+    width: 15px;
+    transform: translate(-50%, -50%);
+    height: 15px;
+    border: 1px solid white;
+    border-radius: 50%;
+}
+
+[data-section="signup"] .container-form .form {
+    max-width: 450px;
+    color: white;
+    align-self: center;
+}
+
+[data-section="signup"] .container-form .form h1 {
+    font-weight: 600;
+    margin: 0;
+    color: white;
+    text-align: center;
+}
+
+[data-section="signup"] .container-form .form h3 {
+    font-size: 15px;
+    color: white; 
+    text-align: center;
+}
+
+[data-section="signup"] .container-form .form p {
+    font-size: 10px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.div._birthdayText_rzr7e_15 {
+    color: white;
+}
+
+.container-form {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    gap: 20px;
+    z-index: 2;
+    width: 100%;
+    max-width: 80%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.container-info .title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.container-info {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    align-self: center;
+    justify-self: center;
+    line-height: 3;
+    z-index: 2;
+}
+
+.container-info a {
+    font-weight: 600;
+}
+
+.container-info .content {
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.container-form .form-countdown {
+    align-self: center;
+    display: flex;
+    width: 100%;
+    align-self: center;
+    gap: 5px;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+}
+
+.container-form [data-countdown-type] {
+    font-size: 33px;
+    font-weight: 600;
+}
+
+[aria-countdown="opens"].container-form {
+    position: relative;
+}
+
+[aria-countdown="opens"] .form-countdown {
+    position: absolute;
+    color: black;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+[aria-countdown="opens"] .form {
+    filter: blur(1px);
+    opacity: 0.5;
+}
+form-overlay {
+    display: none;
+}
+
+[aria-countdown="opens"] form-overlay {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+[aria-countdown="disabled"] .form-countdown, [aria-countdown="disabled"] form-overlay {
+    display: none;
+}
+
+.form-countdown span {
+    line-height: 1.5;
+    text-align: center;
+    color: black;
+}
+
+[title="Opens a widget where you can find more information"] {
+    display: none !important;
+}
+
+@media screen and (max-height: 767px) {
+
+    .navigation-menu:has([aria-page="5"][aria-active="true"]) {
+        opacity: 0;
+    }
+
+}
+
+@media screen and (max-width: 767px) {
+
+    [data-section='introduction'] content {
+        width: 90%;        
+    }
+
+    [data-section='loading-screen'] content {
+        width: 80%;
+    }
+
+    [data-section='loading-screen'] content span {
+        font-size: large;
+        text-align: center;
+    }
+
+    [data-section='introduction'] .introduction_title {
+        position: absolute;
+        top: 50%;
+        transform: translate(0%, -50%);
+        text-align: left;
+    }
+
+    [data-section='introduction'] .introduction_main {
+        position: relative;
+    }
+
+    [data-section='introduction'] .introduction_main--snippet {
+        position: absolute;
+        width: 100%;
+        left: 0%;
+        font-size: x-large;
+        text-align: left;
+        line-height: 1.5;
+        top: 50%;
+        transform: translate(0px, -50%);
+    }
+
+
+    [data-section='benefits'] .table-container {
+        width: 80%;
+        top: 50%;
+        max-height: 50%;
+        font-size: x-small;
+        overflow: scroll;
+        overscroll-behavior: none;
+        transform: translate(-50%, -50%);
+    }
+
+    [data-section='benefits'] .table-container td div {
+        display: flex;
+        width: 33vw;
+        text-wrap: balance;
+    }
+
+}
+
+</style>
+
+<script>
+
+// Init
+
+enableMarkers = false;
+
+window.addEventListener('DOMContentLoaded', function(event) {
+  
+  document.querySelector('header').setAttribute('data-transparent-header', 'true');
+
+  waitForElm('form-embed').then((elm) => {
+    elm.style.setProperty('--body-text-color', 'white');
+    elm.style.setProperty('--heading-text-color', 'white');
+  });
+  
+})
+
+window.clubhouseSection = 1;
+
+theme.clubhouse = {};
+theme.clubhouse.countdown_expired = '{{ "custom.clubhouse-signup.expired" | t }}'
+
+// Loading Page Code
+
+gsap.to("[data-section='loading-screen'] content", { 
+  autoAlpha: 1,
+  duration: 0.5,
+  delay: 0.5,
+}),
+
+gsap.to("[data-section='loading-screen']", { 
+  autoAlpha: 0,
+  duration: 0.5,
+  delay: 3,
+})
+
+
+
+// Video Section Code
+
+
+const showVideo = gsap.from("[data-section='video']", { 
+  autoAlpha: 0,
+  paused: true,
+  duration: 0.5
+}).progress(1);
+
+const video = gsap.timeline({
+    scrollTrigger:{
+        trigger: "[data-section='video']",
+        start: `${window.innerHeight * 1} top`,
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+            updatePage(self, showVideo, 1, 2);
+        },
+        markers: enableMarkers
+    }
+});
+
+
+// Introduction Section Code
+
+const showIntroduction = gsap.from("[data-section='introduction']", { 
+  autoAlpha: 0,
+  paused: true,
+  duration: 0.5
+}).progress(1);
+
+
+const introduction = gsap.timeline({
+    scrollTrigger:{
+        trigger: "[data-section='introduction']",
+        start: `${window.innerHeight * 3} top`,
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+            updatePage(self, showIntroduction, 2, 3);
+        },
+        markers: enableMarkers
+    }
+});
+
+
+  
+// Community Section Code
+
+
+const showCommunity = gsap.from("[data-section='our-community']", { 
+  autoAlpha: 0,
+  paused: true,
+  duration: 0.5
+}).progress(1);
+
+const ourCommunity = gsap.timeline({
+    scrollTrigger:{
+        trigger: "[data-section='our-community']",
+        start: `${window.innerHeight * 4} top`,
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+            updatePage(self, showCommunity, 3, 4);
+        },
+        markers: enableMarkers
+    }
+});
+
+// Benefits Section Code
+
+
+const showBenefits = gsap.from("[data-section='benefits']", { 
+  autoAlpha: 0,
+  paused: true,
+  duration: 0.5
+}).progress(1);
+
+const benefits = gsap.timeline({
+    scrollTrigger:{
+        trigger: "[data-section='benefits']",
+        start: `${window.innerHeight * 5} top`,
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+            updatePage(self, showBenefits, 4, 5);
+        },
+        markers: enableMarkers
+    }
+});
+
+
+// Function Code
+
+var navigationLinks = document.querySelectorAll('.navigation-menu span');
+
+function updatePage(self, animation, previousPage, CurrentPage) {
+
+    if(self.direction === -1) {
+        animation.play();
+        window.clubhouseSection = previousPage;
+    }
+    else {
+        animation.reverse();
+        window.clubhouseSection = CurrentPage;
+    }
+
+    navigationLinks.forEach((link) => {
+        link.removeAttribute('aria-active');
+    });
+
+    document.querySelector('.navigation-menu span[aria-page="' + window.clubhouseSection + '"]').setAttribute('aria-active', 'true')
+
+}
+
+navigationLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+        window.scrollTo({ top: window.innerHeight * (link.getAttribute('aria-scroll')) });
+    });
+});
+
+document.querySelector('.member-cta').addEventListener('click', () => {
+    document.querySelector('span[aria-page="4"]').click();
+});
+
+
+
+
+
+
+let mm = gsap.matchMedia();
+
+mm.add("(max-width: 799px)", () => {
+
+
+    introduction.to("[data-section='introduction'] .introduction_title",{
+        scrollTrigger:{
+            scrub: true,
+            trigger: "[data-section='introduction']",
+            start: `${window.innerHeight * 1.50} top`,
+            end: `+=0%`,
+            markers: enableMarkers
+        },
+        autoAlpha: 0,
+        duration: 4,
+    })
+
+    introduction.to("[data-section='introduction'] .introduction_main--snippet[aria-snippet='1']",{
+        scrollTrigger:{
+            scrub: true,
+            trigger: "[data-section='introduction']",
+            start: `${window.innerHeight * 1.50} top`,
+            end: `+=50%`,
+            markers: enableMarkers
+        },
+        autoAlpha: 1,
+        scale: 1,
+        duration: 4,
+    }),
+    introduction.to("[data-section='introduction'] .introduction_main--snippet[aria-snippet='1']",{
+        scrollTrigger:{
+            scrub: true,
+            trigger: "[data-section='introduction']",
+            start: `${window.innerHeight * 2.0} top`,
+            end: `+=50%`,
+            markers: enableMarkers
+        },
+        autoAlpha: 0,
+        duration: 4,
+    })
+
+
+    introduction.to("[data-section='introduction'] .introduction_main--snippet[aria-snippet='2']",{
+        scrollTrigger:{
+            scrub: true,
+            trigger: "[data-section='introduction']",
+            start: `${window.innerHeight * 2.0} top`,
+            end: `+=50%`,
+            markers: enableMarkers
+        },
+        autoAlpha: 1,
+        scale: 1,
+        duration: 4,
+    })
+
+    introduction.to("[data-section='introduction'] .introduction_main--snippet[aria-snippet='2']",{
+        scrollTrigger:{
+            scrub: true,
+            trigger: "[data-section='introduction']",
+            start: `${window.innerHeight * 2.50} top`,
+            end: `+=50%`,
+            markers: enableMarkers
+        },
+        autoAlpha: 0,
+        duration: 4,
+    })
+
+
+    introduction.to("[data-section='introduction'] .introduction_main--snippet[aria-snippet='3']",{
+        scrollTrigger:{
+            scrub: true,
+            trigger: "[data-section='introduction']",
+            start: `${window.innerHeight * 2.50} top`,
+            end: `+=50%`,
+            markers: enableMarkers
+        },
+        autoAlpha: 1,
+        scale: 1,
+        duration: 4,
+    })
+
+});
+
+mm.add("(min-width: 800px)", () => {
+
+    var sections = document.querySelectorAll("[data-section='introduction'] .introduction_main--snippet")
+
+    sections.forEach((section, index) => {
+        var sectionHeight = (0.5 * (index + 1)) + 1
+        introduction.to(section,{
+            scrollTrigger:{
+                scrub: true,
+                trigger: "[data-section='introduction']",
+                start: `${window.innerHeight * sectionHeight} top`,
+                end: '+=50%',
+                markers: enableMarkers
+            },
+            autoAlpha: 1,
+            duration: 4,
+        })
+    });
+
+
+
+});
+    
+</script>
+
+{% endif %}
+
+{% schema %}
+    {
+        "name": "Clubhouse - Home",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "background",
+                "label": "Background Image"
+            }
+        ],
+        "blocks": [
+            {
+                "type": "@app"
+            },
+            {
+                "type": "url",
+                "name": "Hotspot",
+                "settings": [
+                    {
+                        "type": "text",
+                        "id": "title",
+                        "label": "Link Title"
+                    },
+                    {
+                        "type": "header",
+                        "content": "Position"
+                    },
+                    {
+                        "type": "range",
+                        "id": "x_position",
+                        "min": 0,
+                        "max": 100,
+                        "step": 1,
+                        "unit": "%",
+                        "label": "X",
+                        "default": 50
+                    },
+                    {
+                        "type": "range",
+                        "id": "y_position",
+                        "min": 0,
+                        "max": 100,
+                        "step": 1,
+                        "unit": "%",
+                        "label": "Y",
+                        "default": 50
+                    },
+                    {
+                        "type": "header",
+                        "content": "Content"
+                    },
+                    {
+                        "type": "url",
+                        "id": "url",
+                        "label": "Content Link"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "liquid",
+                        "label": "Custom Content"
+                    }
+                ]
+            },
+            {
+                "type": "page",
+                "name": "Room",
+                "settings": [
+                    {
+                        "type": "text",
+                        "id": "title",
+                        "label": "Room Title",
+                        "default": "Enter Room"
+                    },
+                    {
+                        "type": "header",
+                        "content": "Position"
+                    },
+                    {
+                        "type": "range",
+                        "id": "x_position",
+                        "min": 0,
+                        "max": 100,
+                        "step": 1,
+                        "unit": "%",
+                        "label": "X",
+                        "default": 50
+                    },
+                    {
+                        "type": "range",
+                        "id": "y_position",
+                        "min": 0,
+                        "max": 100,
+                        "step": 1,
+                        "unit": "%",
+                        "label": "Y",
+                        "default": 50
+                    },
+                    {
+                        "type": "header",
+                        "content": "Content"
+                    },
+                    {
+                        "type": "url",
+                        "id": "url",
+                        "label": "Room Link"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "reverse",
+                        "label": "Reverse Arrow",
+                        "default": false
+                    }
+                ]
+            }
+        ],
+        "presets": [
+            {
+                "name": "Clubhouse - Room"
+            }
+        ]
+    }
+  {% endschema %} 

@@ -1,0 +1,119 @@
+<div  class="job-post-holder container section-standard">
+  <div class="contain-full-width">
+  	<div class="wrapper job-item-holder">
+      {% for block in section.blocks %}
+      <div class="job__item">
+        {% if block.settings.link != blank %}
+    	<a href="{{ block.settings.link }}" class="{% if zoom %}zoom text-overlay{% endif %} {% if image_rollover != blank %}rollover{% endif %}">
+  		{% endif %}
+          {%- assign image = block.settings.image -%}
+          {% if image != blank %}
+          
+          <img class="card__image lazyload"
+            style="background-image: url('{{ image | img_url: '500x' }}');"
+            alt="{{ image.alt | escape }}">
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+          
+          
+          {% if block.settings.title != blank %}
+          <div class="job-content text-uppercase">
+            <span>{{ block.settings.title | escape }}</span>
+            {% if block.settings.location != blank %}
+              <span class="text-location">
+                {{ block.settings.location }}
+              </span>
+          {% endif %}
+          </div>
+          {% endif %}
+          
+          
+        {% if block.settings.link != blank %}
+        </a>
+  		{% endif %}
+      </div>
+      {%endfor%}
+    </div>
+  </div>
+</div>
+{% schema %}
+  {
+    "name": "Job Post",
+	"class": "job-section",
+    "settings": [],
+	"blocks": [
+		{
+          "type": "job_post",
+          "name": "Job Post",
+		  "settings": [
+		  	{
+              "type": "image_picker",
+              "id": "image",
+              "label": "Image"
+            },
+            
+            {
+              "type": "url",
+              "id": "link",
+              "label": "Link"
+            },
+            {
+              "type": "text",
+              "id": "title",
+              "label": "Job Title"
+            },
+            {
+              "type": "text",
+              "id": "location",
+              "label": "Location"
+            }
+
+		  ]
+		}
+	],
+    "presets": [
+            {
+                "name": "Job Post"
+            }
+        ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+
+.job-item-holder {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    padding-bottom: 30px;
+}
+
+.card__image {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  background-size: cover;
+}
+
+.job-content {
+  line-height: 1.5;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.job-content span:first-child {
+    font-weight: 600;
+}
+
+@media screen and (max-width: 768px) {
+  .job-item-holder {
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+}
+
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

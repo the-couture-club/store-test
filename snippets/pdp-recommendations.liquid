@@ -1,0 +1,30 @@
+<div class="product_recommendations">
+
+    {% if product.metafields.shopify--discovery--product_recommendation.complementary_products != null %}
+        {% assign intent = 'complementary' %}
+        <span class="cc-fs1 cc-uppercase">{{ "custom.complementary_products_title" | t | uppercase }}</span>
+    {% else %}
+        {% assign intent = 'related' %}
+        <span class="cc-fs1 cc-uppercase">{{ "custom.related_products_title" | t | uppercase }}</span>
+    {% endif %}
+
+    <div
+    class="product-recommendations"
+    data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4&intent={{ intent }}"
+    >
+    {%- if recommendations.performed? and recommendations.products_count > 0 -%}
+        {%- for product in recommendations.products -%}
+            {% render 'product-grid-item',
+            product: product,
+            swatchEnable: false,
+            page: 'collection',
+            nodrawer: true,
+            image_sizes: '(max-width: 767px) 50vw, 100px',
+            type: 'product-recommendations',
+            hide_colours: true
+            %}
+        {%- endfor -%}
+    {%- endif -%}
+    </div>
+
+</div>

@@ -1,0 +1,964 @@
+{% # theme-check-disable TemplateLength %}
+{%- liquid
+  assign transparent_header = false
+  if template contains 'collection' and collection.image and section.settings.header_transparent_collection
+    assign transparent_header = true
+  elsif template == 'index' and section.settings.header_transparent
+    assign transparent_header = true
+  endif
+
+  assign mega_menu = false
+  if section.settings.dropdown_style == 'mega'
+    assign mega_menu = true
+  endif
+
+  assign logo_size = section.settings.logo_size | times: 1.5 | round
+  assign logo_size_mobile = section.settings.logo_size_mobile
+  assign logo_img_size = logo_size | times: 2 | round
+
+  assign header_text_brightness = section.settings.header_text | color_brightness
+  if header_text_brightness < 125
+    assign header_text_contrast = '#fff'
+  else
+    assign header_text_contrast = '#000'
+  endif
+
+  assign header_transparent_text_brightness = section.settings.header_transparent_text | color_brightness
+  if header_transparent_text_brightness < 125
+    assign header_transparent_contrast = '#fff'
+  else
+    assign header_transparent_contrast = '#000'
+  endif
+-%}
+
+<style type="text/css">
+    :root {
+        {% if section.settings.style == 'sticky' %}
+        --header-is-sticky:1;
+        {% else %}
+        --header-is-sticky:0;
+        {% endif %}
+        --header-bg-color: {{ section.settings.header_bg }};
+        --header-bg-color-darker: {{ section.settings.header_bg | color_darken: 5 }};
+        --header-text-color: {{ section.settings.header_text }};
+        --header-text-color-light: {{ section.settings.header_text | color_modify: 'alpha', 0.7 }};
+        --header-text-color-lighter: {{ section.settings.header_text | color_modify: 'alpha', 0.5 }};
+        --header-text-color-lightest: {{ section.settings.header_text | color_modify: 'alpha', 0.1 }};
+        --header-text-color-bg: {{ section.settings.header_text | color_modify: 'alpha', 0.01 }};
+        --header-transparent-text-color: {{ section.settings.header_transparent_text }};
+        --header-transparent-text-color-light: {{ section.settings.header_transparent_text | color_modify: 'alpha', 0.3 }};
+        --header-text-contrast-color: {{ header_text_contrast }};
+        --header-transparent-text-contrast-color: {{ header_transparent_contrast }};
+    }
+
+    {% if section.settings.style == 'sticky' or section.settings.style == 'scroll' %}
+    .shopify-section-header {
+        position: -webkit-sticky;
+        position: sticky;
+        top: -1px;
+    }
+    {% endif %}
+
+
+    .header,
+    .header__logo,
+    .header-trigger {
+        height: calc({{ logo_size }}px + {{ section.settings.logo_spacing | times: 7 }}px);
+    }
+    .header__logo-img {
+        max-height: {{ logo_size }}px;
+        padding: 0;
+    }
+    .header__logo-ratio-box {
+        height: {{ logo_size }}px;
+    }
+    .header.header--center .header__logo {
+        padding: {{ section.settings.logo_spacing | times: 3 }}px 0;
+    }
+
+    @media screen and (max-width: 767px) {
+        .header,
+        .header__logo,
+        .header-trigger,
+        .header.header--center {
+            height: calc({{ logo_size_mobile }}px + {{ section.settings.logo_spacing_mobile | times: 5 }}px);
+        }
+        .header__logo-img {
+            max-height: {{ logo_size_mobile }}px;
+        }
+        .header__logo-ratio-box {
+            height: auto;
+            max-height: {{ logo_size_mobile }}px;
+        }
+        .header.header--center .header__logo {
+            padding: 0;
+        }
+    }
+
+    .header--mega .primary-nav .nav__sub {
+        padding-top: calc((({{ logo_size }}px + {{ section.settings.logo_spacing | times: 7 }}px) / 2) - 16px);
+    }
+
+    {% assign header_bg = section.settings.header_bg | downcase %}
+    {% assign main_bg = settings.color_bg | downcase %}
+    {% unless header_bg == main_bg or template == 'product' %}
+        .main { margin-top: 30px }
+        .main .shopify-section:first-child .section--full { margin-top: -30px }
+        @media screen and (max-width: 767px) {.main .shopify-section:first-child .section--full-mobile { margin-top: -30px }}
+    {% endunless %}
+
+    {% if section.settings.invert %}
+        .shopify-section-header:has(header[data-transparent-header="true"]) {
+            mix-blend-mode: difference;
+        }
+        header[data-transparent-header="true"] {
+            transition: transform .3s !important;
+            background: transparent
+        }
+        header[data-transparent-header="true"]:hover * {
+            color: white;
+        }
+        header[data-transparent-header="true"] .cart-count-bubble {
+            transition: 0s;
+            background: white;
+        }
+        [data-transparent-header=true].header:is(:hover) .header__logo-img {
+            filter: invert(1) !important;
+        }
+        header[data-transparent-header="true"] .js-cart-count {
+            color: black !important;
+        }
+    {% endif %}
+
+</style>
+
+<header role="banner" id="top" {% if template.name == "index" %} data-index {% endif %} class="header js-header{% if section.settings.style == 'sticky' %} header--sticky js-header-sticky{% elsif section.settings.style == 'scroll' %} header--sticky js-header-sticky header--scroll js-header-scroll{% else %} header--not-sticky{% endif %}{% if section.settings.layout == 'center' %} header--center{% else %} header--{{ section.settings.layout }} u-flex u-flex--middle u-flex--center{% endif %}{% if mega_menu %} header--mega{% endif %}{% if settings.search_enable %} header--search-enabled{% endif %}{% unless section.settings.parent_links %} header--parent-disabled{% endunless %}{% if transparent_header %} header--transparent{% endif %}{% if section.settings.header_transparent_divider %} header--has-transparent-divider{% endif %}" data-section-id="{{ section.id }}" data-section-type="header-section" data-invert="{{section.settings.invert}}" data-transparent-header="{{ transparent_header }}" data-sticky-header="{% if section.settings.style == 'sticky' or section.settings.style == 'scroll' %}true{% else %}false{% endif %}" data-header-style="{{ section.settings.layout }}">
+
+    <div class="header__logo u-flex u-flex--middle u-flex--center{% unless section.settings.logo %} header__logo--text{% endunless %}{% if transparent_header and section.settings.logo_transparent %} header__logo--has-transparent{% endif %}">
+        {% if template == 'index' %}
+            <h1 class="header__logo-wrapper js-main-logo" itemscope itemtype="http://schema.org/Organization">
+        {% else %}
+            <div class="header__logo-wrapper js-main-logo" itemscope itemtype="http://schema.org/Organization">
+        {% endif %}
+            {% if section.settings.logo %}
+                <a href="{{ routes.root_url }}" itemprop="url" class="header__logo-link">
+                    <div class="header__logo-ratio-box" style="aspect-ratio: {{ section.settings.logo.aspect_ratio | round: 1 }}/1">
+
+                        <img src="{{ section.settings.logo | image_url: height: logo_img_size }}" class="header__logo-img" alt="{{ section.settings.logo.alt | default: shop.name }}" itemprop="logo" width="{{ section.settings.logo.width }}" height="{{ section.settings.logo.height }}" loading="eager">
+
+                        {% if transparent_header and section.settings.logo_transparent %}
+                            <img src="{{ section.settings.logo_transparent | image_url: height: logo_img_size }}" class="header__logo-img header__logo-img--transparent" alt="{{ section.settings.logo_transparent.alt | default: shop.name }}" itemprop="logo-transparent" width="{{ section.settings.logo_transparent.width }}" height="{{ section.settings.logo_transparent.height }}" loading="eager">
+                        {% endif %}
+                    </div>
+
+                </a>
+            {% else %}
+                <a href="{{ routes.root_url }}" class="header__logo-link header__logo-link--text" itemprop="url">{{ shop.name }}</a>
+            {% endif %}
+        {% if template == 'index' %}
+            </h1>
+        {% else %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="header-trigger--left_container">
+    
+        <div class="header-trigger header-trigger--left mobile-draw-trigger-icon u-flex u-flex--middle js-mobile-draw-icon">
+            <a href="#" class="header-trigger__link header-trigger__link--mobile js-mobile-draw-trigger"  aria-haspopup="dialog" aria-label="{{ 'layout.navigation.menu' | t }}">
+                {% render 'icon-menu' %}
+            </a>
+        </div>
+        
+        {% if settings.search_enable %}
+            <div class="header-trigger header-trigger--left mobile-draw-trigger-icon u-flex u-flex--middle js-search-draw-icon u-hidden@tab-up">
+                <a href="{{ routes.search_url }}" class="header-trigger__link header-trigger__link--search js-search-trigger" aria-haspopup="dialog" aria-label="{{ 'layout.navigation.search' | t }}">
+                    {% render 'icon-search' %}
+                </a>
+            </div>
+        {% endif %}
+
+        </div>
+    
+
+    <div class="header-trigger header-trigger--right cart-draw-trigger-icon u-flex u-flex--middle js-cart-draw-icon" style="display: none">
+        <a href="{{ routes.cart_url }}" class="header-trigger__link header-trigger__link--cart js-cart-icon{% if cart.item_count > 0 %} js-cart-full{% endif %}{% if settings.cart_type == 'modal' %} js-cart-trigger{% endif %}" aria-haspopup="dialog" aria-label="{{ 'layout.cart.title' | t }}">
+            {% render 'icon-cart' %}
+            <div class="cart-count-bubble">
+                <span class="js-cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="header-navs js-heaver-navs u-clearfix">
+
+        {%comment%}
+            <nav class="primary-nav header-navs__items js-primary-nav" role="navigation">
+            <ul class="primary-nav__items js-primary-nav-items">
+                {% assign menuWithChildIndex = 0 %}
+                {% for link in linklists[section.settings.main_linklist].links %}
+
+                    {% capture parentIndex %}{{ forloop.index }}{% endcapture %}
+
+                    {%- liquid
+                        assign collectionLinksOnly = false
+
+                        if link.levels == 1
+                            assign collectionLinksOnly = true
+
+                            for sub_link in link.links
+                                if sub_link.type != 'collection_link'
+
+                                assign collectionLinksOnly = false
+                                break
+
+                                endif
+                            endfor
+                        endif
+                    -%}
+
+                    <li class="primary-nav__item{% if link.active %} primary-nav__item--active{% endif %}{% if link.links != blank %} primary-nav__item--sub js-header-sub-link{% endif %} f-family--{{ settings.type_nav_style }} f-caps--{{ settings.type_nav_capitalize }} f-space--{{ settings.type_nav_letterspace }}">
+                        <a href="{{ link.url }}" class="primary-nav__link {% if link.links != blank %} nav__link--sub js-header-sub-link-a{% endif %}" {% if link.links != blank %} aria-expanded="false" aria-controls="sub-{{ forloop.index }}"{% endif %}>{{ link.title }}</a>
+
+                        {% if link.links != blank %}
+
+                            {%- liquid
+                                assign menuWithChildIndex = menuWithChildIndex | plus:1
+                                assign show_mega_cta = false
+                                assign mega_has_1_cta = false
+                                assign mega_has_2_cta = false
+                                assign mega_has_both_cta = false
+                                assign mega_has_cta = false
+                                assign show_mega_and_has_cta = false
+
+                                if mega_menu and section.settings.mega_image_first_only and menuWithChildIndex == 1
+                                    assign show_mega_cta = true
+
+                                elsif mega_menu and section.settings.mega_image_first_only and menuWithChildIndex != 1
+                                    assign show_mega_cta = false
+
+                                elsif mega_menu and section.settings.mega_image_first_only == false
+                                    assign show_mega_cta = true
+
+                                endif
+
+                                if section.settings.mega_1_image or section.settings.mega_1_title != blank or section.settings.mega_1_text != blank
+                                    assign mega_has_1_cta = true
+                                endif
+
+                                if section.settings.mega_2_image or section.settings.mega_2_title != blank or section.settings.mega_2_text != blank
+                                    assign mega_has_2_cta = true
+                                endif
+
+                                if mega_has_1_cta and mega_has_2_cta
+                                    assign mega_has_both_cta = true
+                                endif
+
+                                if mega_has_1_cta or mega_has_2_cta
+                                    assign mega_has_cta = true
+                                endif
+
+                                if show_mega_cta and mega_has_cta
+                                    assign show_mega_and_has_cta = true
+                                endif
+                            -%}
+
+                            <div class="nav__sub{% unless collectionLinksOnly and section.settings.mega_collection %} nav__sub--cta-{{ section.settings.mega_image_alignment }}{% if show_mega_cta %}{% if mega_has_1_cta or mega_has_2_cta %} nav__sub--cta{% endif %}{% if mega_has_both_cta %} nav__sub--cta-2x{% endif %}{% endif %}{% endunless %} js-nav-sub" id="sub-{{ forloop.index }}">
+                                <div class="nav__sub-wrap">
+
+                                    {% unless collectionLinksOnly and section.settings.mega_collection and mega_menu %}
+
+                                        <ul class="nav__sub__items nav__sub__items--{{ link.links.size }}{% if link.levels == 1 %} nav__sub__items--single{% endif %} o-list-bare"{% if show_mega_and_has_cta and mega_menu %} style="transition-delay: 100ms;"{% endif %}>
+
+                                            {% assign subLinkDelay = 100 %}
+                                            {% for sub_link in link.links %}
+
+                                                <li class="nav__sub__item{% if sub_link.active %} nav__sub__item--active{% endif %}{% if sub_link.links != blank %} nav__sub__item--sub js-header-sub-t-link{% endif %}"{% if mega_menu %}{% unless show_mega_and_has_cta %} style="transition-delay: {{ subLinkDelay | times: forloop.index }}ms"{% endunless %}{% endif %}>
+                                                    <a href="{{ sub_link.url }}" class="nav__sub__link{% if sub_link.links != blank %} js-header-sub-t-a{% endif %}" {% if link.links != blank %} aria-expanded="false" aria-controls="sub-t-{{ parentIndex }}-{{ forloop.index }}"{% endif %}>{{ sub_link.title | escape }}</a>
+
+                                                    {% if sub_link.links != blank %}
+                                                        <div class="nav__sub-t js-nav-sub-t" id="sub-t-{{ parentIndex }}-{{ forloop.index }}">
+                                                            <div class="nav__sub-t-wrap">
+                                                                <ul class="nav__sub-t__items o-list-bare">
+
+                                                                    {% for sub_sub_link in sub_link.links %}
+                                                                        <li class="nav__sub-t__item{% if sub_sub_link.active %} nav__sub-t__item--active{% endif %}">
+                                                                            <a href="{{ sub_sub_link.url }}" class="nav__sub-t__link">{{ sub_sub_link.title | escape }}</a>
+                                                                        </li>
+                                                                    {% endfor %}
+
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+
+                                                </li>
+
+
+                                            {% endfor %}
+
+                                        </ul>
+
+                                        {% if show_mega_cta %}
+                                            {% if mega_has_1_cta %}
+                                                <div class="nav__sub__cta" style="transition-delay: 250ms;">
+                                                    {% unless section.settings.mega_1_link == blank %}
+                                                    <a href="{{ section.settings.mega_1_link }}" class="nav__sub__cta-image-link">
+                                                    {% endunless %}
+                                                        {% if section.settings.mega_1_image %}
+                                                            <div class="o-ratio o-ratio--{{ section.settings.mega_image_ratio }}"{% if section.settings.mega_image_ratio == 'natural' %} style="padding-bottom:{{ 1 | divided_by: section.settings.mega_1_image.aspect_ratio | times: 100 }}%;"{% endif %}>
+                                                                <div class="o-ratio__content">
+                                                                    <img
+                                                                        class="nav__sub__collection-image u-bg-cover"
+                                                                        src="{{ section.settings.mega_1_image | image_url: width: 300 }}"
+                                                                        srcset="
+                                                                            {{ section.settings.mega_1_image | image_url: width: 180 }} 180w {{ 180 | divided_by: section.settings.mega_1_image.aspect_ratio | round }}h,
+                                                                            {{ section.settings.mega_1_image | image_url: width: 360 }} 360w {{ 360 | divided_by: section.settings.mega_1_image.aspect_ratio | round }}h,
+                                                                            {{ section.settings.mega_1_image | image_url: width: 540 }} 540w {{ 540 | divided_by: section.settings.mega_1_image.aspect_ratio | round }}h,
+                                                                            {{ section.settings.mega_1_image | image_url: width: 720 }} 720w {{ 720 | divided_by: section.settings.mega_1_image.aspect_ratio | round }}h,
+                                                                            {{ section.settings.mega_1_image | image_url: width: 900 }} 900w {{ 900 | divided_by: section.settings.mega_1_image.aspect_ratio | round }}h
+                                                                        "
+                                                                        width="300"
+                                                                        height="{{ 300 | divided_by: section.settings.mega_1_image.aspect_ratio | round }}"
+                                                                        alt="{{ section.settings.mega_1_image.alt }}"
+                                                                        loading="lazy"
+                                                                        sizes="20vw"
+                                                                        style="object-position:{{ section.settings.mega_1_image.presentation.focal_point }}"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+
+                                                         {% unless section.settings.mega_1_title == blank %}
+                                                            <h4 class="nav__sub__cta-title h5">{{ section.settings.mega_1_title  | escape }}</h4>
+                                                        {% endunless %}
+                                                        {% unless section.settings.mega_1_text == blank %}
+                                                            <div class="nav__sub__cta-text rte">
+                                                                {{ section.settings.mega_1_text }}
+                                                            </div>
+                                                        {% endunless %}
+
+                                                    {% unless section.settings.mega_1_link == blank %}
+                                                    </a>
+                                                    {% endunless %}
+                                                </div>
+                                            {% endif %}
+
+                                            {% if mega_has_2_cta %}
+
+                                                <div class="nav__sub__cta" style="transition-delay: 400ms;">
+                                                    {% unless section.settings.mega_2_link == blank %}
+                                                    <a href="{{ section.settings.mega_2_link }}" class="nav__sub__cta-image-link">
+                                                    {% endunless %}
+                                                        {% if section.settings.mega_2_image %}
+                                                            <div class="o-ratio o-ratio--{{ section.settings.mega_image_ratio }}"{% if section.settings.mega_image_ratio == 'natural' %} style="padding-bottom:{{ 1 | divided_by: section.settings.mega_2_image.aspect_ratio | times: 100 }}%;"{% endif %}>
+                                                                <div class="o-ratio__content">
+                                                                    <img
+                                                                        class="nav__sub__collection-image u-bg-cover"
+                                                                        src="{{ section.settings.mega_2_image | image_url: width: 300 }}"
+                                                                        srcset="
+                                                                            {{ section.settings.mega_2_image | image_url: width: 180 }} 180w {{ 180 | divided_by: section.settings.mega_2_image.aspect_ratio | round }}h,
+                                                                            {{ section.settings.mega_2_image | image_url: width: 360 }} 360w {{ 360 | divided_by: section.settings.mega_2_image.aspect_ratio | round }}h,
+                                                                            {{ section.settings.mega_2_image | image_url: width: 540 }} 540w {{ 540 | divided_by: section.settings.mega_2_image.aspect_ratio | round }}h,
+                                                                            {{ section.settings.mega_2_image | image_url: width: 720 }} 720w {{ 720 | divided_by: section.settings.mega_2_image.aspect_ratio | round }}h,
+                                                                            {{ section.settings.mega_2_image | image_url: width: 900 }} 900w {{ 900 | divided_by: section.settings.mega_2_image.aspect_ratio | round }}h
+                                                                        "
+                                                                        width="300"
+                                                                        height="{{ 300 | divided_by: section.settings.mega_2_image.aspect_ratio | round }}"
+                                                                        alt="{{ section.settings.mega_2_image.alt }}"
+                                                                        loading="lazy"
+                                                                        sizes="20vw"
+                                                                        style="object-position:{{ section.settings.mega_2_image.presentation.focal_point }}"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+
+                                                         {% unless section.settings.mega_2_title == blank %}
+                                                            <h4 class="nav__sub__cta-title h5">{{ section.settings.mega_2_title  | escape }}</h4>
+                                                        {% endunless %}
+                                                        {% unless section.settings.mega_2_text == blank %}
+                                                            <div class="nav__sub__cta-text rte">
+                                                                {{ section.settings.mega_2_text }}
+                                                            </div>
+                                                        {% endunless %}
+
+                                                    {% unless section.settings.mega_2_link == blank %}
+                                                    </a>
+                                                    {% endunless %}
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        <ul class="nav__sub__items nav__sub__items--collection nav__sub__items--{{ link.links.size }}{% if link.levels == 1 %} nav__sub__items--single{% endif %} o-list-bare"{% if show_mega_and_has_cta and mega_menu %} style="transition-delay: 100ms;"{% endif %}>
+
+                                            {% assign subLinkDelay = 50 %}
+                                            {% for sub_link in link.links %}
+
+                                                {% assign collection_image = sub_link.object.image %}
+
+                                                <li class="nav__sub__item nav__sub__item--collection{% if collection_image != blank %} nav__sub__item--collection-image{% else %} nav__sub__item--collection-no-image{% endif %}{% if sub_link.active %} nav__sub__item--active{% endif %}{% if sub_link.links != blank %} nav__sub__item--sub js-header-sub-t-link{% endif %}"{% if mega_menu %}{% unless show_mega_and_has_cta %} style="transition-delay: {{ subLinkDelay | times: forloop.index }}ms"{% endunless %}{% endif %}>
+
+                                                    <a href="{{ sub_link.url }}" class="nav__sub__collection-link">
+
+                                                        {% if collection_image != blank %}
+                                                            <div class="o-ratio o-ratio--{{ section.settings.mega_collection_ratio }}"{% if section.settings.mega_collection_ratio == 'natural' %} style="padding-bottom:{{ 1 | divided_by: collection_image.aspect_ratio | times: 100 }}%;"{% endif %}>
+
+                                                                <div class="o-ratio__content">
+                                                                    <img
+                                                                        class="nav__sub__collection-image u-bg-cover"
+                                                                        src="{{ collection_image | image_url: width: 300 }}"
+                                                                        srcset="
+                                                                            {{ collection_image | image_url: width: 180 }} 180w {{ 180 | divided_by: collection_image.aspect_ratio | round }}h,
+                                                                            {{ collection_image | image_url: width: 360 }} 360w {{ 360 | divided_by: collection_image.aspect_ratio | round }}h,
+                                                                            {{ collection_image | image_url: width: 540 }} 540w {{ 540 | divided_by: collection_image.aspect_ratio | round }}h,
+                                                                            {{ collection_image | image_url: width: 720 }} 720w {{ 720 | divided_by: collection_image.aspect_ratio | round }}h,
+                                                                            {{ collection_image | image_url: width: 900 }} 900w {{ 900 | divided_by: collection_image.aspect_ratio | round }}h
+                                                                        "
+                                                                        width="300"
+                                                                        height="{{ 300 | divided_by: collection_image.aspect_ratio | round }}"
+                                                                        alt="{{ collection_image.alt }}"
+                                                                        loading="lazy"
+                                                                        sizes="20vw"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+
+                                                        <p class="nav__sub__collection-text nav__sub__collection-text--{{ section.settings.mega_collection_alignment }}">{{ sub_link.title | escape }}</p>
+
+                                                    </a>
+
+                                                </li>
+
+                                            {% endfor %}
+
+                                        </ul>
+
+                                    {% endunless %}
+
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </li>
+                {% endfor %}
+            </ul>
+            </nav>
+        {%endcomment%}
+
+        <nav class="secondary-nav header-navs__items js-secondary-nav">
+            <ul class="secondary-nav__items secondary-nav__items--{{ section.settings.link_style }}">
+
+            {% if settings.search_enable %}
+            <li class="secondary-nav__item secondary-nav__item--search secondary-nav__link--{{ section.settings.link_style }}{% if section.settings.link_style == 'word' %} secondary-nav__item--light f-family--{{ settings.type_nav_style }} f-caps--{{ settings.type_nav_capitalize }} f-space--{{ settings.type_nav_letterspace }}{% endif %} u-hidden@tab-down">
+                <a href="{{ routes.search_url }}" class="header-trigger__link header-trigger__link--search js-search-trigger" aria-haspopup="dialog" aria-label="{{ 'layout.navigation.search' | t }}">
+                    {% render 'icon-search' %}
+                </a>
+            </li>
+            {% endif %}
+
+                {%- liquid
+                    assign country_selector = false
+                    assign language_selector = false
+                    assign show_selectors = false
+
+                    if section.settings.enable_country_selector and localization.available_countries.size > 1
+                        assign country_selector = true
+                    endif
+
+                    if section.settings.enable_language_selector and localization.available_languages.size > 1
+                        assign language_selector = true
+                    endif
+
+                    if country_selector or language_selector
+                        assign show_selectors = true
+                    endif
+                -%}
+
+                {%- if show_selectors -%}
+                    <li class="secondary-nav__item  f-family--{{ settings.type_nav_style }} f-caps--{{ settings.type_nav_capitalize }} f-space--{{ settings.type_nav_letterspace }}">
+                        {%- form 'localization', id: 'HeaderLocalizeForm', class: 'localize__form' -%}
+                            {%- if show_selectors -%}
+                                {%- if country_selector -%}
+                                    <span class="secondary-nav__item secondary-nav__item--light secondary-nav__item--sub js-header-sub-link js-localize-wrapper">
+                                        <h2 class="u-hidden-visually" id="country-heading-header">
+                                          {{ 'general.country.dropdown_label' | t }}
+                                        </h2>
+
+                                        <a href="#" class="secondary-nav__link nav__link--sub js-header-sub-link-a" aria-expanded="false" aria-controls="country-list-header">{{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})</a>
+
+                                        <div class="nav__sub nav__sub--header-localize js-nav-sub">
+                                            <div class="nav__sub-wrap nav__sub-wrap--country">
+                                                <ul id="country-list-header" class="nav__sub__items o-list-bare">
+                                                    {%- for country in localization.available_countries -%}
+                                                        <li class="nav__sub__item">
+                                                            <a href="#" class="nav__sub__link js-localize-item{% if country.iso_code == localization.country.iso_code %} selected{% endif %}" {% if country.iso_code == localization.country.iso_code %}aria-current="true"{% endif %} data-value="{{ country.iso_code }}">
+                                                                {{ country.name }} <span class="localization-form__country">({{ country.currency.iso_code }} {{ country.currency.symbol }})</span>
+                                                            </a>
+                                                        </li>
+                                                    {%- endfor -%}
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}" data-disclosure-input>
+
+                                    </span>
+                                {%- endif -%}
+
+                                {%- if language_selector -%}
+                                    <span class="secondary-nav__item secondary-nav__item--light secondary-nav__item--sub js-header-sub-link js-localize-wrapper">
+                                        <h2 class="u-hidden-visually" id="lang-heading-header">
+                                          {{ 'general.language.dropdown_label' | t }}
+                                        </h2>
+
+                                        <a href="#" class="secondary-nav__link nav__link--sub js-header-sub-link-a" aria-expanded="false" aria-controls="lang-list-header">{{ localization.language.endonym_name | capitalize }}</a>
+
+                                        <div class="nav__sub nav__sub--header-localize js-nav-sub">
+                                            <div class="nav__sub-wrap nav__sub-wrap--lang">
+                                                <ul id="lang-list-header" class="nav__sub__items o-list-bare">
+                                                    {%- for language in localization.available_languages -%}
+                                                        <li class="nav__sub__item">
+                                                            <a href="#" class="nav__sub__link js-localize-item{% if language.iso_code == localization.language.iso_code %} selected{% endif %}" {% if language.iso_code == localization.language.iso_code %}aria-current="true"{% endif %} data-value="{{ language.iso_code }}">{{ language.endonym_name | capitalize }}</a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <input type="hidden" name="locale_code" value="{{ localization.language.iso_code }}" data-disclosure-input>
+                                    </span>
+                                {%- endif -%}
+                            {%- endif -%}
+                        {%- endform -%}
+                    </li>
+                {%- endif -%}
+
+                <li class="secondary-nav__item f-family--{{ settings.type_nav_style }} f-caps--{{ settings.type_nav_capitalize }} f-space--{{ settings.type_nav_letterspace }}">
+
+                    <a href="{{ routes.account_url }}" class="secondary-nav__link secondary-nav__item--cart secondary-nav__link--{{ section.settings.link_style }}" aria-haspopup="dialog" aria-label="{{ 'layout.cart.title' | t }}">
+                        {% render 'icon-user' %}
+                    </a>
+                </li>
+
+                <li class="secondary-nav__item f-family--{{ settings.type_nav_style }} f-caps--{{ settings.type_nav_capitalize }} f-space--{{ settings.type_nav_letterspace }}">
+
+                    <a href="{{ routes.cart_url }}" class="secondary-nav__link secondary-nav__item--cart secondary-nav__link--{{ section.settings.link_style }}{% if settings.cart_type == 'modal' %} js-cart-trigger{% endif %}" aria-haspopup="dialog" aria-label="{{ 'layout.cart.title' | t }}">
+
+                        {%- if section.settings.link_style == 'icon' -%}
+                            {% render 'icon-cart' %}
+                            <div class="cart-count-bubble">
+                                <span class="js-cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+                            </div>
+                        {%- else -%}
+                            {{ 'layout.cart.title' | t }} (<span class="js-cart-count">{{ cart.item_count }}</span>)
+                        {%- endif -%}
+
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
+    </div>
+
+    <div id="load-animation--container"></div>
+</header>
+<script>
+    theme.setUpHeaderResizeObservers();
+</script>
+
+{% schema %}
+{
+    "name": "Header",
+    "class": "shopify-section-header js-section__header",
+    "settings": [
+        {
+            "type": "link_list",
+            "id": "main_linklist",
+            "label": "Menu",
+            "default": "main-menu"
+        },
+        {
+            "type": "checkbox",
+            "id": "invert",
+            "label": "Invert Header Content",
+            "default": false
+        },
+        {
+            "type": "select",
+            "id": "layout",
+            "label": "Header layout",
+            "options": [
+                {
+                    "value": "logo-left",
+                    "label": "Logo left"
+                },
+                {
+                    "value": "left",
+                    "label": "Logo center"
+                },
+                {
+                    "value": "center",
+                    "label": "Menu center"
+                },
+                {
+                    "value": "icons",
+                    "label": "Mobile menu"
+                }
+            ],
+            "default": "logo-left",
+            "info": "Layout will default to 'Menu center' when menu exceeds available width."
+        },
+        {
+            "type": "select",
+            "id": "style",
+            "label": "Navigation visibility",
+            "options": [
+                {
+                    "value": "static",
+                    "label": "Default"
+                },
+                {
+                    "value": "sticky",
+                    "label": "Sticky"
+                },
+                {
+                    "value": "scroll",
+                    "label": "Scroll up"
+                }
+            ],
+            "default": "scroll"
+        },
+        {
+            "type": "select",
+            "id": "link_style",
+            "label": "Header link style (wide screens)",
+            "options": [
+                {
+                    "value": "word",
+                    "label": "Words"
+                },
+                {
+                    "value": "icon",
+                    "label": "Icons"
+                }
+            ],
+            "default": "icon",
+            "info": "This setting affects the account, cart and search links only."
+        },
+        {
+            "type": "checkbox",
+            "id": "parent_links",
+            "label": "Enable clickable parent links",
+            "default": true
+        },
+        {
+            "type": "header",
+            "content": "Solid header"
+        },
+        {
+            "type": "color",
+            "id": "header_bg",
+            "label": "Background",
+            "default": "#ffffff"
+        },
+        {
+            "type": "color",
+            "id": "header_text",
+            "label": "Text and icons",
+            "default": "#111111"
+        },
+        {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo image"
+        },
+        {
+            "type": "header",
+            "content": "Transparent header"
+        },
+        {
+            "type": "checkbox",
+            "id": "header_transparent",
+            "label": "Enable on home page",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "header_transparent_collection",
+            "label": "Enable on collection page",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "header_transparent_divider",
+            "label": "Show divider",
+            "default": true
+        },
+        {
+            "type": "color",
+            "id": "header_transparent_text",
+            "label": "Text and icons",
+            "default": "#ffffff"
+        },
+        {
+            "type": "image_picker",
+            "id": "logo_transparent",
+            "label": "Alternate logo"
+        },
+        {
+            "type": "header",
+            "content": "Logo size"
+        },
+        {
+            "type": "range",
+            "id": "logo_size",
+            "label": "Logo size desktop",
+            "min": 10,
+            "max": 100,
+            "step": 5,
+            "default": 25
+        },
+        {
+            "type": "range",
+            "id": "logo_spacing",
+            "label": "Logo spacing desktop",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "default": 3
+        },
+        {
+            "type": "range",
+            "id": "logo_size_mobile",
+            "label": "Logo size mobile",
+            "min": 10,
+            "max": 100,
+            "step": 5,
+            "default": 20
+        },
+        {
+            "type": "range",
+            "id": "logo_spacing_mobile",
+            "label": "Logo spacing mobile",
+            "min": 0,
+            "max": 15,
+            "step": 1,
+            "default": 0
+        },
+        {
+            "type": "header",
+            "content": "Dropdown menus"
+        },
+        {
+            "type": "select",
+            "id": "dropdown_style",
+            "label": "Style",
+            "options": [
+                {
+                    "value": "mega",
+                    "label": "Mega menu"
+                },
+                {
+                    "value": "simple",
+                    "label": "Simple"
+                }
+            ],
+            "default": "mega"
+        },
+        {
+            "type": "header",
+            "content": "Mega menu image blocks"
+        },
+        {
+            "type": "checkbox",
+            "id": "mega_image_first_only",
+            "label": "Only display image blocks in first mega menu",
+            "default": true
+        },
+        {
+            "type": "select",
+            "id": "mega_image_alignment",
+            "label": "Heading and text alignment",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                }
+            ],
+            "default": "center"
+        },
+        {
+            "type": "select",
+            "id": "mega_image_ratio",
+            "label": "Image ratio",
+            "default": "1:1",
+            "options": [
+                {
+                    "value": "1:1",
+                    "label": "Square (1:1)"
+                },
+                {
+                    "value": "3:4",
+                    "label": "Portrait (3:4)"
+                },
+                {
+                    "value": "4:3",
+                    "label": "Landscape (4:3)"
+                },
+                {
+                    "value": "16:9",
+                    "label": "Wide (16:9)"
+                },
+                {
+                    "value": "2:3",
+                    "label": "Tall (2:3)"
+                },
+                {
+                    "value": "circle",
+                    "label": "Circle"
+                },
+                {
+                    "value": "natural",
+                    "label": "Natural"
+                }
+            ]
+        },
+        {
+            "type": "image_picker",
+            "id": "mega_1_image",
+            "label": "Image 1",
+            "info": "600px width recommended."
+        },
+        {
+            "type": "text",
+            "id": "mega_1_title",
+            "label": "Heading 1"
+        },
+        {
+            "type": "richtext",
+            "id": "mega_1_text",
+            "label": "Text 1"
+        },
+        {
+            "type": "url",
+            "id": "mega_1_link",
+            "label": "Link 1"
+        },
+        {
+            "type": "image_picker",
+            "id": "mega_2_image",
+            "label": "Image 2",
+            "info": "600px width recommended."
+        },
+        {
+            "type": "text",
+            "id": "mega_2_title",
+            "label": "Heading 2"
+        },
+        {
+            "type": "richtext",
+            "id": "mega_2_text",
+            "label": "Text 2"
+        },
+        {
+            "type": "url",
+            "id": "mega_2_link",
+            "label": "Link 2"
+        },
+        {
+            "type": "header",
+            "content": "Collection mega menu",
+            "info": "Create a menu in your admin using only product collections. For best results ensure each collection has an image attached."
+        },
+        {
+            "type": "checkbox",
+            "id": "mega_collection",
+            "label": "Enable",
+            "default": true
+        },
+        {
+            "type": "select",
+            "id": "mega_collection_ratio",
+            "label": "Image ratio",
+            "default": "1:1",
+            "options": [
+                {
+                    "value": "1:1",
+                    "label": "Square (1:1)"
+                },
+                {
+                    "value": "3:4",
+                    "label": "Portrait (3:4)"
+                },
+                {
+                    "value": "4:3",
+                    "label": "Landscape (4:3)"
+                },
+                {
+                    "value": "16:9",
+                    "label": "Wide (16:9)"
+                },
+                {
+                    "value": "2:3",
+                    "label": "Tall (2:3)"
+                },
+                {
+                    "value": "circle",
+                    "label": "Circle"
+                },
+                {
+                    "value": "natural",
+                    "label": "Natural"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "mega_collection_alignment",
+            "label": "Heading alignment",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "Left"
+                },
+                {
+                    "value": "center",
+                    "label": "Center"
+                }
+            ],
+            "default": "center"
+        },
+        {
+            "type": "header",
+            "content": "Country/Region Selector",
+            "info": "To add a country/region, go to your [payment settings.](/admin/settings/payments)"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_country_selector",
+            "label": "Enable country/region selector",
+            "default": false
+        },
+        {
+            "type": "header",
+            "content": "Language Selector",
+            "info": "To add a language, go to your [language settings.](/admin/settings/languages)"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_language_selector",
+            "label": "Enable language selector",
+            "default": false
+        }
+    ]
+}
+{% endschema %}

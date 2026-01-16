@@ -1,0 +1,35 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+      }
+    },
+    "form": {
+      "type": "section-contact-form",
+      "blocks": {
+        "56f8b835-ac6c-4e1d-b20e-fa61f19740fa": {
+          "type": "text",
+          "settings": {
+            "required": true,
+            "long": false,
+            "label": "Phone Number"
+          }
+        }
+      },
+      "block_order": [
+        "56f8b835-ac6c-4e1d-b20e-fa61f19740fa"
+      ],
+      "settings": {
+        "heading": "",
+        "background": true,
+        "divider": false,
+        "section-bottom-margin": false
+      }
+    }
+  },
+  "order": [
+    "main",
+    "form"
+  ]
+}

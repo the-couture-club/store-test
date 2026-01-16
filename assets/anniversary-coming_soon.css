@@ -1,0 +1,43 @@
+.anniversary-coming_soon {
+  padding: 0 !important;
+}
+
+.anniversary-coming_soon .box {
+  cursor: pointer;
+}
+
+.anniversary-coming_soon [data-product] {
+  transition: 1s;
+}
+
+.anniversary-coming_soon [data-product]:hover img {
+  scale: 1.05;
+}
+
+.anniversary-coming_soon section {
+  display: flex;
+  min-height: 500vh; /* Tall so we have scroll space */
+  overflow: hidden;
+  gap: 20px;
+  margin: 20px;
+}
+
+
+.anniversary-coming_soon .column {
+  flex: 1;
+  overflow: hidden;
+}
+
+.anniversary-coming_soon .content {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+}
+
+.anniversary-coming_soon .product-card {
+  margin: 0 !important;
+}
+
+.anniversary-coming_soon .product-card__details, .anniversary-coming_soon form {
+  display: none !important;
+}

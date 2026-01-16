@@ -1,0 +1,46 @@
+<div aria-hidden="true"  aria-visible="false" id="slide_zoom">
+    <a class="slide_zoom-close js-close-zoom">
+        <i class="icon icon--close-l"></i>
+    </a>
+    <img>
+</div>
+
+<script>
+    document.addEventListener( 'DOMContentLoaded', function() {
+
+        var images = document.querySelectorAll('.splide li img');
+        var popup = document.getElementById('slide_zoom');
+        var close =  document.querySelector('.js-close-zoom');
+        var popupimg = popup.querySelector('img')
+
+        images.forEach(img => {
+            img.addEventListener('click', function () {
+                popup.querySelector('img').src = img.getAttribute('aria-url');
+                document.querySelector('html').classList.add("no-scroll");
+
+                if (popupimg.complete) {
+                } else {
+                    popupimg.addEventListener('load', function() {
+                        popup.setAttribute('aria-hidden', 'false')
+                        setTimeout(function() {
+                            popup.setAttribute('aria-visible', 'true');
+                        }, 10);
+                    })
+                    popupimg.addEventListener('error', function() {
+                        alert('error')
+                    })
+                }
+            });
+        })
+
+        close.addEventListener('click', function () {
+            popup.setAttribute('aria-visible', 'false')
+            setTimeout(function() {
+                popup.setAttribute('aria-hidden', 'true');
+            }, 300);
+            document.querySelector('html').classList.remove("no-scroll");
+        });
+
+    });
+
+</script>

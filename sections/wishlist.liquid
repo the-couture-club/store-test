@@ -1,0 +1,276 @@
+{% if customer %}
+<wishlist-container>
+  <wishlist-header>
+    <span>My Wishlist</span>
+    <div>
+      <span data-amount></span>
+      <span>Products</span>
+    </div>
+  </wishlist-header>
+  <loading>
+    <span class="product-card-btn__spinner">
+      <div class="theme-spinner">
+        <div class="theme-spinner__border"></div>
+        <div class="theme-spinner__border"></div>
+        <div class="theme-spinner__border"></div>
+        <div class="theme-spinner__border"></div>
+      </div>
+    </span>
+  </loading>
+  <wishlist>
+    <span class="product-card-btn__spinner">
+      <div class="theme-spinner">
+        <div class="theme-spinner__border"></div>
+        <div class="theme-spinner__border"></div>
+        <div class="theme-spinner__border"></div>
+        <div class="theme-spinner__border"></div>
+      </div>
+    </span>
+  </wishlist>
+</wishlist-container>
+
+<script>
+
+function onSwymLoadPageCallback(swat, loading) {
+
+let onSuccess = function(lists) {
+
+    window.lists = lists;
+
+    var listHandle = []
+
+    for (var x = 0; x < lists[0].listcontents.length; x++) {
+        listHandle.push(lists[0].listcontents[x].du.split('/products/')[1].split('?')[0]);
+    }
+
+    var myURL = 'https://www.thecoutureclub.com/pages/swym-wishlist?view=wishlist-render&prodid=' + listHandle.join();
+
+    fetch(myURL, {
+        headers: {
+            'Accept': 'text/html'
+        }
+      })
+      .then(function(response) {
+        return response.text()
+        console.log(response.text());
+      })
+      .then(function(html) {
+
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, "text/html");
+        var html = doc.querySelector('#wishlist-render');
+        document.querySelector('wishlist').innerHTML = '';
+        document.querySelector('wishlist').insertAdjacentHTML("beforeend", html.innerHTML);
+        document.querySelector('wishlist-container loading').removeAttribute('active');
+        document.querySelector('html').classList.remove("no-scroll");
+
+        for ( var i = 0; i < lists[0].listcontents.length; i++) {
+          console.log(lists[0].listcontents[i].empi);
+          document.querySelector('[data-product-id="' + lists[0].listcontents[i].empi + '"]').classList.add('fade-in');
+        }
+
+        document.querySelector('wishlist-header [data-amount]').innerHTML = lists[0].listcontents.length;
+
+        const forms = document.querySelectorAll('wishlist form[action^="/cart/add"]');
+        Array.from(forms).forEach((form) => window.ajaxCart.initForm(form) );
+
+        scrollSnapInit();
+
+        var slides = document.querySelectorAll('.mobile_image-snap');
+
+        slides.forEach(slide => {
+          console.log(slide);
+            new Splide( slide ).mount();
+        });
+
+      })
+    }
+
+let onError = function(error) {
+  console.log("Error while fetching all Lists", error);
+}
+
+swat.fetchLists({
+  callbackFn: onSuccess,
+  errorFn: onError
+});
+
+}
+if (!window.SwymCallbacks) {
+  window.SwymCallbacks = [];
+}
+
+window.SwymCallbacks.push(onSwymLoadPageCallback, false);
+
+
+function removeUpdate(swat) {
+
+// Define the list id of the list to be updated
+let lid = window.lists[0].lid; // lid
+
+// Define the Product to be deleted
+let product = {
+  epi: window.remove_epi,  // unique variant id  per listid
+  empi: window.remove_empi, // product id
+  du: window.remove_du // product url.
+};
+
+document.querySelector('wishlist-container loading').setAttribute('active','');
+document.querySelector('html').classList.add("no-scroll");
+
+// Define success callback 
+let onSuccess = function(deletedProduct) {
+  // Executed when product is successfully deleted
+
+	console.log("Successfully deleted the Product", deletedProduct);
+
+  window.SwymCallbacks.push(onSwymLoadPageCallback, true);
+
+}
+
+// Define error callback 
+let onError = function(error) {
+	// Error is an xhrObject
+	console.log("Error while deleting the Product", error);
+}
+
+// Call `deleteFromList` using the above callbacks, lid and listItem
+swat.deleteFromList(lid, product, onSuccess, onError);
+
+}
+
+
+function wishlistPageUpdate(item) {
+
+  window.remove_epi = item.closest('[data-product]').querySelector('.product-form__content-input').getAttribute('data-id');
+  window.remove_empi = item.closest('[data-product]').getAttribute('data-product-id');
+  window.remove_du = 'https://' + Shopify.shop + item.closest('[data-product]').querySelector('.product-card__link').getAttribute('href')
+
+  console.log(window.remove_epi, window.remove_empi, window.remove_du);
+
+  window.SwymCallbacks.push(removeUpdate);
+}
+
+
+
+
+</script>
+
+{% style %}
+
+  wishlist {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 2%;
+      position: relative;
+      flex-grow: 1;
+      row-gap: 20px;
+  }
+  button.wishlist-remove {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 0px;
+      border: 0px;
+      background: transparent;
+      font-size: 13px;
+      cursor: pointer;
+  }
+
+  wishlist [data-product]  {
+    width: 25%;
+    margin-bottom: 0px
+  }
+
+  wishlist [data-product] {
+    display: none;
+  }
+
+  wishlist [data-product] {
+    margin-bottom: 20px
+  }
+
+  wishlist [data-product].fade-in {
+    display: block;
+  }
+
+  wishlist-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    background: #efefed;
+    min-height: calc(100vh - var(--header-section-height) - var(--announcement-height));
+  }
+
+  wishlist-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 2% 2% 0% 2%;
+    text-transform: uppercase;
+  }
+
+  wishlist-container .product-card-btn__spinner {
+    opacity: 1;
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin-left: 0px;
+  }
+
+  wishlist-container .theme-spinner__border {
+    border-width: 4px !important;
+    border-color: #000000 transparent transparent transparent !important;
+  }
+
+  wishlist-container .icon {
+    font-weight: 700;
+  }
+
+  wishlist-container loading {
+    top: calc(-1px + var(--header-height));
+    display: none;
+    position: fixed;
+    transition: 0.2s;
+    height: calc(100% - var(--header-height) + 1px);
+    width: 100%;
+    background: #ffffffcf;
+    z-index: 2;
+  }
+
+  wishlist-container loading[active] {
+    display: block;
+  }
+
+  @media screen and (max-width: 767px) {
+
+  wishlist [data-product]  {
+    width: 50%;
+  }
+
+  }
+
+{% endstyle %}
+
+{% else %}
+
+<script>
+  window.onload = function() {
+    // similar behavior as clicking on a link
+    window.location.href = "/account/login";
+}
+</script>
+
+{% endif %}
+
+{% schema %}
+    {
+      "name": "Wishlist",
+      "settings": [],
+      "presets": [
+      {
+          "name": "Wishlist"
+      }
+      ]
+    }
+  {% endschema %} 

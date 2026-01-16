@@ -1,0 +1,33 @@
+{% if customer %}
+
+<script defer>
+
+    //Executed after SWYM has loaded all necessary resources.
+    function onSwymLoadCallback(swat) {
+        let onSuccess = function(lists) {
+
+            var count = document.querySelectorAll('[wishlist-count]');
+            count.forEach(element => {
+                element.innerHTML = '(' + lists[0].listcontents.length + ')';
+            });
+        }
+
+        let onError = function(error) {
+            console.log("Error while fetching all Lists", error);
+        }
+
+        swat.fetchLists({
+            callbackFn: onSuccess,
+            errorFn: onError
+        });
+    }
+
+    if (!window.SwymCallbacks) {
+        window.SwymCallbacks = [];
+    }
+
+    window.SwymCallbacks.push(onSwymLoadCallback);
+
+</script>
+
+{% endif %}

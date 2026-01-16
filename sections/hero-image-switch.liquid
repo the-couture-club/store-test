@@ -1,0 +1,337 @@
+<div id="hero-image">
+
+  {% if section.blocks.size > 0 %}
+
+
+    <div data-parent={{section.settings.id}} class="hero-image--content_cta hero-image--content_switch cc-uppercase">
+        {% for block in section.blocks %}
+        <div {% if forloop.first %}aria-active=""{% endif %} data-section-id="{{ block.settings.id }}" class="switch-container">
+          <div>{{block.settings.title}}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+  {% endif %}
+
+  {% for block in section.blocks %}
+
+  <div {% if forloop.first %} aria-active {% endif %} data-section={{block.settings.id}} id="block-{{block.id}}" class="hero-image--container hero-image--switch">
+
+    {% if block.settings.show_scroll %}
+
+    <span class="hero-image--content_scroll">
+      <span>{{ "custom.scroll" | t }}</span>
+      <i class="icon icon--down" aria-hidden="true"></i>
+    </span>
+
+    {% endif %}
+
+    {% if block.settings.enable_countdown_signup %}
+      <a href="{{block.settings.link}}" class="hero-image--content"></a>
+    {% endif %}
+
+    {% if block.settings.enable_countdown %}
+
+    <a style="color:{{block.settings.text_colour}}; top: {{block.settings.countdown_position}};" data-time="{{ block.settings.countdown_time }}" data-countdown-type="hero-image" class="hero-image--content_countdown {% if block.settings.countdown_time != '' %} countdown-container {% endif %} {% if block.settings.text_shadow %} shadow {% endif %}">
+          <span class="countdown__title cc-uppercase">{{block.settings.countdown_title}}</span>
+          <span class="countdown__text">{{block.settings.countdown_text}}</span>
+          <span data-countdown></span>
+          {% if block.settings.enable_countdown_signup %}
+            <div class="klaviyo-form klaviyo-form-{{ block.settings.klaviyo_form_id }}"></div>
+          {% endif %}
+    </a>
+
+    {% endif %}
+
+    {% unless block.settings.enable_countdown_signup %}
+      <a href="{{block.settings.link}}" class="hero-image--content"></a>
+    {% endunless %}
+
+      <div class="content">
+
+
+      {% if block.settings.content_type == 'image' %}
+
+        <img
+          class="hero-image--content__img u-hidden@desk-down"
+          src="{{ block.settings.image | image_url: width: 360 }}"
+          srcset="{{ block.settings.image | image_url: width: 180 }} 180w {{ 180 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 360 }} 360w {{ 360 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 540 }} 540w {{ 540 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 720 }} 720w {{ 720 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 900 }} 900w {{ 900 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 1080 }} 1080w {{ 1080 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 1296 }} 1296w {{ 1296 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url }} 2512w {{ 2512 | divided_by: block.settings.image.aspect_ratio | round }}h"
+          alt="{{ block.settings.image.alt }}"
+          loading="lazy"
+          sizes="(min-width: 981px): 520px, (min-width: 696px): 660px, 100vw" />
+
+      {% else %}
+
+        {{ block.settings.video | video_tag: class: 'u-hidden@desk-down', autoplay: true, loop: true, muted: true, controls: false }}
+
+      {% endif %}
+
+      {% if block.settings.content_type_mobile == 'image' %}
+
+      <img
+        class="hero-image--content__img u-hidden@desk-up"
+        src="{{ block.settings.image_mobile | image_url: width: 360 }}"
+        srcset="{{ block.settings.image_mobile | image_url: width: 180 }} 180w {{ 180 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 360 }} 360w {{ 360 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 540 }} 540w {{ 540 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 720 }} 720w {{ 720 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 900 }} 900w {{ 900 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 1080 }} 1080w {{ 1080 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 1296 }} 1296w {{ 1296 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url }} 2512w {{ 2512 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h"
+        alt="{{ block.settings.image_mobile.alt }}"
+        loading="lazy"
+        sizes="(min-width: 981px): 520px, (min-width: 696px): 660px, 100vw" />
+
+    {% else %}
+
+      {{ block.settings.video_mobile | video_tag: class: 'u-hidden@desk-up', autoplay: true, loop: true, muted: true, controls: false }}
+
+    {% endif %}
+
+    </div>
+
+      {% if block.settings.heading != '' %}
+
+      <div class="hero-image--content_cta">
+
+        <h5>{{ block.settings.heading }}</h5>
+        <span>{{ block.settings.subheading }}</span>
+
+      </div>
+
+      {% endif %}
+
+  </div>
+
+  {% endfor %}
+
+</div>
+
+{% if section.blocks.size > 0 %}
+<style>
+    {% for block in section.blocks %}{% unless forloop.first %}[data-parent={{section.settings.id}}][data-section={{block.settings.id}}]{display: none!important;height: auto;visibility: visible;}{% endunless %}{% endfor %}
+</style>
+{% endif %}
+
+{% javascript %}
+
+    const blocks = document.querySelectorAll('.hero-image--content_switch .switch-container');
+    const parentID = blocks[0].parentElement.getAttribute('data-parent');
+    blocks.forEach(block => {
+        block.addEventListener('click', function () {
+            const blockID = block.getAttribute('data-section-id');
+            const elems = document.querySelectorAll('#hero-image[data-parent="' + parentID + '"]');
+
+            blocks.forEach(block => {
+                block.removeAttribute('aria-active');
+                document.querySelector('.hero-image--switch[data-section="' + block.getAttribute('data-section-id') + '"]').removeAttribute('aria-active');
+            })
+            elems.forEach(section => {
+                var sectionID = section.getAttribute('data-section')
+                if (sectionID == blockID) {
+                    var child = document.querySelector('.hero-image--switch[data-section="' + blockID + '"]');
+                    console.log(section);
+                    child.setAttribute('aria-active', '');
+                    child.style.display = 'block!important';
+                  
+                    block.setAttribute('aria-active', '');
+                    
+                    section.style.setProperty("display", "grid", "important")
+                    section.style.height = 'auto';
+                    section.style.visibility = 'visible';
+                } else {
+                    section.style.display = 'none';
+                    section.style.height = '0px';
+                    section.style.visibility = 'hidden';
+                }
+            });
+        });
+    });
+    
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Hero Image (Switch)",
+  "settings": [
+    {
+          "type": "header",
+          "content": "ID"
+        },
+        {
+          "type": "text",
+          "id": "id",
+          "label": "Section ID",
+          "info": "Set Parent ID to be used when linking Hero Image sections"
+        }
+      ],
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "name": "CTA",
+      "type": "slide",
+      "settings": [
+        {
+          "type": "text",
+          "id": "id",
+          "label": "Section ID",
+          "info": "Must match the ID mentioned in the Hero Image Section"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "header",
+          "content": "Content (Desktop)"
+        },
+        {
+          "type": "select",
+          "id": "content_type",
+          "label": "Content Type",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            }, {
+              "value": "video",
+              "label": "Video"
+            }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        },
+        {
+          "type": "header",
+          "content": "Content (Mobile/Tablet)"
+        },
+        {
+          "type": "select",
+          "id": "content_type_mobile",
+          "label": "Content Type",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            }, {
+              "value": "video",
+              "label": "Video"
+            }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video_mobile",
+          "label": "Video"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Shop Now"
+        }, {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }, {
+          "type": "checkbox",
+          "id": "show_scroll",
+          "label": "Show Scroll Button",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Countdown"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_countdown",
+          "label": "Enable Countdown",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_countdown_signup",
+          "label": "Enable Countdown Signup",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "klaviyo_form_id",
+          "label": "Klaviyo Form ID",
+          "default": "UsPdCH"
+        },
+        {
+          "type": "select",
+          "id": "countdown_position",
+          "label": "Countdown Vertical Position",
+          "default": "50%",
+          "options": [
+              {
+                  "value": "25%",
+                  "label": "Top"
+              },
+              {
+                  "value": "50%",
+                  "label": "Middle"
+              },
+              {
+                  "value": "75%",
+                  "label": "Bottom"
+              }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "countdown_title",
+          "label": "Countdown Title"
+        },
+        {
+          "type": "text",
+          "id": "countdown_text",
+          "label": "Countdown Content"
+        },
+        {
+          "type": "text",
+          "id": "countdown_time",
+          "label": "Countdown Time",
+          "info": "Must follow following format 'Feb 15, 2024 19:00:00 GMT' (in GMT)"
+        },
+        {
+          "type": "checkbox",
+          "id": "text_shadow",
+          "label": "Add Shadow to Countdown Content?",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "text_colour",
+          "label": "Content Colour",
+          "default": "#000"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Image (Switch)"
+    }
+  ]
+}
+{% endschema %}

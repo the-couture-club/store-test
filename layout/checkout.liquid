@@ -1,0 +1,169 @@
+{% include 'shogun-content-handler' %}
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+
+    <title>{{ page_title }}</title>
+
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+  
+  {% include "globale-checkout-css" %}
+
+  {% render 'shogun-head' %}
+</head>
+  <body>
+    {{ skip_to_content_link }}
+
+    <header class="banner" data-header role="banner">
+      <div class="wrap">
+        {{ content_for_logo }}
+      </div>
+    </header>
+
+    {{ order_summary_toggle }}
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main">
+          <header class="main__header" role="banner">
+            {{ content_for_logo }}
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </header>
+          <main class="main__content" role="main">
+            {{ content_for_layout }}
+          </main>
+          <footer class="main__footer" role="contentinfo">
+            {{ content_for_footer }}
+          </footer>
+        </div>
+        <aside class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    {{ tracking_code }}
+  
+  {% include "globale-checkout-js" %}
+</body>
+  <script>
+
+      // Open Summary Toggle on Load
+      window.addEventListener("load", (event) => {
+        document.querySelector('.order-summary-toggle--show').click();
+      });
+
+      // Create section policy div.
+      var elem_policy = document.createElement('div');
+
+      // Section policy class.
+      elem_policy.className = 'section__policiy';
+// 	   var html_content=  '<h4>{{'opp-checkout.checkout.delivery_notice_heading' | t}}</h4>'+
+//            '<ul><li>{{'opp-checkout.checkout.delivery_notice_text1' | t}}</li>'+
+//            '<li>{{'opp-checkout.checkout.delivery_notice_text2' | t}}</li>'+
+//            '<li>{{'opp-checkout.checkout.delivery_notice_text3' | t}}/li></ul>';
+      {% assign  delivery_notice_text3 = 'opp-checkout.checkout.delivery_notice_text3' | t %}
+      
+      var html_content=  '<h4>{{'opp-checkout.checkout.delivery_notice_heading' | t}}</h4>'+
+           '<div class="delivery_holder"><p>{{'opp-checkout.checkout.delivery_notice_text1' | t}}</p>'+
+           '<p>{{'opp-checkout.checkout.delivery_notice_text2' | t}}</p>'
+           ;
+      {% if delivery_notice_text3 != blank %}
+        html_content= html_content + '<p>{{'opp-checkout.checkout.delivery_notice_text3' | t}}</p>';
+      {% endif %}
+      html_content= html_content +'</div>';
+      elem_policy.innerHTML =  html_content;
+      document.querySelector( ".section--shipping-method .section__header" ).insertAdjacentElement('afterend', elem_policy);
+      
+      {% assign preOrderProducts = '' %}
+      {% for line_item in checkout.line_items %}
+        {% if line_item.properties['_is_pre_order'] == 'true' %}
+          {% assign preOrderProducts = preOrderProducts | append: ',' | append: line_item.product.title | append: ':' | append: line_item.properties["_pre_order"] %}
+        {% endif %}
+      {% endfor %}
+    
+      {% if preOrderProducts != '' %}
+
+          {% assign preOrderProducts = preOrderProducts | remove_first: ',' | split: ',' %}
+          console.log('true!')
+          var preorder_content = '<div class="section__header">' +
+          '<h2 class="section__title" id="main-header" tabindex="-1">Pre-order Shipping Dates</h2>' +
+          '</div>' +
+          '<div class="delivery_holder">' +
+              {% for handle in preOrderProducts %}
+                {% assign prod = handle | split: ':'  %}
+                '<p>{{ prod[0] }}: <b>{{ prod[1] | replace: '12/11', '8th December' | replace: '16/11', '8th December' }}</b></p>' +
+              {% endfor %}
+          '</div>'
+
+          var preorderDates = document.createElement('div');
+
+          // Section policy class.
+          preorderDates.className = 'section__pre-order-dates';
+          preorderDates.innerHTML =  preorder_content;
+
+          document.querySelector( ".section--shipping-method" ).insertAdjacentElement('afterbegin', preorderDates);
+
+      {% endif %}
+
+  </script>
+  <style>
+      	.section__policiy, .section__pre-order-dates .delivery_holder {
+          margin-top: 10px;
+          margin-bottom: 25px;
+/*           border: solid 1px #d9d9d9;
+          border-radius: 5px; */
+        }
+      .delivery_holder{
+      	border: solid 1px #d9d9d9;
+          border-radius: 5px;
+      }
+        .section__policiy ul{
+          padding-left:25px;
+          margin-top:10px;
+        }
+      .section__policiy h4 {
+        color: #545454;
+      	font-weight:600;
+/*         text-decoration:underline; */
+        margin-bottom:10px;
+      }
+    	.section__policiy ul li {
+/*             padding: 10px 15px; */
+          margin-bottom:10px;
+            color: #545454;
+          	list-style:disc;
+            
+            width: 100%;
+        }
+      .section__policiy p:last-child {
+            border-bottom:none;
+        }
+      .section__policiy p, .section__pre-order-dates p {
+            padding: 10px 15px;
+            color: #545454;
+            /* border: solid 1px #d9d9d9; */
+            /* border-radius: 5px; */
+            display: table;
+            box-sizing: border-box;
+            border-bottom: solid 1px #d9d9d9;
+            width: 100%;
+        }
+
+        .section__pre-order-dates p:last-child {
+          border-bottom: solid 0px #d9d9d9;
+        }
+    </style>
+</html>

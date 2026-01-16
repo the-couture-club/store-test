@@ -1,0 +1,99 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "shogun-helper": {
+      "type": "shogun-helper",
+      "disabled": true,
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
+    "shogun-optimizer": {
+      "type": "shogun-optimizer",
+      "disabled": true,
+      "settings": {}
+    },
+    "anniversary_landing_tU7M4D": {
+      "type": "anniversary-landing",
+      "blocks": {
+        "slide_iHUEyF": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/anniversary_mens_01.jpg"
+          }
+        },
+        "slide_9zD4fb": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/anniversary_01.jpg"
+          }
+        },
+        "slide_ipWYGn": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/anniversary_womens_01.jpg"
+          }
+        },
+        "slide_M6kyyj": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/anniversary_mens_02.jpg"
+          }
+        },
+        "slide_BCAJd8": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/anniversary_womens_03.jpg"
+          }
+        },
+        "slide_r4eWLr": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/anniversary_mens_03.jpg"
+          }
+        },
+        "slide_KktQFx": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/anniversary_womens_02.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "slide_iHUEyF",
+        "slide_9zD4fb",
+        "slide_ipWYGn",
+        "slide_M6kyyj",
+        "slide_BCAJd8",
+        "slide_r4eWLr",
+        "slide_KktQFx"
+      ],
+      "name": "Anniversary Home",
+      "settings": {
+        "title": "<p>LEGACY OF LUXURY</p>",
+        "content_type": "image",
+        "image": "shopify://shop_images/ten_years.jpg",
+        "signup_header": "",
+        "signup": "",
+        "signup_content": "<p>A decade ago, The Couture Club was born from a bold vision - to create a brand that lived at the intersection of luxury and accessibility, grounded in community, creativity, and culture. Ten years on, that vision has evolved into a movement.<br/><br/>This page is a tribute to every step of the journey. From our humble beginnings in Manchester to the global stage, discover the milestones that shaped us, the people who believed in us, and the designs that defined a generation.<br/><br/>Explore our exclusive anniversary collection, get a first look at our upcoming documentary, and step into the story of how far we’ve come and where we’re going.<br/><br/>Because after 10 years of building, we're only just getting started.</p>"
+      }
+    }
+  },
+  "order": [
+    "shogun-helper",
+    "main",
+    "shogun-optimizer",
+    "anniversary_landing_tU7M4D"
+  ]
+}

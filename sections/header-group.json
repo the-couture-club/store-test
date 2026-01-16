@@ -1,0 +1,123 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "Header group",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "header-announcement-bar",
+      "blocks": {
+        "announcement_9E8AgU": {
+          "type": "announcement",
+          "settings": {
+            "icon": "none",
+            "text": "FURTHER REDUCTIONS NOW LIVE | UP TO 60% OFF",
+            "text_link": "",
+            "link": "shopify://collections/sale-view-all",
+            "countdown_time": ""
+          }
+        },
+        "announcement_jqzHBV": {
+          "type": "announcement",
+          "settings": {
+            "icon": "none",
+            "text": "SUBSCRIBE FOR 10% OFF YOUR FIRST ORDER INCLUDING SALE",
+            "text_link": "",
+            "link": "",
+            "countdown_time": ""
+          }
+        },
+        "2c2ba93d-6769-4eff-8cc1-10abee6d7bb5": {
+          "type": "announcement",
+          "settings": {
+            "icon": "none",
+            "text": "NO TAXES & DUTIES ON EU ORDERS",
+            "text_link": "",
+            "link": "",
+            "countdown_time": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement_9E8AgU",
+        "announcement_jqzHBV",
+        "2c2ba93d-6769-4eff-8cc1-10abee6d7bb5"
+      ],
+      "settings": {
+        "home_page_only": false,
+        "text_size_desktop": 3,
+        "text_size_mobile": 1,
+        "text_style": "body",
+        "message_color_bg": "#2a2a2a",
+        "message_color_text": "#ffffff",
+        "close_icon": false,
+        "auto_carousel": true,
+        "carousel_speed": 8
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "main_linklist": "main-menu",
+        "invert": true,
+        "layout": "left",
+        "style": "sticky",
+        "link_style": "icon",
+        "parent_links": true,
+        "header_bg": "#ffffff",
+        "header_text": "#111111",
+        "logo": "shopify://shop_images/TCC_New.png",
+        "header_transparent": true,
+        "header_transparent_collection": false,
+        "header_transparent_divider": true,
+        "header_transparent_text": "#ffffff",
+        "logo_size": 10,
+        "logo_spacing": 3,
+        "logo_size_mobile": 20,
+        "logo_spacing_mobile": 0,
+        "dropdown_style": "mega",
+        "mega_image_first_only": true,
+        "mega_image_alignment": "center",
+        "mega_image_ratio": "1:1",
+        "mega_1_title": "",
+        "mega_1_text": "",
+        "mega_1_link": "",
+        "mega_2_title": "",
+        "mega_2_text": "",
+        "mega_2_link": "",
+        "mega_collection": true,
+        "mega_collection_ratio": "1:1",
+        "mega_collection_alignment": "center",
+        "enable_country_selector": false,
+        "enable_language_selector": false
+      }
+    },
+    "mobile-drawer": {
+      "type": "mobile-drawer",
+      "settings": {
+        "main_linklist": "black-friday-new-web-navigation",
+        "explore_linklist": "explore",
+        "auto_open_query": "WINTER SALE",
+        "contact_title": "Contact",
+        "show_contact_number": false,
+        "show_contact_email": false,
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "show_social": true,
+        "header_image": "shopify://shop_images/4_leaf_logo.png"
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header",
+    "mobile-drawer"
+  ]
+}

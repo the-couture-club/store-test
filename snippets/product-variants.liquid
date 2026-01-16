@@ -1,0 +1,72 @@
+{%- assign tag_alt = product.title | split: " - " | first | strip -%}
+
+{% assign typeHandle = product.variants.first.sku |  split: '/' | first %}
+{% assign collectionHandle = typeHandle | append: '-index' | handleize  %}
+
+{%- unless collectionHandle == blank -%}
+  {%- if collections[collectionHandle].products.size > 0 -%}
+
+    {%- assign alt_products_total = 1 -%}
+	
+    {%- capture products_output -%}
+
+        {%- for alt_product in collections[collectionHandle].products -%}
+
+          {%- if alt_product.id != product.id  -%}
+
+            {%- assign alt_products_total = alt_products_total | plus: 1 -%}
+
+          {%- endif -%}
+
+        {%- endfor -%}
+
+    {%- endcapture -%}
+
+  {%- endif -%}
+
+{%- endunless -%}
+
+{% if showTitle == true %}
+
+    {%- if alt_products_total > 0 -%}
+      <span class="cc-fs1 variants cc-uppercase">
+          <span>{{ alt_products_total }} {{ alt_products_total | pluralize: 'colour', 'colours' }}</span>
+          <span class="cc-opacity">{{ product.title |  split: ' - ' | last }}</span>
+      </span>
+    {%- endif -%}
+
+{% endif %}
+
+{% if showSwatch %}
+
+  <div class="product-variants__swatches-container variants">
+
+  <a selected data-variant >{% if image %} <span active></span><div><img src="{{product.featured_media | img_url: '500x' }}"></div>{% endif %}</a>
+
+    
+    {%- if alt_products_total > 0 -%}
+      {% assign prodCount = 0 %}
+        {%- for alt_product in collections[collectionHandle].products -%}
+          {%- if alt_product.id != product.id and prodCount < 4  -%}
+            <a data-id="{{product.id}}" href="{{alt_product.url}}{% if early-access %}?{{settings.presale_query}}{% endif %}" data-variant>{% if image %} <div><img src="{{alt_product.featured_media | img_url: '500x' }}"></div>{% endif %}</a>
+            {% assign prodCount = prodCount | plus: 1 %}
+          {%- endif -%}
+        {%- endfor -%}
+    {%- endif -%}
+    {%- if alt_products_total > 5 -%}
+      <a class="more_colours cc-fs2 cc-pointer">
+        <span>{{ 'products.product.variant_select.cta_text' | t }}</span>
+        <i class="icon icon--down" aria-hidden="true"></i>
+      </a>
+    {% endif %}
+
+  </div>
+
+  {% else %}
+  {%- if alt_products_total > 0 and hide_colours != true -%}
+    <span class="variants cc-uppercase">
+      <span>{{ alt_products_total }} {{ alt_products_total | pluralize: 'colour', 'colours' }}</span>
+    </span>
+  {%- endif -%}
+
+{%endif%}

@@ -1,0 +1,50 @@
+<div class="container">
+{% assign swatchList = '' %}
+
+{% paginate collections.all.products by 1000 %}
+	{% for product in collections.all.products %}
+		{% assign productTitle = product.title | downcase | split: ' - ' %}
+        {% unless swatchList contains productTitle[1] %}
+            {% if productTitle[1] != '' or productTitle[1] != ' ' %}
+                {% assign swatchList = swatchList | append: productTitle[1] |  append: ','  %}
+            {%endif%}
+        {% endunless %}
+	{% endfor %}
+{% endpaginate %}
+
+<h2>Swatch Checker</h2>
+
+{% paginate shop.metaobjects['product_page_swatch'].values by 150 %}
+{% assign swatchList = swatchList | split: ','  %}
+{% for swatch in swatchList %}
+    {% assign match = false %}
+    {% assign swatch = swatch | strip %}
+    {% if swatch != '' %}
+      {% for swatchMeta in shop.metaobjects['product_page_swatch'].values %}
+        {% assign swatchColour = swatchMeta['colour_identifier'] | downcase | strip %}
+        {% if swatchColour == swatch %}
+            {% assign match = true %}
+        {% endif %}
+      {% endfor %}
+
+    {% endif %}
+    {% if match == false and swatch != '' %}
+    {{swatch}} <br>
+    {% endif %}
+{% endfor %}
+{% endpaginate %}
+</div>
+
+<br>
+
+{% schema %}
+    {
+      "name": "SWATCH [BACKEND ONLY]",
+      "settings": [],
+      "presets": [
+      {
+          "name": "SWATCH [BACKEND ONLY]"
+      }
+      ]
+    }
+  {% endschema %}

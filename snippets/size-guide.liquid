@@ -1,0 +1,120 @@
+{% assign guide = product.metafields.custom.size_guide.value %}
+{% assign data = guide.size_guide_data.value %}
+{% assign conversion = guide.conversion_chart.value %}
+
+<div class="modal" aria-hidden="true" data-size id="size-chart">
+
+   <content>
+
+      <div class="size-guide_title">{{guide.size_guide_title.value}}</div>
+
+
+      {% assign data = guide.size_guide_data.value %}
+
+      {% if data.size > 0 %}
+      
+      <div class="table-container">
+
+      {% if guide.size_guide_image.value != null and show_image %}
+         <img src="{{ guide.size_guide_image.value | img_url: '500x' }}">
+      {% endif %}
+
+         <div class="table_scroll">
+
+            <table class="table table-bordered">
+               {% for row in data %}
+                  <tr>
+                     {% for col in row %}
+                        <td>{{ col | last }}</td>
+                     {% endfor %}
+                  </tr>
+               {% endfor %}
+            </table>
+
+         </div>
+
+         <div class="table_scroll">
+
+            {% if conversion.size > 0 %}
+
+               <table class="table table-bordered">
+                  {% for row in conversion %}
+                     <tr>
+                        {% for col in row %}
+                           <td>{{ col | last }}</td>
+                        {% endfor %}
+                     </tr>
+                  {% endfor %}
+               </table>
+               
+            {% endif %}
+
+         </div>
+
+      </div>
+
+      {% endif %}
+
+      {% if guide.size_guide_additional_information.value != null %}
+      <div class="size-guide_additional">{{guide.size_guide_additional_information.value}}</div>
+   {% endif %}
+
+   </content>
+
+</div>
+
+
+<style>
+   #size-chart {
+      overflow: scroll;
+   }
+
+   #size-chart content {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 20px;
+   }
+
+   #size-chart .size-guide_title, #size-chart .size-guide_code, .size-guide_cm, .size-guide_additional {
+      text-align: center;
+      line-height: 1;
+      white-space: pre-line;
+   }
+
+   #size-chart .table-container {
+      display: grid;
+      {% if conversion.size > 0 %} grid-template-columns: 1fr 1fr; {% endif %}
+      gap: 20px;
+      overflow: hidden;
+   }
+
+   #size-chart .table-container img {
+      align-self: center;
+   }
+
+   #size-chart table {
+      margin: 0px;
+      height: 100%;
+      text-align: center;
+   }
+
+   #size-chart .table_scroll {
+      overflow: scroll;
+      display: block;
+   }
+
+   #size-chart tr:first-of-type {
+      background-color: rgb(239, 239, 237);
+   }
+
+   #size-chart table td {
+      padding: 0px 5px;
+   }
+   @media only screen and (max-width: 768px) {
+      #size-chart .table-container {
+         display: flex;
+         flex-direction: column;
+      }
+   }
+</style>

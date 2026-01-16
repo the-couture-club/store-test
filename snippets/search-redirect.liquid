@@ -1,0 +1,11 @@
+{% assign searchTerm = search.terms | downcase %}
+{% for term in shop.metaobjects['search_redirects'].values %}
+    {% assign redirectTerms = term['search_terms'].value %}
+    {% for terms in redirectTerms %}
+        {% assign redirectTerm = terms | downcase %}
+        {% if searchTerm == redirectTerm %}
+            <meta http-equiv="refresh" content="0;url={{term['redirect_collection'].value.url}}" />
+            {% break %}
+        {% endif %}
+    {% endfor %} 
+{% endfor %}

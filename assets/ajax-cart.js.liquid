@@ -1,0 +1,2052 @@
+/*============================================================================
+  Ajax the add to cart experience by revealing it in a side drawer
+  Plugin Documentation - http://shopify.github.io/Timber/#ajax-cart
+  (c) Copyright 2015 Shopify Inc. Author: Carson Shold (@cshold). All Rights Reserved.
+
+  This file includes:
+    - Basic Shopify Ajax API calls
+    - Ajax cart plugin
+
+  This requires:
+    - jQuery 1.8+
+    - handlebars.min.js (for cart template)
+    - modernizr.min.js
+    - snippet/ajax-cart-template.liquid
+
+  Customized version of Shopify's jQuery API
+  (c) Copyright 2009-2015 Shopify Inc. Author: Caroline Schnapp. All Rights Reserved.
+==============================================================================*/
+if ((typeof ShopifyAPI) === 'undefined') { ShopifyAPI = {}; }
+
+/*============================================================================
+  API Helper Functions
+==============================================================================*/
+function attributeToString(attribute) {
+  if ((typeof attribute) !== 'string') {
+    attribute += '';
+    if (attribute === 'undefined') {
+      attribute = '';
+    }
+  }
+  return jQuery.trim(attribute);
+};
+
+/*============================================================================
+  API Functions
+==============================================================================*/
+ShopifyAPI.onCartUpdate = function(cart) {
+  // alert('There are now ' + cart.item_count + ' items in the cart.');
+};
+
+ShopifyAPI.updateCartNote = function(note, callback) {
+  var $body = $(document.body),
+  params = {
+    type: 'POST',
+    url: theme.routes.cartUrl + '/update.js',
+    data: 'note=' + attributeToString(note),
+    dataType: 'json',
+    beforeSend: function() {
+      $body.trigger('beforeUpdateCartNote.ajaxCart', note);
+    },
+    success: function(cart) {
+      if ((typeof callback) === 'function') {
+        callback(cart);
+      }
+      else {
+        ShopifyAPI.onCartUpdate(cart);
+      }
+      $body.trigger('afterUpdateCartNote.ajaxCart', [note, cart]);
+    },
+    error: function(XMLHttpRequest, textStatus) {
+      $body.trigger('errorUpdateCartNote.ajaxCart', [XMLHttpRequest, textStatus]);
+      ShopifyAPI.onError(XMLHttpRequest, textStatus);
+    },
+    complete: function(jqxhr, text) {
+      $body.trigger('completeUpdateCartNote.ajaxCart', [this, jqxhr, text]);
+    }
+  };
+  jQuery.ajax(params);
+};
+
+ShopifyAPI.onError = function(XMLHttpRequest, textStatus) {
+  if (navigator.onLine) {
+    var data = eval('(' + XMLHttpRequest.responseText + ')');
+    if (!!data.message) {
+      alert(data.message + '(' + data.status  + '): ' + data.description);
+    }
+  } else {
+
+  }
+};
+
+/*============================================================================
+  POST to cart/add.js returns the JSON of the cart
+    - Allow use of form element instead of just id
+    - Allow custom error callback
+==============================================================================*/
+ShopifyAPI.addItemFromForm = function(form, callback, errorCallback) {
+  var $body = $(document.body),
+  params = {
+    type: 'POST',
+    url: theme.routes.cartAddUrl + '.js',
+    data: jQuery(form).serialize(),
+    dataType: 'json',
+    beforeSend: function(jqxhr, settings) {
+      $body.trigger('beforeAddItem.ajaxCart', form);
+    },
+    success: function(line_item) {
+      if ((typeof callback) === 'function') {
+        callback(line_item, form);
+      } else {
+        ShopifyAPI.onItemAdded(line_item, form);
+      }
+
+      $body.trigger('afterAddItem.ajaxCart', [line_item, form]);
+    },
+    error: function(XMLHttpRequest, textStatus) {
+      if (errorCallback && (typeof errorCallback) === 'function') {
+        errorCallback(XMLHttpRequest, textStatus, form);
+      } else {
+        ShopifyAPI.onError(XMLHttpRequest, textStatus);
+      }
+      $body.trigger('errorAddItem.ajaxCart', [XMLHttpRequest, textStatus]);
+    },
+    complete: function(jqxhr, text) {
+      $body.trigger('completeAddItem.ajaxCart', [this, jqxhr, text]);
+    }
+  };
+  jQuery.ajax(params);
+};
+
+// Get from cart.js returns the cart in JSON
+ShopifyAPI.getCart = function(callback) {
+  $(document.body).trigger('beforeGetCart.ajaxCart');
+  jQuery.getJSON(theme.routes.cartUrl + '.js', function (cart, textStatus) {
+    if ((typeof callback) === 'function') {
+      callback(cart);
+    }
+    else {
+      ShopifyAPI.onCartUpdate(cart);
+    }
+    $(document.body).trigger('afterGetCart.ajaxCart', cart);
+  });
+};
+
+// POST to cart/change.js returns the cart in JSON
+ShopifyAPI.changeItem = function(line, quantity, callback, errorCallback) {
+  var $body = $(document.body),
+  params = {
+    type: 'POST',
+    url: theme.routes.cartChangeUrl + '.js',
+    data: 'quantity=' + quantity + '&line=' + line,
+    dataType: 'json',
+    beforeSend: function() {
+      $body.trigger('beforeChangeItem.ajaxCart', [line, quantity]);
+    },
+    success: function(cart) {
+      if ((typeof callback) === 'function') {
+        callback(cart);
+      }
+      else {
+        ShopifyAPI.onCartUpdate(cart);
+      }
+      $body.trigger('afterChangeItem.ajaxCart', [line, quantity, cart]);
+    },
+    error: function(XMLHttpRequest, textStatus) {
+      if ((typeof errorCallback) === 'function') {
+        errorCallback(XMLHttpRequest, textStatus);
+      }
+      else {
+        ShopifyAPI.onError(XMLHttpRequest, textStatus);
+      }
+      $body.trigger('errorChangeItem.ajaxCart', [XMLHttpRequest, textStatus]);
+    },
+    complete: function(jqxhr, text) {
+      $body.trigger('completeChangeItem.ajaxCart', [this, jqxhr, text]);
+    }
+  };
+  jQuery.ajax(params);
+};
+
+/*============================================================================
+  Ajax Shopify Add To Cart
+==============================================================================*/
+var ajaxCart = (function(module, $) {
+
+  'use strict';
+
+  // Public functions
+  var init, initForm, loadCart;
+
+  // Private general variables
+  var settings, isUpdating, $body, gwpAddInProgress, gwpRemoveInProgress, gwpSkipRemovalMark, gwpPreviouslyInCart, gwpPreviousCartToken;
+  var taggedThresholdTagsCache = Object.create(null);
+  var taggedThresholdRequestId = 0;
+
+  // Private plugin variables
+  var $formContainer, $addToCart, $cartCountSelector, $cartCostSelector, $cartContainer, $drawerContainer, $emptySelector, $triggerSelector;
+
+  // Private functions
+  var updateCountPrice, formOverride, itemAddedCallback, itemErrorCallback, cartUpdateCallback, buildCart, cartCallback, adjustCart, adjustCartCallback, adjustCartErrorCallback, createQtySelectors, qtySelectors, cartRecommendations, validateQty;
+
+  /*============================================================================
+    Initialise the plugin and define global options
+  ==============================================================================*/
+  init = function (options) {
+
+    // Default settings
+    settings = {
+      sourceId           : '#CartTemplate',
+      formSelector       : 'form[action^="/cart/add"]',
+      cartContainer      : '#CartContainer',
+      addToCartSelector  : 'input[type="submit"]',
+      cartCountSelector  : null,
+      cartCostSelector   : '.ajaxcart__button span',
+      triggerSelector    : null,
+      emptySelector      : null,
+      moneyFormat        : '£{{amount}}',
+      disableAjaxCart    : false,
+      enableQtySelectors : true
+    };
+
+    // Override defaults with arguments
+    $.extend(settings, options);
+
+    // Select DOM elements
+    $formContainer     = $(settings.formSelector);
+    $cartContainer     = $(settings.cartContainer);
+    $addToCart         = $formContainer.find(settings.addToCartSelector);
+    $cartCountSelector = $(settings.cartCountSelector);
+    $cartCostSelector  = $(settings.cartCostSelector);
+    $emptySelector     = $(settings.emptySelector);
+    $triggerSelector   = $(settings.triggerSelector);
+
+    // General Selectors
+    $body = $(document.body);
+
+    // Track cart activity status
+    isUpdating = false;
+    gwpAddInProgress = false;
+    gwpRemoveInProgress = false;
+    gwpSkipRemovalMark = false;
+    gwpPreviouslyInCart = false;
+    gwpPreviousCartToken = null;
+
+    // Enable hidden id field
+    $formContainer.find('[name="id"]').removeAttr('disabled');
+
+    // Setup ajax quantity selectors on the any template if enableQtySelectors is true
+    if (settings.enableQtySelectors) {
+      qtySelectors();
+    }
+
+    // Take over the add to cart form submit action if ajax enabled
+    if (!settings.disableAjaxCart && $addToCart.length) {
+      formOverride();
+    }
+
+    // Run this function in case we're using the quantity selector outside of the cart
+    adjustCart();
+
+    window.theme.ajaxCartInitiated = true;
+  };
+
+  initForm = function(form) {
+    if (!form) return;
+
+    const $form = $(form);
+    const $thisAddToCart = $form.find(settings.addToCartSelector);
+
+    // Enable hidden id field
+    $form.find('[name="id"]').removeAttr('disabled');
+
+    // Setup ajax quantity selectors on the any template if enableQtySelectors is true
+    if (settings.enableQtySelectors) {
+      qtySelectors(form);
+    }
+
+    // Take over the add to cart form submit action if ajax enabled
+    if (!settings.disableAjaxCart && $thisAddToCart.length) {
+      formOverride(form);
+    }
+
+  }
+
+  loadCart = function () {
+    $body.addClass('drawer--is-loading');
+    ShopifyAPI.getCart(cartUpdateCallback);
+  };
+
+  updateCountPrice = function (cart) {
+    if ($cartCountSelector) {
+      $cartCountSelector.html(cart.item_count).removeClass('hidden-count');
+
+      if (cart.item_count === 0) {
+        $cartCountSelector.addClass('hidden-count');
+      }
+    }
+  };
+
+  formOverride = function (form) {
+    const submitCallback = (evt) => {
+      evt.preventDefault();
+      var preOrderString;
+
+      if (window.cart != '' && theme.pre_order_rule == false) {
+        preOrderString = window.cart[window.cart.length - 1].properties._pre_order;
+      } else {
+        preOrderString = ''
+      }
+      
+      var prodStatus = evt.target[2].value;
+
+      if (preOrderString == '' || preOrderString == prodStatus) {
+        var thisAddToCart = $(evt.target).find(settings.addToCartSelector);
+        // Add class to be styled if desired
+        thisAddToCart.removeClass('is-added').addClass('is-adding');
+  
+        // Remove any previous quantity errors
+        $('.qty-error').remove();
+  
+        ShopifyAPI.addItemFromForm(evt.target, itemAddedCallback, itemErrorCallback);
+      } else {
+        $.magnificPopup.close();
+        setTimeout(function() {
+          theme.mfpOpen('pre-order-notice')
+        }, 500);
+        setTimeout(function() {
+          $.magnificPopup.close();
+        }, 3000);
+      }
+
+    }
+    if (form) {
+      const $form = $(form);
+      $form.find('[name="id"]').removeAttr('disabled');
+
+      $(form).on('submit', submitCallback);
+    } else {
+      $formContainer.on('submit', submitCallback);
+    }
+  };
+
+  //setting up current product data variable
+  var thisProduct = {};
+  itemAddedCallback = function (product, form) {
+    var $body = $(document.body);
+    var thisAddToCart = $(form).find(settings.addToCartSelector);
+
+    // Add class to be styled if desired
+    thisAddToCart.removeClass('is-adding').addClass('is-added');
+
+    // removes button styling when animation finishes
+    form.querySelector(".js-product-add.is-added").addEventListener("animationend", function() {
+      const quickShopElement = form.closest("quick-shop");
+      const addedFromCard = !!form.closest(".product-card");
+
+      thisAddToCart.removeClass('is-added');
+      $body.trigger('afterButtonAnimation.ajaxCart', [quickShopElement, addedFromCard]);
+    }, { once: true });
+
+    // removes button styling if mouse leaves quick shop card
+    if(form.classList.contains('product-form--card') && form.closest(".product-card--trigger-icon")){
+      form.closest(".product-card--trigger-icon").addEventListener("mouseleave", function(){
+        thisAddToCart.removeClass('is-added');
+      }, { once: true });
+    }
+
+    // removes button styling if mouse leaves quick shop drawer
+    if(form.classList.contains('product-form--card') && form.closest(".mfp-content")){
+      form.closest("quick-shop").addEventListener("closed.quickShop", function(){
+        thisAddToCart.removeClass('is-added');
+      }, { once: true });
+    }
+
+    thisProduct = product;
+
+    ShopifyAPI.getCart(cartUpdateCallback);
+  };
+
+  itemErrorCallback = function (XMLHttpRequest, textStatus, form) {
+    var data = eval('(' + XMLHttpRequest.responseText + ')');
+    $addToCart.removeClass('is-adding is-added');
+
+    if (data && !!data.message) {
+      if (data.status == 422) {
+        $(form).after('<div class="errors qty-error u-small">'+ data.description +'</div>')
+      }
+    }
+  };
+
+  cartUpdateCallback = function (cart) {
+    // Update quantity and price
+    updateCountPrice(cart);
+    buildCart(cart);
+  };
+
+  function stripHtml(value) {
+    return (value || '').toString().replace(/<[^>]*>/g, '');
+  }
+
+  function formatMoneyPlain(cents) {
+    if (!window.Shopify || typeof Shopify.formatMoney !== 'function') {
+      return (Number(cents || 0) / 100).toFixed(2);
+    }
+    return stripHtml(Shopify.formatMoney(cents, settings.moneyFormat));
+  }
+
+  function normalizeTags(tags) {
+    if (!tags) return [];
+    if (Array.isArray(tags)) {
+      return tags
+        .map(function(t) { return (t || '').toString().trim().toLowerCase(); })
+        .filter(Boolean);
+    }
+    if (typeof tags === 'string') {
+      return tags
+        .split(',')
+        .map(function(t) { return (t || '').toString().trim().toLowerCase(); })
+        .filter(Boolean);
+    }
+    return [];
+  }
+
+  function fetchProductTagsByHandle(handle) {
+    if (!handle) return Promise.resolve([]);
+    if (taggedThresholdTagsCache[handle]) return Promise.resolve(taggedThresholdTagsCache[handle]);
+
+    var root = (window.theme && theme.routes && theme.routes.rootUrlSlash) ? theme.routes.rootUrlSlash : '/';
+    var url = root + 'products/' + handle + '.js';
+
+    return fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Failed to fetch product tags for ' + handle);
+        return res.json();
+      })
+      .then(function(product) {
+        var tags = normalizeTags(product && product.tags);
+        taggedThresholdTagsCache[handle] = tags;
+        return tags;
+      })
+      .catch(function() {
+        taggedThresholdTagsCache[handle] = [];
+        return [];
+      });
+  }
+
+  function calculateTaggedSubtotalCents(cart, tagLower) {
+    var items = (cart && cart.items) ? cart.items : [];
+    var lines = items
+      .map(function(item) {
+        return {
+          handle: item && item.handle,
+          cents: Number(item.final_line_price != null ? item.final_line_price : item.line_price) || 0
+        };
+      })
+      .filter(function(line) { return !!line.handle; });
+
+    var uniqueHandles = [];
+    var seen = Object.create(null);
+    lines.forEach(function(line) {
+      if (!seen[line.handle]) {
+        seen[line.handle] = true;
+        uniqueHandles.push(line.handle);
+      }
+    });
+
+    return Promise.all(
+      uniqueHandles.map(function(handle) {
+        return fetchProductTagsByHandle(handle).then(function(tags) {
+          return { handle: handle, tags: tags };
+        });
+      })
+    ).then(function(results) {
+      var tagsByHandle = Object.create(null);
+      results.forEach(function(r) { tagsByHandle[r.handle] = r.tags || []; });
+
+      var eligibleTotalCents = 0;
+      var hasEligibleItems = false;
+      lines.forEach(function(line) {
+        var tags = tagsByHandle[line.handle] || [];
+        if (tags.indexOf(tagLower) > -1) {
+          hasEligibleItems = true;
+          eligibleTotalCents += line.cents;
+        }
+      });
+
+      return { eligibleTotalCents: eligibleTotalCents, hasEligibleItems: hasEligibleItems };
+    });
+  }
+
+  function updateTaggedDeliveryThreshold(cart) {
+    var successEl = document.querySelector('.ajaxcart__footer [data-tagged-threshold-success]');
+    var standardEl = document.querySelector('.ajaxcart__footer .ajaxcart__footer--delivery');
+    var barEl = document.querySelector('.ajaxcart__footer .ajaxcart-bar');
+    
+    if (!successEl) return;
+
+    var enabled = !!(settings && settings.taggedThresholdEnabled);
+    var taggedThresholdAmount = settings && Number(settings.taggedThresholdAmount);
+    var tagLower = ((settings && settings.taggedThresholdTag) || '').toString().trim().toLowerCase();
+    var unlockedMessage = (settings && settings.taggedDeliveryMessageUnlocked) || (settings && settings.deliveryMessageUnlocked) || '';
+
+    successEl.hidden = true;
+    successEl.textContent = '';
+
+    standardEl.hidden = false;
+    barEl.hidden = false;
+
+    if (!enabled || !tagLower || !taggedThresholdAmount) {
+      return;
+    }
+
+    var requestId = ++taggedThresholdRequestId;
+
+    calculateTaggedSubtotalCents(cart, tagLower)
+      .then(function(result) {
+        if (requestId !== taggedThresholdRequestId) return;
+
+        if (!result || !result.hasEligibleItems) {
+          return;
+        }
+
+        var taggedThresholdCents = Math.round(taggedThresholdAmount * 100);
+        var eligibleCents = Number(result.eligibleTotalCents) || 0;
+        if (eligibleCents < taggedThresholdCents) return;
+
+        successEl.textContent = unlockedMessage || 'FREE Delivery Unlocked';
+        successEl.hidden = false;
+        standardEl.hidden = true;
+        barEl.hidden = true;
+      })
+      .catch(function() {
+        if (requestId !== taggedThresholdRequestId) return;
+        successEl.hidden = true;
+        standardEl.hidden = false;
+        barEl.hidden = false;
+      });
+  }
+
+  buildCart = function (cart) {
+    window.cartTotal = cart.total_price;
+
+    // Show empty cart
+    if (cart.item_count === 0) {
+      // Start with a fresh cart div
+      $cartContainer.empty();
+      $(settings.emptySelector).show();
+      $(settings.emptySelector).attr("aria-hidden","false");
+
+      $(settings.cartContainer).hide();
+
+      $(settings.triggerSelector).removeClass('js-cart-full');
+      cartCallback(cart);
+      return;
+    } else {
+      $(settings.emptySelector).hide();
+      $(settings.emptySelector).attr("aria-hidden","true");
+
+      $(settings.cartContainer).show();
+
+      $(settings.triggerSelector).addClass('js-cart-full');
+    }
+
+    // Handlebars.js cart layout
+    var items = [],
+        item = {},
+        thisItem = thisProduct,
+        data = {},
+        source = $(settings.sourceId).html(),
+        template = Handlebars.compile(source);
+
+    settings.cartDifference = ({{ settings.threshold_amount}} - (cart.total_price / 100))
+
+  const countryCode = (window.Shopify && Shopify.country) ? Shopify.country : 'GB';
+
+  function fetchVariantPriceInMarket(variantId) {
+      const gid = `gid://shopify/ProductVariant/${variantId}`;
+
+      const query = `
+        query VariantData($id: ID!, $country: CountryCode!) @inContext(country: $country) {
+          node(id: $id) {
+            ... on ProductVariant {
+              id
+              quantityAvailable
+              availableForSale
+              price {
+                amount
+                currencyCode
+              }
+              compareAtPrice {
+                amount
+                currencyCode
+              }
+            }
+          }
+        }
+      `;
+
+      return fetch('https://couture-club-2.myshopify.com/api/2025-01/graphql.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': 'd73cd3dfa8a314ecdf400a3f45bd19da'
+        },
+        body: JSON.stringify({
+          query,
+          variables: {
+            id: gid,
+            country: countryCode
+          }
+        })
+      })
+      .then(res => res.json())
+      .then(json => {
+        const node = json.data && json.data.node;
+        if (!node) return null;
+
+        return {
+          id: node.id,
+          quantityAvailable: node.quantityAvailable,
+          availableForSale: node.availableForSale,
+          priceAmount: node.price ? parseFloat(node.price.amount) : null,
+          compareAtAmount: node.compareAtPrice ? parseFloat(node.compareAtPrice.amount) : null,
+          currencyCode: node.price ? node.price.currencyCode : null
+        };
+      });
+  }
+
+  // Fetch a product via Storefront GraphQL and shape it to match our cart item object for GWP use
+  // GWP product now supplied from the metaobject (fields.product)
+
+  function normalizeGwpFields(metaFields) {
+    return (metaFields || []).reduce((acc, field) => {
+      var key = field.key;
+      // If the field references a collection, include its products for eligibility checks
+      if (field.reference && field.reference.__typename === 'Collection') {
+        const products = (field.reference.products && field.reference.products.edges) ? field.reference.products.edges.map(edge => edge.node) : [];
+        var value = Object.assign({}, field.reference, { products });
+        if (acc[key]) {
+          acc[key] = Array.isArray(acc[key]) ? acc[key].concat(value) : [acc[key], value];
+        } else {
+          acc[key] = value;
+        }
+      } else {
+        var val = field.reference ? field.reference : field.value;
+        if (acc[key]) {
+          acc[key] = Array.isArray(acc[key]) ? acc[key].concat(val) : [acc[key], val];
+        } else {
+          acc[key] = val;
+        }
+      }
+      return acc;
+    }, {});
+  }
+
+  function fetchAllCollectionProducts(collectionId) {
+    if (!collectionId) return Promise.resolve([]);
+
+    const query = `
+      query CollectionProducts($id: ID!, $cursor: String, $country: CountryCode!) @inContext(country: $country) {
+        node(id: $id) {
+          ... on Collection {
+            products(first: 250, after: $cursor) {
+              edges { node { id handle } }
+              pageInfo { hasNextPage endCursor }
+            }
+          }
+        }
+      }
+    `;
+
+    function getPage(cursor, acc) {
+      return fetch('https://couture-club-2.myshopify.com/api/2025-01/graphql.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': 'd73cd3dfa8a314ecdf400a3f45bd19da'
+        },
+        body: JSON.stringify({
+          query,
+          variables: {
+            id: collectionId,
+            cursor: cursor,
+            country: countryCode
+          }
+        })
+      })
+      .then(res => res.json())
+      .then(json => {
+        var edges = json.data && json.data.node && json.data.node.products ? json.data.node.products.edges : [];
+        var pageInfo = json.data && json.data.node && json.data.node.products ? json.data.node.products.pageInfo : null;
+        var products = edges ? edges.map(function(edge) { return edge && edge.node; }).filter(Boolean) : [];
+        var nextAcc = acc.concat(products);
+
+        if (pageInfo && pageInfo.hasNextPage && pageInfo.endCursor) {
+          return getPage(pageInfo.endCursor, nextAcc);
+        }
+
+        return nextAcc;
+      });
+    }
+
+    return getPage(null, []);
+  }
+
+  function expandCollectionProducts(fields) {
+    function collectCollections(val, acc) {
+      if (!val) return;
+      if (Array.isArray(val)) {
+        val.forEach(function(v) { collectCollections(v, acc); });
+        return;
+      }
+      if (val.__typename === 'Collection' && val.id) {
+        acc.push(val);
+      }
+    }
+
+    var collections = [];
+    Object.keys(fields || {}).forEach(function(key) {
+      collectCollections(fields[key], collections);
+    });
+
+    if (!collections.length) return Promise.resolve(fields);
+
+    return Promise.all(collections.map(function(col) {
+      return fetchAllCollectionProducts(col.id).then(function(products) {
+        col.products = products;
+        return col;
+      });
+    })).then(function() { return fields; });
+  }
+
+  // Fetch all GWP campaign metaobjects (type: gwp_campaign)
+  function fetchGwpCampaignMetaobjects() {
+    const query = `
+      query GwpCampaigns($country: CountryCode!) @inContext(country: $country) {
+        metaobjects(type: "gwp_campaign", first: 20) {
+          nodes {
+            id
+            type
+            handle
+            fields {
+              key
+              type
+              value
+              reference {
+                __typename
+                ... on Product {
+                  id
+                  handle
+                  title
+                  featuredImage { url }
+                  variants(first: 1) {
+                    edges {
+                      node {
+                        id
+                        availableForSale
+                        quantityAvailable
+                        price { amount currencyCode }
+                        compareAtPrice { amount currencyCode }
+                      }
+                    }
+                  }
+                  priceRange {
+                    minVariantPrice { amount currencyCode }
+                  }
+                }
+                ... on Metaobject {
+                  id
+                  type
+                  handle
+                }
+                ... on Collection {
+                  id
+                  handle
+                  products(first: 250) {
+                    edges {
+                      node {
+                        id
+                        handle
+                      }
+                    }
+                    pageInfo {
+                      hasNextPage
+                      endCursor
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    return fetch('https://couture-club-2.myshopify.com/api/2025-01/graphql.json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': 'd73cd3dfa8a314ecdf400a3f45bd19da'
+      },
+      body: JSON.stringify({
+        query,
+        variables: { country: countryCode }
+      })
+    })
+    .then(res => res.json())
+    .then(json => {
+      const nodes = json && json.data && json.data.metaobjects && json.data.metaobjects.nodes;
+      if (!nodes || !nodes.length) return [];
+
+      var mapped = nodes.map((meta) => {
+        return {
+          id: meta.id,
+          type: meta.type,
+          handle: meta.handle,
+          fields: normalizeGwpFields(meta.fields)
+        };
+      });
+
+      return Promise.all(mapped.map(function(meta) {
+        return expandCollectionProducts(meta.fields).then(function(enrichedFields) {
+          meta.fields = enrichedFields;
+          return meta;
+        });
+      }));
+    });
+  }
+
+  function parseThresholdCents(thresholdField) {
+    if (!thresholdField) return null;
+    try {
+      var parsed = typeof thresholdField === 'string' ? JSON.parse(thresholdField) : thresholdField;
+      if (parsed && parsed.amount) {
+        return Number(parsed.amount) * 100;
+      }
+    } catch (e) {
+      return null;
+    }
+    return null;
+  }
+
+  function buildEligibleProductsList(collectionField) {
+    function getProductId(node) {
+      if (!node) return null;
+      var rawId = node.id || node.product_id || node.productId || (typeof node === 'string' ? node : null);
+      if (!rawId) return null;
+      var parts = String(rawId).split('/');
+      return parts[parts.length - 1];
+    }
+
+    function collectFromCollection(collection) {
+      if (!collection || !collection.products) return [];
+      var products = collection.products;
+      if (Array.isArray(products)) {
+        return products.map(getProductId).filter(Boolean);
+      }
+      if (products.edges && products.edges.length) {
+        return products.edges.map(function(edge) { return getProductId(edge && edge.node); }).filter(Boolean);
+      }
+      return [];
+    }
+
+    var ids = [];
+    var entries = Array.isArray(collectionField) ? collectionField : [collectionField];
+
+    entries.forEach(function(entry) {
+      if (!entry) return;
+      if (entry.products) {
+        ids = ids.concat(collectFromCollection(entry));
+      } else {
+        var pid = getProductId(entry);
+        if (pid) ids.push(pid);
+      }
+    });
+
+    return ids.filter(function(id, idx, arr) { return arr.indexOf(id) === idx; });
+  }
+
+  function getEligibleProductsField(fields) {
+    if (!fields) return null;
+    return fields.eligible_products || fields.eligable_products || null;
+  }
+
+  function computeEligibleTotals(cart, eligibleProductIds) {
+    var eligibleTotalCents = 0;
+    var eligibleItemsCount = 0;
+    if (eligibleProductIds && eligibleProductIds.length) {
+      for (var x = 0; x < cart.items.length; x++) {
+        var ci = cart.items[x];
+        if (eligibleProductIds.indexOf(String(ci.product_id)) !== -1) {
+          eligibleTotalCents += ci.final_line_price;
+          eligibleItemsCount += 1;
+        }
+      }
+    } else {
+      eligibleTotalCents = cart.total_price;
+      eligibleItemsCount = cart.items.length;
+    }
+
+    return {
+      totalCents: eligibleTotalCents,
+      hasEligibleItems: eligibleItemsCount > 0
+    };
+  }
+
+  var GWP_FALLBACK_STOCK_THRESHOLD = 10;
+
+  function getFallbackStockThreshold(fields) {
+    var raw = fields && fields.gwp_fallback_threshold;
+    if (raw == null) return GWP_FALLBACK_STOCK_THRESHOLD;
+    var num = parseInt(raw, 10);
+    if (isNaN(num)) return GWP_FALLBACK_STOCK_THRESHOLD;
+    return num;
+  }
+
+  function getVariantQuantityAvailable(product) {
+    var variant = product && product.variants && product.variants.edges && product.variants.edges[0] && product.variants.edges[0].node;
+    if (variant && variant.quantityAvailable != null) {
+      return Number(variant.quantityAvailable);
+    }
+    return null;
+  }
+
+  function getGwpActiveProduct(fields) {
+    if (!fields) return null;
+    var primary = fields.product;
+    var fallback = fields.gwp_fallback_product;
+    var primaryQty = getVariantQuantityAvailable(primary);
+    var threshold = getFallbackStockThreshold(fields);
+    console.log(threshold);
+
+    if (primary && primaryQty != null && primaryQty < threshold && fallback) {
+      return fallback;
+    }
+
+    if (!primary && fallback) return fallback;
+
+    return primary || fallback || null;
+  }
+
+  function selectActiveGwpCampaign(cart, campaigns) {
+    if (!campaigns || !campaigns.length) return { selected: null, enriched: [], reachedCampaigns: [] };
+
+    var enabledCampaigns = campaigns.filter(function(c) {
+      return c.fields && (c.fields.enable_gwp === true || c.fields.enable_gwp === 'true');
+    });
+
+    var enriched = enabledCampaigns.map(function(c) {
+      var eligibleProductsField = getEligibleProductsField(c.fields);
+      var eligibleProductIds = buildEligibleProductsList(eligibleProductsField);
+      var eligibility = computeEligibleTotals(cart, eligibleProductIds);
+      var thresholdCents = parseThresholdCents(c.fields.threshold);
+      var reached = thresholdCents != null && eligibility.totalCents >= thresholdCents;
+      var deltaToThreshold = thresholdCents != null ? (thresholdCents - eligibility.totalCents) : Number.POSITIVE_INFINITY;
+      var activeProduct = getGwpActiveProduct(c.fields);
+      var fallbackStockThreshold = getFallbackStockThreshold(c.fields);
+
+      return Object.assign({}, c, {
+        eligibleProductIds: eligibleProductIds,
+        eligible_total_price: eligibility.totalCents,
+        hasEligibleItems: eligibility.hasEligibleItems,
+        thresholdCents: thresholdCents,
+        reached: reached,
+        deltaToThreshold: deltaToThreshold,
+        activeProduct: activeProduct,
+        fields: Object.assign({}, c.fields, {
+          product_active: activeProduct,
+          gwp_fallback_threshold_resolved: fallbackStockThreshold
+        })
+      });
+    });
+
+    if (!enriched.length) return { selected: null, enriched: [], reachedCampaigns: [] };
+
+    var selected = null;
+
+    var reachedCampaigns = enriched.filter(function(c) {
+      return c.hasEligibleItems && c.reached;
+    });
+
+    if (reachedCampaigns.length) {
+      // If any campaign is already met, pick the one with the highest threshold and ignore others
+      reachedCampaigns.sort(function(a, b) { return b.thresholdCents - a.thresholdCents; });
+      selected = reachedCampaigns[0];
+    } else {
+      // Otherwise, pick the campaign closest to its threshold (smallest positive delta)
+      var upcoming = enriched.filter(function(c) {
+        return c.hasEligibleItems && c.thresholdCents != null && c.deltaToThreshold > -1;
+      }).sort(function(a, b) {
+        return a.deltaToThreshold - b.deltaToThreshold;
+      });
+      if (upcoming.length) {
+        selected = upcoming[0];
+      }
+    }
+
+    return { selected: selected, enriched: enriched, reachedCampaigns: reachedCampaigns };
+  }
+
+// You already have `cart`
+let promiseArray = [];
+
+for (var i = 0; i < cart.items.length; i++) {
+  const item = cart.items[i];
+  // promiseArray.push(fetchVariantInventory(item.variant_id));
+  promiseArray.push(fetchVariantPriceInMarket(item.variant_id));
+}
+
+promiseArray.push(fetchGwpCampaignMetaobjects());
+
+Promise.all(promiseArray).then(allResults => {
+  const variantResults = allResults.slice(0, cart.items.length);
+  const gwpCampaignResults = allResults[cart.items.length] || [];
+  const gwpSelection = selectActiveGwpCampaign(cart, gwpCampaignResults);
+  const gwpCampaignResult = gwpSelection.selected;
+  const gwpResult = gwpCampaignResult ? (gwpCampaignResult.activeProduct || gwpCampaignResult.fields && gwpCampaignResult.fields.product_active || gwpCampaignResult.fields && gwpCampaignResult.fields.product) : null;
+
+  cart.gwp = {};
+
+  if (gwpCampaignResult) {
+    console.log('GWP campaign metaobject (selected)', gwpCampaignResult);
+    cart.gwp.campaign = gwpCampaignResult;
+    theme.custom
+  }
+
+  if (gwpResult) {
+    console.log('GWP product result', gwpResult);
+    cart.gwp.product = gwpResult;
+  }
+  // Attach all campaigns for debugging/analytics and use the selected campaign
+  cart.gwp.available_campaigns = gwpSelection.enriched;
+  cart.gwp.reached_campaigns = gwpSelection.reachedCampaigns;
+
+  var eligibleProductIds = gwpCampaignResult ? gwpCampaignResult.eligibleProductIds : [];
+  cart.gwp.eligibleProductIds = eligibleProductIds;
+  cart.gwp.eligible_total_price = gwpCampaignResult && gwpCampaignResult.eligible_total_price != null ? gwpCampaignResult.eligible_total_price : cart.total_price;
+  cart.gwp.has_eligible_items = gwpCampaignResult && gwpCampaignResult.hasEligibleItems != null ? gwpCampaignResult.hasEligibleItems : false;
+
+  if (!cart.gwp.campaign) {
+    cart.gwp.campaign = { fields: { enable_gwp: false, threshold: 0 } };
+  } else if (!cart.gwp.campaign.fields) {
+    cart.gwp.campaign.fields = { enable_gwp: false, threshold: 0 };
+  } else {
+    if (cart.gwp.campaign.fields.threshold == null) {
+      cart.gwp.campaign.fields.threshold = 0;
+    }
+    if (cart.gwp.campaign.fields.enable_gwp == null) {
+      cart.gwp.campaign.fields.enable_gwp = false;
+    }
+  }
+
+  if (!cart.gwp.product) {
+    cart.gwp.product = null;
+  }
+
+  for (var i = 0; i < cart.items.length; i++) {
+    let result = variantResults[i];
+    let stockMessage = "";
+    let isStockMessage = "";
+
+    if (result.quantityAvailable >= 1 && result.quantityAvailable < theme.custom.units_left.red) {
+      isStockMessage = true;
+      stockMessage = "last-stock";
+    } 
+    else if (result.quantityAvailable >= theme.custom.units_left.red && result.quantityAvailable < theme.custom.units_left.orange) {
+      isStockMessage = true;
+      stockMessage = "low-stock";
+    } 
+    else if (result.quantityAvailable >= theme.custom.units_left.orange) {
+      isStockMessage = false;
+      stockMessage = "in-stock";
+    } else {
+      isStockMessage = false;
+    }
+
+    result.stockMessage = stockMessage;
+    result.isStockMessage = isStockMessage;
+    cart.items[i].customData = result;
+  }
+
+  buldCartData();
+});
+
+function getGwpVariantId(gwpProduct) {
+  if (!gwpProduct || !gwpProduct.variants || !gwpProduct.variants.edges || !gwpProduct.variants.edges.length) return null;
+
+  const variantNode = gwpProduct.variants.edges[0].node;
+  if (!variantNode || !variantNode.id) return null;
+
+  const gidParts = variantNode.id.split('/');
+  return gidParts[gidParts.length - 1];
+}
+
+function getGwpRemovalStorage() {
+  try {
+    return window.sessionStorage;
+  } catch (err) {
+    return null;
+  }
+}
+
+function getGwpRemovalKey(cart, handle) {
+  var token = cart && cart.token ? cart.token : 'default';
+  var h = handle ? handle : (cart && cart.gwp && cart.gwp.campaign && cart.gwp.campaign.handle ? cart.gwp.campaign.handle : 'default');
+  return 'gwpRemoved:' + token + ':' + h;
+}
+
+function hasUserRemovedGwp(cart, handle) {
+  var store = getGwpRemovalStorage();
+  if (!store) return false;
+  return store.getItem(getGwpRemovalKey(cart, handle)) === 'true';
+}
+
+function markGwpRemoved(cart, handle) {
+  var store = getGwpRemovalStorage();
+  if (!store) return;
+  store.setItem(getGwpRemovalKey(cart, handle), 'true');
+}
+
+function clearGwpRemoved(cart, handle) {
+  var store = getGwpRemovalStorage();
+  if (!store) return;
+  store.removeItem(getGwpRemovalKey(cart, handle));
+}
+
+function trackGwpRemovalState(cart, cartHasGwp, options) {
+  var opts = options || {};
+  var token = cart && cart.token ? cart.token : null;
+
+  if (gwpPreviousCartToken && token && gwpPreviousCartToken !== token) {
+    gwpPreviouslyInCart = false;
+  }
+
+  var skipRemovalMark = opts.skipRemovalMark || (gwpSkipRemovalMark && !cartHasGwp);
+  if (gwpSkipRemovalMark && !cartHasGwp) {
+    gwpSkipRemovalMark = false;
+  }
+
+  if (gwpPreviouslyInCart && !cartHasGwp && !skipRemovalMark) {
+    markGwpRemoved(cart);
+  }
+
+  if (cart && cart.item_count === 0) {
+    clearGwpRemoved(cart);
+    gwpPreviouslyInCart = false;
+  } else {
+    gwpPreviouslyInCart = cartHasGwp;
+  }
+
+  gwpPreviousCartToken = token;
+}
+
+function addGwpProductToCart(cart, campaign, options) {
+  var opts = options || {};
+  if (!cart || !campaign || !campaign.fields) return false;
+  if (gwpAddInProgress) return false;
+
+  var handle = campaign.handle;
+
+  if (!opts.ignoreRemovalFlag && hasUserRemovedGwp(cart, handle)) return false;
+
+  var threshold = campaign.thresholdCents || (campaign.fields && parseThresholdCents(campaign.fields.threshold));
+  var eligibleTotal = campaign.eligible_total_price != null ? campaign.eligible_total_price : cart.total_price;
+  if (!threshold || eligibleTotal < threshold) return false;
+
+  var activeProduct = campaign.activeProduct || (campaign.fields && campaign.fields.product_active) || (campaign.fields && campaign.fields.product);
+  if (!activeProduct) return false;
+  const gwpVariantId = getGwpVariantId(activeProduct);
+  if (!gwpVariantId) return false;
+
+  const gwpAlreadyInCart = cart.items.some(function(item) {
+    return item.properties && item.properties._gwp_handle === handle;
+  });
+  if (gwpAlreadyInCart) return false;
+
+  gwpAddInProgress = true;
+
+  $.ajax({
+    type: 'POST',
+    url: theme.routes.cartAddUrl + '.js',
+    data: $.param({
+      id: gwpVariantId,
+      quantity: 1,
+      'properties[_gwp]': true,
+      'properties[_gwp_handle]': handle
+    }),
+    dataType: 'json'
+  }).done(function() {
+    ShopifyAPI.getCart(cartUpdateCallback);
+  }).fail(function(xhr, status) {
+    console.warn('Unable to add GWP item', status);
+  }).always(function() {
+    gwpAddInProgress = false;
+  });
+  return true;
+}
+
+function maybeAutoAddGwp(cart) {
+  if (!cart || !cart.gwp) return false;
+  if (gwpRemoveInProgress) return false;
+
+  var campaigns = (cart.gwp.reached_campaigns && cart.gwp.reached_campaigns.length) ? cart.gwp.reached_campaigns : (cart.gwp.campaign ? [cart.gwp.campaign] : []);
+  if (!campaigns.length) return false;
+
+  var added = false;
+  campaigns.forEach(function(campaign) {
+    if (campaign && campaign.reached) {
+      var result = addGwpProductToCart(cart, campaign);
+      if (result) added = true;
+    }
+  });
+  return added;
+}
+
+function maybeRemoveGwp(cart, gwpReached, cartHasGwp) {
+  if (!cartHasGwp) return false;
+  if (gwpRemoveInProgress) return false;
+
+  var activeHandles = [];
+  if (cart.gwp && cart.gwp.reached_campaigns && cart.gwp.reached_campaigns.length) {
+    activeHandles = cart.gwp.reached_campaigns.filter(function(c) { return c && c.reached; }).map(function(c) { return c.handle; });
+  } else if (cart.gwp && cart.gwp.campaign && gwpReached) {
+    activeHandles = [cart.gwp.campaign.handle];
+  }
+
+  var removalLines = [];
+  for (var i = 0; i < cart.items.length; i++) {
+    var item = cart.items[i];
+    if (item.properties && item.properties._gwp) {
+      var handle = item.properties._gwp_handle || item.properties._gwp;
+      var keep = activeHandles.indexOf(handle) !== -1;
+      if (!keep) {
+        removalLines.push(i);
+      }
+    }
+  }
+
+  if (!removalLines.length) return false;
+
+  var lineToRemove = removalLines[0];
+
+  isUpdating = true;
+  gwpRemoveInProgress = true;
+  gwpSkipRemovalMark = true;
+
+  ShopifyAPI.changeItem(
+    lineToRemove + 1,
+    0,
+    function() {
+      isUpdating = false;
+      gwpRemoveInProgress = false;
+      ShopifyAPI.getCart(cartUpdateCallback);
+    },
+    function() {
+      isUpdating = false;
+      gwpRemoveInProgress = false;
+    }
+  );
+
+  return true;
+}
+
+function bindGwpButton(cart) {
+  var $btn = $('.js-gwp-add');
+  if (!$btn.length) return;
+
+  $btn.off('click.gwpAdd').on('click.gwpAdd', function(evt) {
+    evt.preventDefault();
+    var handle = $(this).data('gwp-handle');
+    var campaign = null;
+    if (cart.gwp && cart.gwp.available_campaigns) {
+      campaign = cart.gwp.available_campaigns.find(function(c) { return c.handle === handle; }) || null;
+    }
+    addGwpProductToCart(cart, campaign, { ignoreRemovalFlag: true });
+  });
+}
+
+function resetRecommendationsUI() {
+  var sections = document.querySelectorAll('.ajaxcart__recommendations');
+  sections.forEach(function(section) {
+    var itemsWrapper = section.querySelector('.ajaxcart__recommendations--items');
+    if (itemsWrapper) {
+      itemsWrapper.innerHTML = '';
+    }
+    section.classList.add('is-loading');
+  });
+
+  var quickshopContainer = document.querySelector('.ajaxcart_quickbuy');
+  if (quickshopContainer) {
+    quickshopContainer.innerHTML = '';
+  }
+}
+
+function finishRecommendationsUI() {
+  var sections = document.querySelectorAll('.ajaxcart__recommendations');
+  sections.forEach(function(section) {
+    section.classList.remove('is-loading');
+  });
+}
+
+function buldCartData() {
+
+  {% raw %}
+  var gwpPlaceholderRegex = /{{\s*(\w+)\s*}}/g;
+  {% endraw %}
+
+  function renderGwpText(template, replacements) {
+    if (!template) return '';
+    return template.replace(gwpPlaceholderRegex, function(match, key) {
+      return (key in replacements) ? replacements[key] : '';
+    });
+  }
+
+  var gwpThresholdCents = null;
+  var gwpEligibleTotal = (cart.gwp && cart.gwp.eligible_total_price != null) ? cart.gwp.eligible_total_price : cart.total_price;
+  var gwpReached = false;
+  if (cart.gwp && cart.gwp.campaign && cart.gwp.campaign.fields && cart.gwp.campaign.fields.threshold) {
+    gwpThresholdCents = Number(JSON.parse(cart.gwp.campaign.fields.threshold).amount) * 100;
+    cart.gwp.campaign.fields.threshold = gwpThresholdCents;
+    gwpReached = (gwpEligibleTotal >= gwpThresholdCents);
+  }
+  var cartHasGwp = cart.items.some(function(ci) {
+    return ci.properties && ci.properties._gwp != null;
+  });
+
+  var gwpGiftsInCart = {};
+  var gwpItemPrice = null;
+  var gwpItemPriceFormatted = null;
+  cart.items.forEach(function(ci) {
+    if (ci.properties && (ci.properties._gwp || ci.properties._gwp_handle)) {
+      var handleKey = ci.properties._gwp_handle || ci.properties._gwp || 'default';
+      gwpGiftsInCart[handleKey] = true;
+      if (gwpItemPrice === null) {
+        gwpItemPrice = ci.price;
+        gwpItemPriceFormatted = Shopify.formatMoney(ci.price, settings.moneyFormat);
+      }
+    }
+  });
+
+  var autoRemovedGwp = maybeRemoveGwp(cart, gwpReached, cartHasGwp);
+
+  trackGwpRemovalState(cart, cartHasGwp, { skipRemovalMark: autoRemovedGwp });
+  var autoAddedGwp = maybeAutoAddGwp(cart);
+  if (autoAddedGwp) {
+    // Skip rendering until the free gift is added to avoid double-loading the cart
+    return;
+  }
+
+  var gwpFields = (cart.gwp && cart.gwp.campaign && cart.gwp.campaign.fields) ? cart.gwp.campaign.fields : {};
+  var gwpMetaText = gwpFields.text;
+  console.log(gwpFields.threshold)
+  var gwpFallbackThreshold = Shopify.formatMoney((gwpFields.threshold || 0), settings.moneyFormat);
+  var activeGwpProduct = cart.gwp ? cart.gwp.product : null;
+  var gwpFallbackTitle = (activeGwpProduct && activeGwpProduct.title) ? activeGwpProduct.title : 'your free gift';
+  var gwpFallbackPriceInfo = getGwpPriceFromProduct(activeGwpProduct);
+  var gwpFallbackPrice = gwpFallbackPriceInfo.formatted || '';
+  var gwpText = gwpMetaText ? renderGwpText(gwpMetaText, {
+    threshold: gwpFallbackThreshold,
+    title: gwpFallbackTitle,
+    price: gwpFallbackPrice
+  }) : ('Spend ' + gwpFallbackThreshold + ' to get ' + gwpFallbackTitle + ' for free');
+
+  function getGwpPriceFromProduct(product) {
+    if (!product) return { cents: null, formatted: null };
+    var firstVariant = product.variants && product.variants.edges && product.variants.edges[0] && product.variants.edges[0].node;
+    var variantAmount = firstVariant && firstVariant.price && firstVariant.price.amount != null ? Number(firstVariant.price.amount) : null;
+    var minRangeAmount = product.priceRange && product.priceRange.minVariantPrice && product.priceRange.minVariantPrice.amount != null ? Number(product.priceRange.minVariantPrice.amount) : null;
+    var amount = variantAmount != null ? variantAmount : minRangeAmount;
+    var cents = amount != null ? Math.round(amount * 100) : null;
+    return {
+      cents: cents,
+      formatted: cents != null ? Shopify.formatMoney(cents, settings.moneyFormat) : null
+    };
+  }
+
+  var gwpCampaigns = [];
+  if (cart.gwp && cart.gwp.available_campaigns && cart.gwp.available_campaigns.length) {
+    gwpCampaigns = cart.gwp.available_campaigns
+      .filter(function(c) { return c.hasEligibleItems; })
+      .map(function(c) {
+        var thresh = c.thresholdCents != null ? c.thresholdCents : parseThresholdCents(c.fields.threshold) || 0;
+        var eligible = c.eligible_total_price != null ? c.eligible_total_price : cart.total_price;
+        var diff = thresh - eligible;
+        var pct = 0;
+        if (thresh > 0) {
+          pct = Math.round((eligible / thresh) * 100);
+          if (pct < 0) pct = 0;
+          if (pct > 100) pct = 100;
+        }
+        var handle = c.handle;
+        var hasGift = !!gwpGiftsInCart[handle];
+        var productTitle = '';
+        var activeProduct = c.activeProduct || c.fields.product_active || c.fields.product;
+        if (activeProduct && activeProduct.title) {
+          productTitle = activeProduct.title.split(' - ')[0];
+        }
+        var productImage = activeProduct && activeProduct.featuredImage ? activeProduct.featuredImage.url : '';
+        var gwpMetaText = c.fields.text;
+        var thresholdMoney = Shopify.formatMoney(thresh, settings.moneyFormat);
+        var fallbackText = 'Spend ' + thresholdMoney + ' to get ' + productTitle + ' for free';
+        var productPriceInfo = getGwpPriceFromProduct(activeProduct);
+        var text = gwpMetaText ? renderGwpText(gwpMetaText, {
+          threshold: thresholdMoney,
+          title: productTitle,
+          price: (productPriceInfo && productPriceInfo.formatted) ? productPriceInfo.formatted : ''
+        }) : fallbackText;
+        if (gwpItemPrice === null && productPriceInfo.cents != null) {
+          gwpItemPrice = productPriceInfo.cents;
+          gwpItemPriceFormatted = productPriceInfo.formatted;
+        }
+        console.log(text)
+
+        return {
+          handle: handle,
+          reached: c.reached,
+          hasGift: hasGift,
+          enableGwp: (c.fields.enable_gwp === true || c.fields.enable_gwp === 'true'),
+          productTitle: productTitle,
+          productImage: productImage,
+          gwpText: text,
+          thresholdMoney: Shopify.formatMoney(thresh, settings.moneyFormat),
+          differenceMoney: Shopify.formatMoney(diff, settings.moneyFormat),
+          differenceRaw: diff,
+          thresholdRaw: thresh,
+          eligibleRaw: eligible,
+          percent: pct,
+          gwpItemPrice: gwpItemPrice,
+          gwpItemPriceFormatted: gwpItemPriceFormatted
+        };
+      });
+  }
+
+  // Add each item to our handlebars.js data
+    $.each(cart.items, function(index, cartItem) {
+
+      /* Hack to get product image thumbnail
+       *   - If image is not null
+       *     - Remove file extension, add _medium, and re-add extension
+       *     - Create server relative link
+       *   - A hard-coded url of no-image
+      */
+
+      if (cartItem.image != null){
+        var prodImg = cartItem.image.replace(/(\.[^.]*)$/, "_240x$1").replace('http:', '');
+      } else {
+        var prodImg = null;
+      }
+
+      var selling_plan_name = cartItem.selling_plan_allocation ? cartItem.selling_plan_allocation.selling_plan.name : null;
+      if (selling_plan_name) {
+        selling_plan_name = selling_plan_name;
+      } else {
+        selling_plan_name = null;
+      }
+
+      var unitPriceExists;
+      if (typeof cartItem.unit_price != "undefined") {
+        unitPriceExists = true;
+        var unitPrice = cartItem.unit_price;
+        var unitReferenceValue = cartItem.unit_price_measurement.reference_value;
+        var unitReferenceUnit = cartItem.unit_price_measurement.reference_unit;
+      } else {
+        unitPriceExists = false;
+      }
+
+      // Getting Colour from product title
+
+      var titleSplit = cartItem.product_title.split(" - ");
+
+      var prodTitle = titleSplit[0]
+      var prodColour = titleSplit[1]
+
+      var compareAtCents = cartItem.customData.compareAtAmount
+      ? Math.round(Number(cartItem.customData.compareAtAmount) * 100)
+      : null;
+
+      // Create item's data object and add to 'items' array
+      item = {
+        id: cartItem.id,
+        key: cartItem.key,
+        line: index + 1, // Shopify uses a 1+ index in the API
+        url: cartItem.url,
+        img: prodImg,
+        prodHandle: cartItem.handle,
+        name: cartItem.product_title,
+        title: prodTitle,
+        colour: prodColour,
+        variation: cartItem.variant_title,
+        properties: cartItem.properties,
+        sellingPlan: selling_plan_name,
+        itemAdd: cartItem.quantity + 1,
+        itemMinus: cartItem.quantity - 1,
+        itemQty: cartItem.quantity,
+        isStockMessage: cartItem.customData.isStockMessage,
+        stockMessage: cartItem.customData.stockMessage,
+        stock: cartItem.customData.quantityAvailable,
+        stockLabel: ((Number((Number(cartItem.customData.quantityAvailable)) || 0)) === 1 ? 'Unit' : 'Units'),
+        isPreOrder: cartItem.properties['Delivers'] != null,
+        itemPreOrder: cartItem.properties['Delivers'],
+        isGWP: cartItem.properties['_gwp'] != null,
+        gwp: (cartItem.properties['_gwp'] != null) && cartItem.final_line_price == 0,
+        
+        price: Shopify.formatMoney(cartItem.price, settings.moneyFormat),
+        originalPrice: Shopify.formatMoney(cartItem.original_price, settings.moneyFormat),
+        hasComparePrice: compareAtCents != null,
+        comparePrice: Shopify.formatMoney(compareAtCents, settings.moneyFormat),
+        comparePriceLine: Shopify.formatMoney((compareAtCents * (Number(cartItem.quantity))), settings.moneyFormat),
+        vendor: cartItem.vendor,
+        linePrice: Shopify.formatMoney(cartItem.final_line_price, settings.moneyFormat),
+        originalLinePrice: Shopify.formatMoney(cartItem.original_line_price, settings.moneyFormat),
+
+        unitPriceExists: unitPriceExists,
+        unitPrice: Shopify.formatMoney(unitPrice, settings.moneyFormat),
+        unitReferenceValue: unitReferenceValue,
+        unitReferenceUnit: unitReferenceUnit,
+
+        lineDiscount: cartItem.line_level_discount_allocations.length,
+        lineDiscounts: cartItem.line_level_discount_allocations.map(function (obj) {
+                        return Object.keys(obj).reduce(function (acc, key) {
+                          if (key === "amount") {
+                            acc[key] = Shopify.formatMoney(obj[key], settings.moneyFormat);
+                          } else {
+                            acc[key] = obj[key];
+                          }
+                          return acc;
+                        }, {});
+                      }),
+        lineDiscountedPrice: Shopify.formatMoney(cartItem.final_line_price, settings.moneyFormat),
+
+        discounts: cartItem.discounts,
+        discountPrice: Shopify.formatMoney(cartItem.original_price - cartItem.discounted_price, settings.moneyFormat),
+        discountsApplied: cartItem.line_price === cartItem.original_line_price ? false : true,
+        discountedPrice: Shopify.formatMoney(cartItem.discounted_price, settings.moneyFormat)
+      };
+      items.push(item);
+    });
+
+    if (typeof thisItem.product_title != "undefined") {
+
+      var thisImg;
+      if (thisItem.image != null){
+        thisImg = thisItem.image.replace(/(\.[^.]*)$/, "_240x$1").replace('http:', '');
+      } else {
+        thisImg = null;
+      }
+
+      var selling_plan_name = thisItem.selling_plan_allocation ? thisItem.selling_plan_allocation.selling_plan.name : null;
+      if (selling_plan_name) {
+        selling_plan_name = selling_plan_name;
+      } else {
+        selling_plan_name = null;
+      }
+
+      var unitPriceExists;
+      if (typeof thisItem.unit_price != "undefined") {
+        unitPriceExists = true;
+        var unitPrice = thisItem.unit_price;
+        var unitReferenceValue = thisItem.unit_price_measurement.reference_value;
+        var unitReferenceUnit = thisItem.unit_price_measurement.reference_unit;
+      } else {
+        unitPriceExists = false;
+      }
+
+      thisItem = {
+          img: thisImg,
+          name: thisItem.product_title,
+          qty: thisItem.quantity,
+          url: thisItem.url,
+          variation: thisItem.variant_title,
+          sellingPlan: selling_plan_name,
+          vendor: thisItem.vendor,
+
+          price: Shopify.formatMoney(thisItem.price, settings.moneyFormat),
+          originalPrice: Shopify.formatMoney(thisItem.original_price, settings.moneyFormat),
+
+          unitPriceExists: unitPriceExists,
+          unitPrice: Shopify.formatMoney(unitPrice, settings.moneyFormat),
+          unitReferenceValue: unitReferenceValue,
+          unitReferenceUnit: unitReferenceUnit,
+      }
+    }
+
+    if ( settings.deliveryThreshold != null ) {
+      var thresholdAmount = settings.deliveryThreshold;
+      var thresholdPrice = cart.total_price / 100;
+      var thresholdDifference = parseFloat((thresholdAmount - thresholdPrice).toFixed(2));
+      if (thresholdDifference <= 0) {
+        var thresholdMsg = settings.deliveryMessageUnlocked;
+      } else {
+        var thresholdMsg = settings.deliveryMessage.replace('[amount]', Shopify.formatMoney((thresholdDifference * 100), settings.moneyFormat).replace('<span class=money>','').replace('</span>',''));
+      }
+    }
+
+    // GWP Calculations
+
+    // Auto-add when the threshold is met, but do not re-add if the shopper removed it
+
+    // Gather all cart data and add to DOM
+    cart.gwp.item_price = gwpItemPrice;
+    cart.gwp.item_price_formatted = gwpItemPriceFormatted;
+
+    data = {
+      items: items,
+      thisItem: thisItem,
+      note: cart.note,
+      totalPrice: Shopify.formatMoney(cart.total_price, settings.moneyFormat).replace('<span class=money>','').replace('</span>',''),
+
+      cartDiscount: cart.cart_level_discount_applications.length,
+      cartDiscounts: cart.cart_level_discount_applications.map(function (obj) {
+                      return Object.keys(obj).reduce(function (acc, key) {
+                        if (key === "total_allocated_amount") {
+                          acc[key] = Shopify.formatMoney(obj[key], settings.moneyFormat);
+                        } else {
+                          acc[key] = obj[key];
+                        }
+
+                        return acc;
+                      }, {});
+                    }),
+                    totalCartDiscount: cart.total_discount === 0 ? 0 : {{ 'cart.general.savings_html' | t: price: '[savings]' | json }}.replace('[savings]', Shopify.formatMoney(cart.total_discount, settings.moneyFormat)),
+                    totalCartDiscountApplied: cart.total_discount === 0 ? false : true,
+      threshold: thresholdDifference,
+      thresholdMessage: thresholdMsg,
+      locale: (window.Shopify.country == 'GB'),
+      isPreOrder: items[0].properties['Ships'] != null,
+      itemPreOrder: items[0].properties['Ships'],
+      gwpEnabled: (cart.gwp.campaign.fields.enable_gwp === true || cart.gwp.campaign.fields.enable_gwp === 'true'),
+      gwp: cart.gwp,
+      gwpText: gwpText,
+      gwpThreshold: Shopify.formatMoney(cart.gwp.campaign.fields.threshold, settings.moneyFormat),
+      gwpDifference: Shopify.formatMoney((cart.gwp.campaign.fields.threshold - gwpEligibleTotal), settings.moneyFormat),
+      gwpReached: gwpReached,
+      cartHasGwp: cartHasGwp,
+      gwpHasEligibleItems: cart.gwp.has_eligible_items,
+      gwpCampaigns: gwpCampaigns,
+      gwpItemPrice: gwpItemPrice,
+      gwpItemPriceFormatted: gwpItemPriceFormatted
+    }
+
+    console.log(data);
+
+    // Start with a fresh cart div
+    $cartContainer.empty();
+    $cartContainer.append(template(data));
+
+    resetRecommendationsUI();
+    var recommendationPromises = [];
+    var accessoriesPromise = cartRecommendations(cart, 'accessories_upsell', true);
+    if (accessoriesPromise && typeof accessoriesPromise.then === 'function') {
+      recommendationPromises.push(accessoriesPromise);
+    }
+    var dynamicPromise = cartRecommendations(cart, 'dynamic', false);
+    if (dynamicPromise && typeof dynamicPromise.then === 'function') {
+      recommendationPromises.push(dynamicPromise);
+    }
+
+    Promise.all(recommendationPromises).catch(function(err) {
+      console.warn('Cart recommendations failed', err);
+    }).finally(function() {
+      finishRecommendationsUI();
+    });
+
+    window.cart = cart
+    bindGwpButton(cart);
+    cartCallback(cart);
+    var $allProgress = $('.ajaxcart-bar__progress');
+    $allProgress.addClass('is-loading');
+    updateTaggedDeliveryThreshold(cart);
+    thresholdBarConfig(document.querySelectorAll('.ajaxcart__footer .ajaxcart-bar__progress')[0], window.cartTotal, window.theme.custom.cartThreshold);
+    // remove loading state once widths applied
+    setTimeout(function() { $allProgress.removeClass('is-loading'); }, 0);
+  };
+}
+
+  cartCallback = function(cart) {
+    $body.removeClass('drawer--is-loading');
+    $body.trigger('afterCartLoad.ajaxCart', cart);
+
+    if (window.Shopify && Shopify.StorefrontExpressButtons) {
+      Shopify.StorefrontExpressButtons.initialize();
+    }
+  };
+
+  adjustCart = function () {
+    // Delegate all events because elements reload with the cart
+
+    // Add or remove from the quantity
+    $body.on('click', '.ajaxcart__qty-adjust', function() {
+      if (isUpdating) {
+        return;
+      }
+
+      var $el = $(this),
+          line = $el.data('line'),
+          $qtySelector = $el.siblings('.ajaxcart__qty-num'),
+          qty = parseInt($qtySelector.val().replace(/\D/g, ''));
+
+      var qty = validateQty(qty);
+
+      // Add or subtract from the current quantity
+      if ($el.hasClass('ajaxcart__qty--plus')) {
+        qty += 1;
+      } else {
+        qty -= 1;
+        if (qty <= 0) qty = 0;
+      }
+
+      // If it has a data-line, update the cart.
+      // Otherwise, just update the input's number
+      if (line) {
+        updateQuantity(line, qty);
+      } else {
+        $qtySelector.val(qty);
+      }
+    });
+
+    // Remove from the quantity
+    $body.on('click', '.ajaxcart__remove', function() {
+      if (isUpdating) {
+        return;
+      }
+
+      var $el = $(this),
+          line = $el.data('line');
+
+      $el.attr('disabled', 'disabled');
+
+      // If it has a data-line, update the cart.
+      // Otherwise, just update the input's number
+      if (line) {
+        updateQuantity(line, 0);
+      } else {
+        $qtySelector.val(0);
+      }
+    });
+
+    // Update quantity based on input on change
+    $body.on('change', '.ajaxcart__qty-num', function() {
+      if (isUpdating) {
+        return;
+      }
+
+      var $el = $(this),
+          line = $el.data('line'),
+          qty = parseInt($el.val().replace(/\D/g, ''));
+
+      var qty = validateQty(qty);
+
+      // If it has a data-line, update the cart
+      if (line) {
+        updateQuantity(line, qty);
+      }
+    });
+
+    // Prevent cart from being submitted while quantities are changing
+    $body.on('submit', 'form.ajaxcart', function(evt) {
+      if (isUpdating) {
+        evt.preventDefault();
+      }
+    });
+
+    // Highlight the text when focused
+    $body.on('focus', '.ajaxcart__qty-adjust', function() {
+      var $el = $(this);
+      setTimeout(function() {
+        $el.select();
+      }, 50);
+    });
+
+    function updateQuantity(line, qty) {
+      isUpdating = true;
+
+      // Add activity classes when changing cart quantities
+      var $row = $('.ajaxcart__row[data-line="' + line + '"]').addClass('is-loading');
+
+      if (qty === 0) {
+        $row.parent().addClass('is-removed');
+      }
+
+      // Slight delay to make sure removed animation is done
+      setTimeout(function() {
+        ShopifyAPI.changeItem(line, qty, adjustCartCallback, adjustCartErrorCallback);
+      }, 250);
+    }
+
+    // Save note anytime it's changed
+    $body.on('change', 'textarea[name="note"]', function() {
+      var newNote = $(this).val();
+
+      // Update the cart note in case they don't click update/checkout
+      ShopifyAPI.updateCartNote(newNote, function(cart) {});
+    });
+  };
+
+  adjustCartCallback = function (cart) {
+    $cartContainer.find('.errors').remove();
+
+    // Update quantity and price
+    updateCountPrice(cart);
+
+    // Reprint cart on short timeout so you don't see the content being removed
+    setTimeout(function() {
+      isUpdating = false;
+      ShopifyAPI.getCart(buildCart);
+    }, 150)
+  };
+
+  adjustCartErrorCallback = function(XMLHttpRequest, textStatus) {
+    const data = eval('(' + XMLHttpRequest.responseText + ')');
+    const form = $cartContainer.find('form');
+
+    if (data && !!data.message) {
+      if (data.status == 422) {
+        form.before(`<div class="errors qty-error u-small">${data.description}</div>`);
+      }
+    } else {
+      const message = textStatus === 'error' && !navigator.onLine ? 'No internet connection' : textStatus;
+      form.before(`<div class="errors u-small">${message}</div>`);
+    }
+
+    isUpdating = false;
+    $cartContainer.find('.is-removed').removeClass('is-removed');
+    $cartContainer.find('.is-loading').removeClass('is-loading');
+    $cartContainer.find('.ajaxcart__remove').attr('disabled', false);
+  }
+
+  createQtySelectors = function() {
+    // If there is a normal quantity number field in the ajax cart, replace it with our version
+    if ($('input[type="number"].js-qty-input', $cartContainer).length) {
+      $('input[type="number"].js-qty-input', $cartContainer).each(function() {
+
+        var $el = $(this),
+            currentQty = $el.val();
+
+        var itemAdd = currentQty + 1,
+            itemMinus = currentQty - 1,
+            itemQty = currentQty;
+
+        var source   = $("#AjaxQty").html(),
+            template = Handlebars.compile(source),
+            data = {
+              key: $el.data('id'),
+              itemQty: itemQty,
+              itemAdd: itemAdd,
+              itemMinus: itemMinus
+            };
+
+        // Append new quantity selector then remove original
+        $el.after(template(data)).remove();
+      });
+    }
+  };
+
+  qtySelectors = function(form) {
+    // Change number inputs to JS ones, similar to ajax cart but without API integration.
+    // Make sure to add the existing name and id to the new input element
+    const setUpNumInputs = (el) => {
+      if (!el.parentElement.classList.contains('js-qty')) {
+        var $el = $(el),
+            currentQty = $el.val(),
+            inputName = $el.attr('name'),
+            inputId = $el.attr('id'),
+            formId = $el.attr('form');
+
+        var itemAdd = currentQty + 1,
+            itemMinus = currentQty - 1,
+            itemQty = currentQty;
+
+        var source   = $("#JsQty").html(),
+            template = Handlebars.compile(source),
+            data = {
+              key: $el.data('id'),
+              itemQty: itemQty,
+              itemAdd: itemAdd,
+              itemMinus: itemMinus,
+              inputName: inputName,
+              inputId: inputId,
+              formId: formId
+            };
+
+        // Append new quantity selector then remove original
+        $el.after(template(data)).remove();
+      }
+    }
+
+    cartRecommendations = function(cart, type, cartThresholdTrigger) {
+
+      var cartRecommendations = type;
+      if(cartRecommendations == 'accessories_upsell') {
+
+        if (cart.items[0].product_type.includes("WOMEN") == true) {
+          var json = theme.womensDeliveryRecommendations
+        } else if (cart.items[0].product_type.includes("MEN") == true) {
+          var json = theme.mensDeliveryRecommendations;
+        } else {
+          var json = theme.accessoriesDeliveryRecommendations;
+        }
+
+        let promiseArray = [];
+        for (var i = 0; i < json.length; i++) {
+          var urlProd = 'https://www.thecoutureclub.com/products/' + json[i].handle + '?view=cart-recommendations';
+          promiseArray.push(
+            fetch(urlProd, {
+              headers: {
+                  'Accept': 'text/html'
+              }
+            })
+            .then(function(response) {
+              return response.text()
+            })
+            .then(function(html) {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, "text/html");
+                var html = doc.querySelector('.product-card');
+                document.querySelector('[aria-type=accessories_upsell] .ajaxcart__recommendations--items').insertAdjacentElement("afterbegin", html);
+                var quickshop = html.querySelector('quick-shop');
+                quickshop.querySelector('[name="properties[_cart_upsell]"]').value = 'accessories_upsell';
+                quickshop.setAttribute('aria-type', 'accessories_upsell');
+                var quickshopContainer = document.querySelector('.ajaxcart_quickbuy');
+                quickshopContainer.insertAdjacentElement("afterbegin", quickshop);
+            })
+          );
+        }
+        return Promise.all(promiseArray).then((values) => {
+          if (window.ajaxCart) {
+            const forms = document.querySelectorAll('quick-shop[aria-type=accessories_upsell] form[action^="/cart/add"][data-type="cart-recommendations"]:not(.initialised)');
+  
+            Array.from(forms).forEach((form) =>
+              window.ajaxCart.initForm(form)
+            );
+
+            Array.from(forms).forEach((form) =>
+              form.classList.add('initialised')
+            );
+          }
+
+          if (cartThresholdTrigger) { document.querySelector('[aria-type=accessories_upsell] .ajaxcart__recommendations__heading').innerHTML = (settings.thresholdMessage).replace('{val}', (settings.cartDifference.toFixed(2)) ) }
+
+          var elem = document.querySelector('[aria-type=accessories_upsell].ajaxcart__recommendations');
+          gsap.to(elem, { opacity: 1, duration: 1 });
+
+          cartUpsellsGA(cartRecommendations);
+
+        });
+
+      } else {
+
+        let promiseArray = [];
+        var url = 'https://www.thecoutureclub.com/recommendations/products.json?product_id=' + cart.items[0].product_id + '&intent=' + cart.items[0].properties['_recommendation'] + '&limit=5';
+    
+        fetch(url, { method: 'get' })
+        .then(response => response.json()) // pass the data as promise to next then block
+        .then(data => {
+          for (var i = 0; i < data.products.length; i++) {
+            var urlProd = 'https://www.thecoutureclub.com/products/' + data.products[i].handle + '?view=cart-recommendations';
+            promiseArray.push(
+              fetch(urlProd, {
+                headers: {
+                    'Accept': 'text/html'
+                }
+              })
+              .then(function(response) {
+                return response.text()
+              })
+              .then(function(html) {
+                  var parser = new DOMParser();
+                  var doc = parser.parseFromString(html, "text/html");
+                  var html = doc.querySelector('.product-card');
+                  document.querySelector('[aria-type=dynamic] .ajaxcart__recommendations--items').insertAdjacentElement("afterbegin", html);
+                  var quickshop = html.querySelector('quick-shop');
+                  quickshop.querySelector('[name="properties[_cart_upsell]"]').value = 'dynamic';
+                  quickshop.setAttribute('aria-type', 'dynamic');
+                  var quickshopContainer = document.querySelector('.ajaxcart_quickbuy');
+                  quickshopContainer.insertAdjacentElement("afterbegin", quickshop);
+              })
+            );
+          }
+          return Promise.all(promiseArray).then((values) => {
+            if (window.ajaxCart) {
+              const forms = document.querySelectorAll('quick-shop[aria-type=dynamic] form[action^="/cart/add"][data-type="cart-recommendations"]:not(.initialised)');
+    
+              Array.from(forms).forEach((form) =>
+                window.ajaxCart.initForm(form)
+              );
+
+              Array.from(forms).forEach((form) =>
+                form.classList.add('initialised')
+              );
+            }
+            var elem = document.querySelector('[aria-type=dynamic].ajaxcart__recommendations');
+            gsap.to(elem, { opacity: 1, duration: 1 });
+
+
+
+            cartUpsellsGA(cartRecommendations);
+          });
+          
+        })
+      }
+    };
+
+    const numberAdjust = (e) => {
+      var $el = $(e.target),
+          id = $el.data('id'),
+          $qtySelector = $el.siblings('.js-qty__num'),
+          qty = parseInt($qtySelector.val().replace(/\D/g, ''));
+
+      var qty = validateQty(qty);
+
+      // Add or subtract from the current quantity
+      if ($el.hasClass('js-qty__adjust--plus')) {
+        qty += 1;
+      } else {
+        qty -= 1;
+        if (qty <= 1) qty = 1;
+      }
+
+      // Update the input's number
+      $qtySelector.val(qty);
+    }
+
+    if (form) {
+      const numInputs = form.querySelector('input[type="number"].js-qty-input') || document.querySelector(`input[type="number"][form="${form.getAttribute('id')}"].js-qty-input`);
+
+      if (numInputs) {
+        setUpNumInputs(numInputs);
+      }
+
+      const qtyAdjustButtons = $(form).find('.js-qty__adjust').length > 0 ?
+        $(form).find('.js-qty__adjust') :
+        $(`input[type="number"][form="${form.getAttribute('id')}"].js-qty-input`).parent().find('.js-qty__adjust');
+
+      $(qtyAdjustButtons).on('click', numberAdjust);
+    } else {
+      const numInputs = document.querySelectorAll('input[type="number"].js-qty-input');
+
+      Array.from(numInputs).forEach((el) => setUpNumInputs(el));
+
+      $('.js-qty__adjust').on('click', numberAdjust);
+    }
+  };
+
+  validateQty = function (qty) {
+    if((parseFloat(qty) == parseInt(qty)) && !isNaN(qty)) {
+      // We have a valid number!
+    } else {
+      // Not a number. Default to 1.
+      qty = 1;
+    }
+    return qty;
+  };
+
+  module = {
+    init: init,
+    initForm: initForm,
+    load: loadCart
+  };
+
+  return module;
+
+}(ajaxCart || {}, jQuery));

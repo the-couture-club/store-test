@@ -1,0 +1,22 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+      }
+    },
+    "1a497386-6879-44b4-b670-bb50d8fe89ff": {
+      "type": "bf-showroom",
+      "settings": {
+        "video": "shopify:\/\/files\/videos\/Couture Club - Raw Seams HD.mp4",
+        "tv_text": "Learn More",
+        "tv_link": "shopify:\/\/collections"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "1a497386-6879-44b4-b670-bb50d8fe89ff"
+  ]
+}

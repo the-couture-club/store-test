@@ -1,0 +1,54 @@
+<script>
+  window.prechatTemplate = {
+      "SubmitLabel": "Start Chat",
+      "fields": {
+          "1": {
+            "error": "Please Enter Name",
+            "fieldId": "name",
+            "label": "Name",
+            "required": "yes",
+            "type": "text"
+          },
+          "2": {
+            "error": "Please Enter Email",
+            "fieldId": "email",
+            "label": "Email",
+            "required": "yes",
+            "type": "email"
+          }
+      },
+      "heading": "Chat with Us",
+      "mainbgColor": "#212121",
+      "maintxColor": "#fff",
+      "textBanner": "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
+    };
+    window.fcSettings = {
+      onInit: function() {
+        window.fcPreChatform.fcWidgetInit(window.prechatTemplate);
+    }
+    };
+    window.fcWidgetMessengerConfig = {
+      config: {
+          content: {
+            actions: {
+                tab_chat: "Chat"
+            },
+            headers: {
+                chat: "Chat With Us"
+            }
+          },
+          cssNames: {
+            expanded: "custom_fc_expanded",
+            widget: "custom_fc_frame"
+          }
+      }
+    };
+</script>
+
+<script src="https://snippets.freshchat.com/js/fc-pre-chat-form-v2.js"></script>
+<script
+src='//eu.fw-cdn.com/13110268/1060841.js'
+chat='true'
+widgetId='768b1289-9969-4a3c-b6af-3e35dcc57bff'>
+</script>
+<script src="https://wchat.freshchat.com/js/widget.js" async></script>

@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+      }
+    },
+    "266b8d7b-683c-49ed-84ec-e54c8530161d": {
+      "type": "swatch-checker",
+      "settings": {
+      }
+    },
+    "ef680672-fc98-45e1-8540-1f9df1f49e64": {
+      "type": "collection-checker",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "main",
+    "266b8d7b-683c-49ed-84ec-e54c8530161d",
+    "ef680672-fc98-45e1-8540-1f9df1f49e64"
+  ]
+}

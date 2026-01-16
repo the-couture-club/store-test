@@ -1,0 +1,77 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "shogun-helper": {
+      "type": "shogun-helper",
+      "disabled": true,
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
+    "shogun-optimizer": {
+      "type": "shogun-optimizer",
+      "disabled": true,
+      "settings": {}
+    },
+    "page_lookbook_iX9mfj": {
+      "type": "page_lookbook",
+      "blocks": {
+        "list_YjNAAy": {
+          "type": "list",
+          "settings": {
+            "image_1": "shopify://shop_images/TCC_AW250474_copy_2dd1473f-3f5d-4397-856b-4d1cf217ad3b.jpg",
+            "image_2": "shopify://shop_images/TCC_AW251111_copy.jpg",
+            "image_3": "shopify://shop_images/TCC_AW251386_copy.jpg",
+            "image_4": "shopify://shop_images/TCC_AW250982_copy.jpg",
+            "image_5": "shopify://shop_images/TCC_AW250870_copy.jpg",
+            "image_6": "shopify://shop_images/TCC_AW251190_copy.jpg",
+            "image_7": "shopify://shop_images/TCC_AW250390_copy.jpg",
+            "image_8": "shopify://shop_images/TCC_AW251207_copy.jpg"
+          }
+        },
+        "list_dDTgK6": {
+          "type": "list",
+          "settings": {
+            "image_1": "shopify://shop_images/TCC_AW250710_copy.jpg",
+            "image_2": "shopify://shop_images/TCC_AW251638_copy.jpg",
+            "image_3": "shopify://shop_images/TCC_AW250105_copy.jpg",
+            "image_4": "shopify://shop_images/TCC_AW250937_copy.jpg",
+            "image_5": "shopify://shop_images/TCC_AW251849_copy.jpg",
+            "image_6": "shopify://shop_images/TCC_AW251759_copy.jpg",
+            "image_7": "shopify://shop_images/TCC_AW250967_copy.jpg",
+            "image_8": "shopify://shop_images/TCC_AW250363_copy.jpg",
+            "image_9": "shopify://shop_images/TCC_AW251563_copy.jpg",
+            "image_10": "shopify://shop_images/TCC_AW251989_copy.jpg",
+            "image_11": "shopify://shop_images/TCC_AW251351_copy_aff3390f-d550-4df9-9f89-fb6cdc40b70c.jpg",
+            "image_12": "shopify://shop_images/TCC_AW251703_copy.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "list_YjNAAy",
+        "list_dDTgK6"
+      ],
+      "name": "Lookbook",
+      "settings": {
+        "title": ""
+      }
+    }
+  },
+  "order": [
+    "shogun-helper",
+    "main",
+    "shogun-optimizer",
+    "page_lookbook_iX9mfj"
+  ]
+}

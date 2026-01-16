@@ -1,0 +1,63 @@
+<script src="{{ 'anniversary-coming_soon.js' | asset_url }}" defer="defer"></script>
+<link href="{{ 'anniversary-coming_soon.css' | asset_url }}" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+{% include 'anniversary-nav', title: 'THE COLLECTION' %}
+
+<section>
+  {% for block in section.blocks %}
+    <div class="column" id="col{{forloop.index}}">
+      <div class="content">
+        {% for item in block.settings.list %}
+          <div class="box">
+            {% render 'product-grid-item',
+              product: item,
+              swatchEnable: false,
+              page: 'recommendations',
+              disable_hover: true,
+              nodrawer: true,
+              hide_labels: true,
+              force_switch: true,
+              scroll_snap: false
+            %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</section>
+
+
+{% schema %}
+  {
+    "name": "Anniversary Coming Soon",
+	"class": "anniversary-template anniversary-coming_soon",
+    "settings": [
+      {
+        "type": "richtext",
+        "id": "title",
+        "label": "Title"
+      }
+    ],
+	"blocks": [
+		{
+          "type": "list",
+          "name": "List",
+		  "settings": [
+            {
+              "type": "product_list",
+              "id": "list",
+              "label": "List",
+              "limit": 20
+            }
+		  ]
+		}
+	],
+    "presets": [
+            {
+                "name": "Anniversary Coming Soon"
+            }
+        ]
+  }
+{% endschema %}

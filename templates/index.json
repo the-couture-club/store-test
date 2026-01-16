@@ -1,0 +1,208 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero_image_EnPPVy": {
+      "type": "hero-image",
+      "blocks": {
+        "slide_cqe87n": {
+          "type": "slide",
+          "settings": {
+            "content_type": "image",
+            "image": "shopify://shop_images/Winter-Sale-further-reductions_07.jpg",
+            "content_type_mobile": "image",
+            "image_mobile": "shopify://shop_images/Winter-Sale-FURTHER-REDUCTIONS_02.jpg",
+            "heading": "",
+            "subheading": "",
+            "text_colour": "#ffffff",
+            "link": "shopify://collections/sale-view-all",
+            "show_buttons": true,
+            "button-1-content": "WOMENS",
+            "button-1-link": "shopify://collections/sale-womens-view-all",
+            "button-2-content": "MENS",
+            "button-2-link": "shopify://collections/sale-mens-view-all",
+            "show_dropshadow": false,
+            "show_backdrop": true,
+            "show_scroll": false,
+            "enable_countdown": true,
+            "enable_countdown_signup": false,
+            "klaviyo_form_id": "UsPdCH",
+            "countdown_title": "",
+            "countdown_text": "",
+            "countdown_time": "Dec 03, 2025 00:00:00 GMT",
+            "text_shadow": false,
+            "enable_custom_positioning_mobile": false,
+            "mobile_left": 50,
+            "mobile_top": 50,
+            "enable_custom_positioning_desktop": false,
+            "desktop_left": 50,
+            "desktop_top": 50
+          }
+        }
+      },
+      "block_order": [
+        "slide_cqe87n"
+      ],
+      "name": "Hero Image",
+      "settings": {
+        "parent_id": "",
+        "section_id": ""
+      }
+    },
+    "hero_collection_6YdhqR": {
+      "type": "hero-collection",
+      "name": "Hero Image / Collection",
+      "settings": {
+        "show_banner": false,
+        "content_type": "image",
+        "content_type_mobile": "image",
+        "heading": "Heading",
+        "subheading": "Shop Now",
+        "link": "",
+        "collection": "sale-view-all"
+      }
+    },
+    "hero_image_iTckcF": {
+      "type": "hero-image",
+      "blocks": {
+        "slide_tTyQRx": {
+          "type": "slide",
+          "settings": {
+            "content_type": "image",
+            "image": "shopify://shop_images/Mens-split-desktop.jpg",
+            "content_type_mobile": "image",
+            "image_mobile": "shopify://shop_images/Mens-split-mobile.jpg",
+            "heading": "MENS SALE",
+            "subheading": "Shop Now",
+            "text_colour": "#ffffff",
+            "link": "shopify://collections/sale-mens-view-all",
+            "show_buttons": false,
+            "button-1-content": "",
+            "button-1-link": "",
+            "button-2-content": "",
+            "button-2-link": "",
+            "show_dropshadow": false,
+            "show_backdrop": true,
+            "show_scroll": false,
+            "enable_countdown": false,
+            "enable_countdown_signup": false,
+            "klaviyo_form_id": "UsPdCH",
+            "countdown_title": "",
+            "countdown_text": "",
+            "countdown_time": "",
+            "text_shadow": false,
+            "enable_custom_positioning_mobile": false,
+            "mobile_left": 50,
+            "mobile_top": 50,
+            "enable_custom_positioning_desktop": false,
+            "desktop_left": 50,
+            "desktop_top": 50
+          }
+        },
+        "slide_yj8HJk": {
+          "type": "slide",
+          "settings": {
+            "content_type": "image",
+            "image": "shopify://shop_images/Womens-split-desktop_f6a07b76-5470-40e2-a256-60aa54efc973.jpg",
+            "content_type_mobile": "image",
+            "image_mobile": "shopify://shop_images/Womens-split-mobile.jpg",
+            "heading": "WOMENS SALE",
+            "subheading": "Shop Now",
+            "text_colour": "#ffffff",
+            "link": "shopify://collections/sale-womens-view-all",
+            "show_buttons": false,
+            "button-1-content": "",
+            "button-1-link": "",
+            "button-2-content": "",
+            "button-2-link": "",
+            "show_dropshadow": false,
+            "show_backdrop": true,
+            "show_scroll": false,
+            "enable_countdown": false,
+            "enable_countdown_signup": false,
+            "klaviyo_form_id": "UsPdCH",
+            "countdown_title": "",
+            "countdown_text": "",
+            "countdown_time": "",
+            "text_shadow": false,
+            "enable_custom_positioning_mobile": false,
+            "mobile_left": 50,
+            "mobile_top": 50,
+            "enable_custom_positioning_desktop": false,
+            "desktop_left": 50,
+            "desktop_top": 50
+          }
+        }
+      },
+      "block_order": [
+        "slide_tTyQRx",
+        "slide_yj8HJk"
+      ],
+      "name": "Hero Image",
+      "settings": {
+        "parent_id": "",
+        "section_id": ""
+      }
+    },
+    "hero_image_tzCC3f": {
+      "type": "hero-image",
+      "blocks": {
+        "slide_33F3m7": {
+          "type": "slide",
+          "settings": {
+            "content_type": "image",
+            "image": "shopify://shop_images/active-upated-final_01.png",
+            "content_type_mobile": "image",
+            "image_mobile": "shopify://shop_images/mobile-updated-final_03.png",
+            "heading": "",
+            "subheading": "",
+            "text_colour": "#ffffff",
+            "link": "https://www.thecoutureclub.com/collections/activewear",
+            "show_buttons": true,
+            "button-1-content": "SHOP NOW",
+            "button-1-link": "https://www.thecoutureclub.com/collections/activewear",
+            "button-2-content": "",
+            "button-2-link": "",
+            "show_dropshadow": false,
+            "show_backdrop": false,
+            "show_scroll": false,
+            "enable_countdown": true,
+            "enable_countdown_signup": false,
+            "klaviyo_form_id": "UsPdCH",
+            "countdown_title": "",
+            "countdown_text": "",
+            "countdown_time": "Dec 19, 2025, 10:00:00 GMT",
+            "text_shadow": false,
+            "enable_custom_positioning_mobile": false,
+            "mobile_left": 50,
+            "mobile_top": 50,
+            "enable_custom_positioning_desktop": false,
+            "desktop_left": 50,
+            "desktop_top": 50
+          }
+        }
+      },
+      "block_order": [
+        "slide_33F3m7"
+      ],
+      "name": "Hero Image",
+      "settings": {
+        "parent_id": "",
+        "section_id": ""
+      }
+    }
+  },
+  "order": [
+    "hero_image_EnPPVy",
+    "hero_collection_6YdhqR",
+    "hero_image_iTckcF",
+    "hero_image_tzCC3f"
+  ]
+}

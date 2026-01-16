@@ -1,0 +1,313 @@
+<div id="looks-page">
+    <div class="image-container">
+        <img
+                src="{{ metaobject.image.value | img_url: '300x' }}"
+                srcset="{% render 'bgset', image: metaobject.image.value %}"
+                width="300"
+                height="{{ 300 | divided_by: metaobject.image.value.aspect_ratio | round }}"
+                alt="{{ metaobject.image.value.alt }}"
+                loading="lazy"
+            />
+    </div>
+    <div class="content-container">
+        <div class="content-container_padding">
+            <div id="title-content">
+                <h1 class="title">{{ metaobject.title.value }}</h1>
+                <p class="description">{{ metaobject.description.value }}</p>
+            </div>
+            <div id="product-content">
+            {% for product in metaobject.products.value  %}
+                <div class="product">
+                    <a href="{{ product.url }}" class="product-image">
+                        <img src="{{ product.featured_image | img_url: 'medium' }}">
+                    </a>
+                    {% assign productTitle = product.title | split: ' - ' %}
+                    <div class="product-data">
+                        <span class="cc-fs1">{{ productTitle[0] }}</span>
+                        <span class="cc-fs1">{{ product.price | money | class: "cc-fs1" }}</span>
+                        {% form 'product', product, class: "js-product-form" %}
+                            <div class="product_container__content-header--form">
+                                {% if product.metafields.global.coming_soon_eta_display != null and product.selected_or_first_available_variant.inventory_policy == 'continue' %}{% assign preOrderStatus = product.metafields.global.coming_soon_eta_display %}{% else %}{% assign preOrderStatus = '*' %}{% endif %}
+                                <input type="hidden" id="properties_preorder" name="properties[_pre_order]" data-date="{{ product.metafields.global.coming_soon_eta_display }}" value="{{ preOrderStatus }}" />
+                                <input type="hidden" name="properties[_is_pre_order]" value="true" />
+                                <input type="hidden" name="id" value="{{ current_variant.id }}">
+                                {% if product.metafields.shopify--discovery--product_recommendation.complementary_products != null %}{% assign type = 'complementary' %}{% else %}{% assign type = 'related' %}{% endif %}
+                                <input type="hidden" id="recommendation_type" name="properties[_recommendation]" value="{{type}}" checked="">
+                                <div class="product_container__content-header--form_select">
+                                    <div>
+                                        <span class="product-form__select-overlay u-hidden@tab-up"></span>
+                                        <select id="product-form__select" autocomplete="off" required class="cc-fs1 cc-uppercase">
+                                            <option value="" disabled selected>{% unless product.gift_card? %}{{ "custom.product-page-select" | t }}{%else%}{{ "custom.gift-card-select" | t }}{%endunless%}</option>
+                                            {% for variant in product.variants %}
+                                            {% assign preOrderQuery = variant.metafields.custom.pre_order_quantity_amount %}
+                                                <option
+                                                    data-policy="{{ variant.inventory_policy }}"
+                                                    data-inventory="{{preOrderQuery}}" 
+                                                    {% if preOrderQuery > 0 and variant.inventory_policy == 'continue' %}
+                                                    data-preorder="{{true}}"
+                                                    {% endif %}
+                                                    title="{{ variant.title }}"
+                                                    data-stock="{% if preOrderQuery != null and variant.inventory_policy == 'continue' %}{% if preOrderQuery <= 0 %}0{%else%}preorder{% endif %}{%elsif variant.inventory_quantity <= 0%}0{%else%}{{variant.inventory_quantity}}{% endif %}"
+                                                    value="{{ variant.id }}"
+                                                    {% if variant.inventory_quantity <= 0 %}disabled{% endif %}
+                                                >
+                                                    {{ variant.title }}
+                                                    {% assign preOrderQuery = variant.metafields.custom.pre_order_quantity_amount %}
+                                                    {% unless variant.available %}
+                                                        - {{ 'products.product.qty_notice_sold_out' | t }}
+                                                    {% endunless %}
+                                                    {% if preOrderQuery <= 0 and variant.inventory_policy =='continue' %}
+                                                        - {{ 'products.product.qty_notice_sold_out' | t }}{% endif %}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <span id="product-form__select-arrow">
+                                            <span class="last_stock cc-fs1 cc-uppercase"></span>
+                                            <i class="icon icon--down" aria-hidden="true"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endform %}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+            <button id="look-atc" type="submit" name="add" class="c-btn c-btn--full product-form__add-btn js-product-add">
+                <span class="product-form__add-btn__text">
+                    <span class="js-product-add-text">
+                        <a data-type="add">Add to basket</a>
+                    </span>
+                </span>
+                <span class="product-form__add-btn__tick"><i class="icon icon--tick"></i></span>
+                <span class="product-form__add-btn__spinner">
+                    <div class="theme-spinner">
+                        <div class="theme-spinner__border"></div>
+                        <div class="theme-spinner__border"></div>
+                        <div class="theme-spinner__border"></div>
+                        <div class="theme-spinner__border"></div>
+                    </div>
+                </span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    #looks-page {
+        display: flex;
+        height: calc( 100dvh - 103px );
+    }
+
+    #looks-page div.image-container, #looks-page div.content-container {
+        min-width: 50%;
+        max-width: 50%;
+    }
+
+    #looks-page div.image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .content-container_padding {
+        display: flex;
+        flex-direction: column;
+        padding: 7.5% 10%;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+    }
+
+    #title-content, #product-content {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    
+
+    #title-content .subtitle {
+        font-family: Work Sans;
+        font-weight: 600;
+        font-size: 25px;
+    }
+
+    #product-content {
+        gap: 20px;
+        margin: 30px 0px;
+        overflow: scroll;
+    }
+
+    #product-content .icon:before {
+    font-size: 12px;
+    }
+
+    #product-content img {
+        aspect-ratio: 3/4;
+        object-fit: cover;
+    }
+
+    #product-content .product-data {
+        line-height: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        justify-content: space-between;
+    }
+
+    #product-content .product-data span.title {
+        font-family: Work Sans;
+        font-size: 25px;
+    }
+
+    #product-content .product {
+        display: grid;
+        grid-template-columns: .75fr 6fr;
+        gap: 20px;
+    }
+
+    #looks-page div.content-container .title {
+        font-size: 25px;
+        font-weight: 600;
+        line-height: 1;
+    }
+
+    #product-form__select {
+        margin: 0px;
+        padding: 5px 0px;
+        height: auto;
+        margin: 0px;
+        line-height: 1.5;
+    }
+
+    #product-content .product_container__content-header--form {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: 1fr !important;
+    }
+
+    #look-atc {
+        position: relative;
+    }
+
+    @media screen and (max-width: 767px) {
+
+        #looks-page div.image-container, #looks-page div.content-container {
+            min-width: inherit;
+            max-width: inherit;
+        }
+
+        #looks-page {
+            flex-direction: column;
+            height: auto;
+        }
+
+        .content-container_padding {
+            padding: 10% 7.5%;
+        }
+
+        #product-content .product {
+            grid-template-columns: 1fr 4fr;
+        }
+
+    }
+
+</style>
+
+<script>
+    var lookForms = document.querySelectorAll('#product-content form');
+
+    lookForms.forEach((form) => {
+        var select = form.querySelector('select');
+        select.addEventListener('change',function(){
+            form.querySelector('[name="id"]').value = this.value;
+            var isPreOrder = document.querySelector('option[value="' + this.value + '"]').getAttribute('data-preorder');
+            if (isPreOrder == 'true') {
+                form.querySelector('[name="properties[_is_pre_order]"]').value = 'true';
+                var Varvalue = form.querySelector('[name="properties[_pre_order]"]').getAttribute('data-date');
+                form.querySelector('[name="properties[_pre_order]"]').value = Varvalue;
+            } else {
+                form.querySelector('[name="properties[_is_pre_order]"]').value = '';
+                form.querySelector('[name="properties[_pre_order]"]').setAttribute('value', '*');
+            }
+        });
+    });
+
+    document.getElementById('look-atc').addEventListener('click', function() {
+        event.preventDefault();
+
+        var loop = [];
+
+        var activeForms = document.querySelectorAll('#product-content [name="id"]:not([value=""])');
+        console.log(activeForms);
+        activeForms.forEach((form) => {
+            form = form.closest('form');
+            var _is_pre_order = ""
+            if(form.querySelector('[name="properties[_is_pre_order]"]').disabled === false) {
+                _is_pre_order = ""
+            } else {
+                _is_pre_order = form.querySelector('[name="properties[_is_pre_order]"]').value
+            }
+            loop.push(
+            {
+                id: form.querySelector('[name="id"]').value,
+                quantity: "1"
+                ,properties: {
+                    '_recommendation': form.querySelector('[name="properties[_recommendation]"]').value,
+                    '_pre_order': form.querySelector('[name="properties[_pre_order]"]').value,
+                    '_is_pre_order': _is_pre_order
+                }
+            }
+            );
+
+        })
+
+        if (loop.length > 0) {
+
+        document.getElementById('look-atc').classList.add('is-adding')
+
+        fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({items: loop})
+        })
+        .then(response => {
+            document.getElementById('look-atc').classList.remove('is-adding')
+            document.getElementById('look-atc').classList.add('is-added')
+            ajaxCart.load();
+            theme.mfpOpen("cart");
+            setTimeout(() => {
+                document.getElementById('look-atc').classList.remove('is-added');
+            }, "1000");
+            activeForms.forEach((form) => {
+                var form = form.closest('form');
+                form.querySelector('input[name="id"]').value = ''
+                form.querySelector('select').value = ''
+            })
+
+        return response.json();
+        })
+        .catch((error) => {
+        console.error('Error:', error);
+        });
+        
+        }
+
+    }, false);
+
+</script>
+
+{% schema %}
+    {
+      "name": "Shop Looks - Page",
+      "settings": [],
+      "presets": [
+        {
+            "name": "Shop Looks - Page"
+        }
+      ]
+    }
+{% endschema %} 

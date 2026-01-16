@@ -1,0 +1,194 @@
+<!-- snippet/product-price.liquid -->
+
+{% comment %}
+    Renders the product price
+
+    Accepts:
+    - product: {Object} Product Liquid object
+    - section_id: {String} Unique section id
+    - id: {String} Unique price element id
+    - from_price: {Boolean} Determines whether or not to output a generalised or specific price.
+    - use_variant: {Boolean} Renders selected or first variant price instead of overall product pricing (optional)
+    - show_price_notes: {Boolean} Renders prie notes. Default: true
+    - show_tax_note: {Boolean} Rebders tax notice. Default: false,
+    - show_label: {Boolean} Renders on sale label
+    - label_type: {String}
+    - label_color: {String}
+
+    Usage:
+    {% render 'product-price',
+        product: product,
+        from_price: true
+    %}
+
+    !!! NOTE: When changing this element, update the HTML in
+    VariantSelects.renderProductInfo()
+{% endcomment %}
+
+{%- liquid
+
+    assign giftCardID = settings.gift_card_id | plus: 0
+
+    if show_price_notes == nil
+        assign show_price_notes = true
+    endif
+
+    if show_tax_note == nil
+        assign show_tax_note = false
+    endif
+
+    if show_label == nil
+        assign show_label = false
+    endif
+-%}
+
+{% assign tags = product.tags | downcase %}
+
+{% if tags contains 'members10' %}
+    {% assign multiplier = 100 | minus: 10 | divided_by: 100.0 %}
+{% elsif tags contains 'members15' %}
+    {% assign multiplier = 100 | minus: 15 | divided_by: 100.0 %}
+{% elsif tags contains 'members20' %}
+    {% assign multiplier = 100 | minus: 20 | divided_by: 100.0 %}
+{% else %}
+    {% assign multiplier = 100 | minus: 10 | divided_by: 100.0 %}
+{% endif %}
+
+{% for collection in product.collections %}
+    {% if collection.id == settings.members_collection.id %}
+        {% assign membersDiscount = true %}
+    {% endif %}
+{% endfor %}
+
+{% if from_price %}
+
+    {%- liquid
+        if product.title
+            assign compare_at_price = product.compare_at_price
+            assign price = product.price
+            assign price_max = product.price_max
+            assign price_varies = product.price_varies
+            assign available = product.available
+        else
+            assign compare_at_price = 1999
+            assign price = 1999
+            assign price_varies = false
+            assign available = true
+        endif
+
+        assign money_price = price | money
+        assign money_price_max = price_max | money
+    -%}
+
+<span id="{{ id }}" class="price {% if membersDiscount %}price-memberPrice{% endif %}">
+
+        {% unless product.gift_card? %}
+        {%- if compare_at_price > price -%}
+        <span data-price="sale">
+            <strike class="price__compare"><span class="money">{{ compare_at_price | money }}</span></strike>
+                <span class="price__number {% unless membersDiscount %}price__number--sale{% endunless %}">
+                {% if price_varies %}{{ 'products.general.from_price' | t }} {% endif %}
+                <span class="money">
+                    {{ money_price }}
+                </span>
+            </span>
+            {% if membersDiscount %}
+                <span>Non Member</span>
+            {% endif %}
+        </span>
+        {% if membersDiscount %}
+            <span data-price="members-sale" >
+                <strike class="price__compare"><span class="money">{{ price | money }}</span></strike>
+                <span class="price__number">
+                    <span class="money">
+                        {{ price | times: multiplier | money }}
+                    </span>
+                </span> 
+                <span>Member</span>
+            </span>
+        {% endif %}
+        {%- else -%}
+            <span {% if membersDiscount %} data-price="members" {% endif %} class="price__number">
+                {% if membersDiscount %}
+                    <span class="money">
+                        {{ price | money }} Non Member
+                    </span>
+                {% endif %}
+                <span class="price__number">
+                    <span class="money">
+                        {% if price_varies %}
+                        {{ 'products.general.from_price' | t }} 
+                    {% endif %} {% if membersDiscount %}{{ price | times: multiplier | money }} Member{% else %}{{ price | money }}{% endif %}
+                    </span>
+                </span>
+                {% if settings.enable_sale_price_preview and product.metafields.custom.sale-price-preview != null %}
+                <span style="background: {{settings.sale_price_preview_colour}}; padding: 2px 6px;" class="sale-price_preview">
+                    {% assign discount = 100 | minus: product.metafields.custom.sale-price-preview | divided_by: 100.0 | round: 2  %}
+                    {{ price | times: discount | money }} {{ settings.sale_price_preview_text }}
+                </span>
+                {% endif %}
+            </span>
+        {%- endif -%}
+        {% else %}
+             <span class="price__number"><span class="money">{{ product.price_min | money }} - {{ product.price_max | money }}</span></span>
+        {% endunless %}
+</span>
+
+{% else %}
+    {%- liquid
+        if use_variant
+            assign variant = product.selected_or_first_available_variant
+            assign compare_at_price = variant.compare_at_price
+            assign price = variant.price
+
+            assign unit_price = variant.unit_price
+        else
+            assign compare_at_price = product.compare_at_price_max
+            assign price = product.price
+
+            assign unit_price = product.selected_or_first_available_variant.unit_price
+        endif
+    -%}
+
+    <div class="price">
+        <div id="{{ id }}" class="price__text">
+            {% unless product.gift_card? %}
+            <span class="u-hidden-visually">{{ 'products.general.regular_price' | t }}</span>
+            <span class="price__number{% if compare_at_price > price or membersDiscount %} price__number--sale{% endif %}">
+                <span class="money">
+                    {% if membersDiscount %}
+                    {{ product.price | times: multiplier | money }}
+                    {% else %}
+                    {{ product.price | money }}
+                    {% endif %}
+                </span>
+            </span>
+            {%- if compare_at_price > price -%}
+                <span class="u-hidden-visually">{{ 'products.general.sale_price' | t }}</span>
+                <s class="price__compare"><span class="money">{{ compare_at_price | money }}</span></s>
+            {% elsif membersDiscount %}
+                <span class="u-hidden-visually">{{ 'products.general.sale_price' | t }}</span>
+                <s class="price__compare"><span class="money">{{ product.price | money }}</span></s>
+            {%- endif -%}
+            {% else %}
+             <span class="price__number"><span class="money">{{ product.price_min | money }} - {{ product.price_max | money }}</span></span>
+            {% endunless %}
+        </div>
+
+        {%- if show_label -%}
+            {%- liquid
+                assign label_id = 'label-' | append: section_id
+            -%}
+            {% render 'product-label',
+                product: product,
+                id: label_id,
+                color: label_color,
+                type: label_type
+            %}
+        {%- endif -%}
+
+    </div>
+
+
+
+{% endif %}

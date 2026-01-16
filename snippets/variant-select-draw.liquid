@@ -1,0 +1,36 @@
+<div class="js-variant-select-draw mobile-draw mfp-hide">
+    <div class="mobile-draw__fixed mobile-draw__header">
+        <span class="cc-fs1 cc-uppercase">{{ 'products.product.variant_select.draw_title' | t }}</span>
+        <a class="cc-fs1 cc-uppercase cc-pointer js-close-mfp">{{ 'layout.drawers.close' | t }}</a>
+    </div>
+    <div class="variant-select-body cc-fs2">
+        <div class="variant-select-body--item">
+            <div class="variant-select-body--item_image">
+                <div class="variant-select-body--item_image__container">
+                    <a selected data-variant ><span active></span><img src="{{product.featured_media | img_url: '500x' }}"></a>
+                </div>
+            </div>
+            <div class="variant-select-body--item_title">
+                <span>{{ product.title | split: ' - ' | last }}</span>
+            </div>
+        </div>
+        {% for alt_product in collection.products %}
+            {% if alt_product.id != product.id %}
+                <div class="variant-select-body--item">
+                    <div class="variant-select-body--item_image">
+                        <div class="variant-select-body--item_image__container">
+                            <a data-id="{{alt_product.id}}" href="{{alt_product.url}}" data-variant> <img src="{{alt_product.featured_media | img_url: '500x' }}"></a>
+                        </div>
+                    </div>
+                    <div class="variant-select-body--item_title">
+                        <span>{{ alt_product.title | split: ' - ' | last }}</span>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.querySelector('.more_colours').addEventListener("click", function(){ theme.mfpOpen("variant-select"); });
+</script>

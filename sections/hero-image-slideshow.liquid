@@ -1,0 +1,489 @@
+<div id="hero-image" class="splide hero-image-slideshow {{ section.blocks.size }} {% if section.blocks.size > 1 %} slideshow-active {% endif %}" data-splide='{"type":"fade","perPage":1,"rewind":true,"pagination":true,"releaseWheel":"true","arrows":false,"start":0,"speed":1000,"dragMinThreshold": 25,"lazyload":true,"flickPower":50,"autoplay":true,"interval":"{{ section.settings.time | times: 1000 }}", "pauseOnHover":false,"pauseOnFocus":false,"resetProgress":false}'>
+
+    <div class="splide__track">
+
+        <div class="splide__list">
+
+            {% for block in section.blocks %}
+
+            <div aria-id="{{ block.id }}" class="hero-image--container splide__slide">
+
+                {% if block.settings.show_scroll %}
+
+                <span class="hero-image--content_scroll">
+                <span>{{ "custom.scroll" | t }}</span>
+                <i class="icon icon--down" aria-hidden="true"></i>
+                </span>
+
+                {% endif %}
+
+                {% unless block.settings.enable_countdown_signup %}
+                  <a href="{{block.settings.link}}" class="hero-image--content"></a>
+                {% endunless %}
+
+                {% if block.settings.content_type == 'image' %}
+
+                    <img
+                    class="hero-image--content__img u-hidden@desk-down"
+                    src="{{ block.settings.image | image_url }}"
+                    srcset="{{ block.settings.image | image_url: width: 180 }} 180w {{ 180 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 360 }} 360w {{ 360 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 540 }} 540w {{ 540 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 720 }} 720w {{ 720 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 900 }} 900w {{ 900 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 1080 }} 1080w {{ 1080 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url: width: 1296 }} 1296w {{ 1296 | divided_by: block.settings.image.aspect_ratio | round }}h, {{ block.settings.image | image_url }} 2512w {{ 2512 | divided_by: block.settings.image.aspect_ratio | round }}h"
+                    alt="{{ block.settings.image.alt }}"
+                    loading="lazy"
+                    sizes="(min-width: 981px): 520px, (min-width: 696px): 660px, 100vw" />
+
+                {% else %}
+
+                    {{ block.settings.video | video_tag: class: 'u-hidden@desk-down', autoplay: true, loop: true, muted: true, controls: false, image_size: "1000x" }}
+
+                {% endif %}
+
+                {% if block.settings.content_type_mobile == 'image' %}
+
+                <img
+                    class="hero-image--content__img u-hidden@desk-up"
+                    src="{{ block.settings.image_mobile | image_url: width: 2000 }}"
+                    srcset="{{ block.settings.image_mobile | image_url: width: 180 }} 180w {{ 180 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 360 }} 360w {{ 360 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 540 }} 540w {{ 540 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 720 }} 720w {{ 720 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 900 }} 900w {{ 900 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 1080 }} 1080w {{ 1080 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url: width: 1296 }} 1296w {{ 1296 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h, {{ block.settings.image_mobile | image_url }} 2512w {{ 2512 | divided_by: block.settings.image_mobile.aspect_ratio | round }}h"
+                    alt="{{ block.settings.image_mobile.alt }}"
+                    loading="lazy"
+                    sizes="(min-width: 981px): 520px, (min-width: 696px): 660px, 100vw" />
+
+                {% else %}
+
+                {{ block.settings.video_mobile | video_tag: class: 'u-hidden@desk-up', autoplay: true, loop: true, muted: true, controls: false, image_size: "1000x" }}
+
+                {% endif %}
+
+                {% if block.settings.show_backdrop %}
+                  <div class="hero-image--content_fade"></div>
+                {% endif %}
+
+                {% if block.settings.show_backdrop %}
+                  <div class="hero-image--content_fade"></div>
+                {% endif %}
+
+                <div  class="hero-image--content_cta {% if block.settings.show_dropshadow %}btn-dropshadow{% endif %}">
+
+                  {% if block.settings.heading != '' %}
+                    <h5>{{ block.settings.heading }}</h5>
+                  {% endif %}
+
+                  {% if block.settings.subheading != '' %}
+                    <span>{{ block.settings.subheading }}</span>
+                  {% endif %}
+
+                  {% if block.settings.enable_countdown %}
+                    <a style="color:{{block.settings.text_colour}}; top: {{block.settings.countdown_position}};" data-time="{{ block.settings.countdown_time }}" data-countdown-type="hero-image" class="hero-image--content_countdown {% if block.settings.countdown_time != '' %} countdown-container {% endif %} {% if block.settings.text_shadow %} shadow {% endif %}">
+                      <span data-countdown></span>
+                      {% if block.settings.enable_countdown_signup %}
+                        <div class="klaviyo-form klaviyo-form-{{ block.settings.klaviyo_form_id }}"></div>
+                      {% endif %}
+                    </a>
+                  {% endif %}
+
+                  {% if block.settings.show_buttons %}
+                    <div class="hero-image--content_cta-buttons">
+                      {% if block.settings.button-1-content != '' and block.settings.button-1-link != '' %}
+                        <a href="{{ block.settings.button-1-link }}" class="c-btn c-btn--full">{{ block.settings.button-1-content }}</a>
+                      {% endif %}
+                      {% if block.settings.button-2-content != '' and block.settings.button-2-link != '' %}
+                        <a href="{{ block.settings.button-2-link }}" class="c-btn c-btn--full">{{ block.settings.button-2-content }}</a>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+
+                </div>
+
+              </div>
+
+              <style>
+                [aria-id={{block.id}}] {
+                  --{{block.id}}: {{ block.settings.text_colour }} !important;
+                }
+
+                [aria-id={{block.id}}] h5, [aria-id={{block.id}}] span {
+                  color: var(--{{block.id}}) !important;
+                }
+
+                [aria-id={{block.id}}] .hero-image--content_cta-buttons a {
+                  border-color: var(--{{block.id}}) !important;
+                  color: var(--{{block.id}}) !important;
+                }
+
+
+                {% if block.settings.enable_custom_positioning_desktop %}
+
+                @media screen and (min-width: 768px) {
+                  [aria-id={{block.id}}] .hero-image--content_cta {
+                    left: {{ block.settings.desktop_left }}%;
+                    bottom: {{ block.settings.desktop_top }}%;
+                    transform: translate(-50%, 50%) !important;
+                    margin-bottom: 0px !important;
+                  }
+                }
+
+                {% endif %}
+
+                {% if block.settings.enable_custom_positioning_mobile %}
+
+                @media screen and (max-width: 767px) {
+                  [aria-id={{block.id}}] .hero-image--content_cta {
+                    left: {{ block.settings.mobile_left }}%;
+                    bottom: {{ block.settings.mobile_top }}%;
+                    transform: translate(-50%, 50%) !important;
+                    margin-bottom: 0px !important;
+                  }
+                }
+
+                {% endif %}
+
+              </style>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<Style>
+  .splide__progress {
+    z-index: 2;
+    width: 100%;
+    height: 3px;
+    position: absolute;
+    bottom: 0px;
+  }
+  .splide__progress__bar {
+    background-color: white;
+  }
+  .splide__pagination__page {
+    height: 5px;
+  }
+  .splide__pagination__page.is-active {
+    background: #ccc !important;
+  }
+  .splide__pagination li:only-child {
+    display: none;
+  }
+  loading-bar {
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 0%;
+    background: #ffffff;
+  }
+  .hero-image--content_countdown.loaded {
+    z-index: 2;
+    width: auto;
+  }
+  .hero-image--content_countdown .klaviyo-form{
+    width: 100%;
+  }
+</Style>
+
+<script>
+
+    var slideArray = document.querySelectorAll('.hero-image-slideshow');
+
+    slideArray.forEach(slide => {
+
+    var highlightsCarousel = new Splide( slide )
+
+    highlightsCarousel.on( 'mounted', function () {
+
+      var sliderButtons = slide.querySelectorAll('.splide__pagination__page');
+
+      sliderButtons.forEach(button => {
+        button.innerHTML = '<loading-bar class="test-bar"></loading-bar>'
+        
+        var progressBar = slide.querySelector('.splide__progress__bar');
+
+        highlightsCarousel.on('active', Slide => {
+          activeBar = slide.querySelector('[aria-controls="' + Slide.slide.id + '"] loading-bar');
+        });
+
+        highlightsCarousel.on('autoplay:playing', rate => {
+          activeBar.style.width = `${rate * 100}%`;
+        });
+      });
+      
+    } );
+
+    highlightsCarousel.mount();
+
+    });
+
+</script>
+
+{% schema %}
+{
+  "name": "Hero Image - Slideshow",
+  "settings": [
+    {
+      "type": "range",
+      "id": "time",
+      "min": 1,
+      "max": 60,
+      "step": 1,
+      "unit": "s",
+      "label": "Time Per Slide",
+      "default": 5
+    }
+  ],
+  "max_blocks": 10,
+  "blocks": [
+    {
+      "name": "Section",
+      "type": "slide",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Background (Desktop)"
+        },
+        {
+          "type": "select",
+          "id": "content_type",
+          "label": "Content Type",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            }, {
+              "value": "video",
+              "label": "Video"
+            }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        },
+        {
+          "type": "header",
+          "content": "Background (Mobile/Tablet)"
+        },
+        {
+          "type": "select",
+          "id": "content_type_mobile",
+          "label": "Content Type",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            }, {
+              "value": "video",
+              "label": "Video"
+            }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video_mobile",
+          "label": "Video"
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+            "type": "color",
+            "id": "text_colour",
+            "label": "Content Colour",
+            "default": "#574941"
+        },
+        {
+          "type": "header",
+          "content": "Buttons"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_buttons",
+          "label": "Show Buttons",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_button_dropshadow",
+          "label": "Show Button Dropshadow",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "button-1-content",
+          "label": "Button 1 Content"
+        },
+        {
+          "type": "url",
+          "id": "button-1-link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "button-2-content",
+          "label": "Button 2 Content"
+        },
+        {
+          "type": "url",
+          "id": "button-2-link",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_dropshadow",
+          "label": "Show Content Dropshadow",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_backdrop",
+          "label": "Show Content Backdrop",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_scroll",
+          "label": "Show Scroll Button",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Countdown"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_countdown",
+          "label": "Enable Countdown",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_countdown_signup",
+          "label": "Enable Countdown Signup",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "klaviyo_form_id",
+          "label": "Klaviyo Form ID",
+          "default": "UsPdCH"
+        },
+        {
+          "type": "text",
+          "id": "countdown_title",
+          "label": "Countdown Title"
+        },
+        {
+          "type": "text",
+          "id": "countdown_text",
+          "label": "Countdown Content"
+        },
+        {
+          "type": "text",
+          "id": "countdown_time",
+          "label": "Countdown Time",
+          "info": "Must follow following format 'Feb 15, 2024 19:00:00 GMT' (in GMT)"
+        },
+        {
+          "type": "checkbox",
+          "id": "text_shadow",
+          "label": "Add Shadow to Countdown Content?",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Positioning"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_custom_positioning_mobile",
+          "label": "Enable Custom Mobile Positioning",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "mobile_left",
+          "label": "Mobile X Axis",
+          "unit": "%",
+          "min": 0,
+          "max": 100,
+          "step": 2,
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "mobile_top",
+          "label": "Mobile Y Axis",
+          "unit": "%",
+          "min": 0,
+          "max": 100,
+          "step": 2,
+          "default": 50
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_custom_positioning_desktop",
+          "label": "Enable Custom Desktop Positioning",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "desktop_left",
+          "label": "Desktop X Axis",
+          "unit": "%",
+          "min": 0,
+          "max": 100,
+          "step": 2.5,
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "desktop_top",
+          "label": "Desktop Y Axis",
+          "unit": "%",
+          "min": 0,
+          "max": 100,
+          "step": 2.5,
+          "default": 50
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Image - Slideshow"
+    }
+  ]
+}
+{% endschema %}

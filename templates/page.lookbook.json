@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+      }
+    },
+    "lookbook_cHm3rV": {
+      "type": "lookbook",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "main",
+    "lookbook_cHm3rV"
+  ]
+}

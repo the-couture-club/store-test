@@ -1,0 +1,12 @@
+#anniversary-title {
+  font-family: math;
+  font-size: 9vw;
+  line-height: 1;
+  text-align: center;
+}
+
+@media screen and (min-width: 768px) {
+  #anniversary-title {
+    font-size: 6vw;
+  }
+}

@@ -1,0 +1,81 @@
+<div id="faq-section">
+  <span class="cc-fs1 cc-uppercase">FAQ</span>
+  <div class="faq-container">
+
+    {% for faq in shop.metaobjects['product_page_faq'].values %}
+      <div aria-open="false" class="faq-question">
+        <div class="faq-question--title cc-fs2">
+          <span>{{ faq.faq_title.value }}</span>
+          <i class="icon icon--plus" aria-hidden="true"></i>
+        </div>
+        <div class="faq-question--content cc-fs2">{{ faq.faq_content | metafield_tag }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  .faq-question {
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    transition: 0.2s;
+    cu
+  }
+  .faq-question .faq-question--title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .faq-question[aria-open="false"] {
+    gap: 0;
+  }
+  .faq-question .icon {
+    transition: 0.2s;
+  }
+  .faq-question[aria-open="true"] .icon {
+    transform: rotate(45deg);
+  }
+  .faq-question .faq-question--content {
+    height: 0;
+    overflow: hidden;
+  }
+  .faq-question a {
+    text-decoration: underline;
+  }
+  .faq-question p, .faq-question ul {
+    margin-bottom: 0px;
+  }
+  .faq-question .metafield-rich_text_field {
+    padding-bottom: 10px;
+  }
+</style>
+
+<script>
+  var questions = document.querySelectorAll('.faq-question');
+  questions.forEach((q) => {
+    q.querySelector('.faq-question--title').addEventListener('click', () => {
+      var active = q.getAttribute('aria-open');
+      console.log(active);
+      if (active == 'true') {
+        q.setAttribute('aria-open', 'false');
+        gsap.to(q.querySelector('.faq-question--content'), {
+          height: '0px',
+          opacity: '0',
+          duration: 0.2
+        })
+      } else {
+        console.log('false')
+        q.setAttribute('aria-open', 'true');
+        gsap.to(q.querySelector('.faq-question--content'), {
+          height: 'auto',
+          opacity: '0.5',
+          duration: 0.2
+        })
+      }
+    });
+  });
+</script>

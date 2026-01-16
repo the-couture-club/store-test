@@ -1,0 +1,136 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "shogun-helper": {
+      "type": "shogun-helper",
+      "disabled": true,
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
+    "shogun-optimizer": {
+      "type": "shogun-optimizer",
+      "disabled": true,
+      "settings": {}
+    },
+    "section_liquid_niiXfn": {
+      "type": "section-liquid",
+      "custom_css": [
+        "{display: flex; justify-content: center; margin-bottom: -40px;}"
+      ],
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "<img width='100px' src='https://cdn.shopify.com/s/files/1/0242/6047/6980/files/TCC_ACTIVE_LOGO_BLACK_20_X_20-TRANSPARENT_BG.png?v=1764067965'>"
+      }
+    },
+    "section_custom_mGQxi4": {
+      "type": "section-custom",
+      "blocks": {
+        "spacer_AwGHzj": {
+          "type": "spacer",
+          "settings": {
+            "space": "large"
+          }
+        },
+        "text_ba9qbd": {
+          "type": "text",
+          "settings": {
+            "title": "",
+            "text": "<h1><strong>The Couture Club Performance Collection: </strong><em><strong>Luxury in Motion</strong></em></h1><p>Introducing The Couture Club Performance, premium fashion into the grit of performance wear - merging utility with the aesthetic of everyday movement.</p><p>We’re entering a new era with the debut of our first-ever Performance Range, engineered for the everyday athlete, designed to elevate daily movement through a new standard of luxury performance wear.</p><p>Crafted to unite cross discipline functionality with high-end fashion, \u0003the collection features earth-inspired hues and translucent fabrications for a contemporary style.</p><p><strong>Sign up for exclusive first look and a gift with purchase:</strong></p>",
+            "link_title": "Learn more",
+            "link": "",
+            "align": "center",
+            "width": "2/3"
+          }
+        }
+      },
+      "block_order": [
+        "spacer_AwGHzj",
+        "text_ba9qbd"
+      ],
+      "custom_css": [
+        "h1 {font-size: 16px;}",
+        "p {font-size: 12px;}",
+        " {font-family: sans-serif; margin-bottom: -12px;}"
+      ],
+      "name": "Custom content",
+      "settings": {
+        "section-bottom-margin": true
+      }
+    },
+    "section_liquid_V98Yjk": {
+      "type": "section-liquid",
+      "custom_css": [
+        "{margin-bottom: 12px; padding: 0 18px;}"
+      ],
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "<div class=\"klaviyo-form-QNn7wq\"></div>"
+      }
+    },
+    "section_liquid_WBYcAm": {
+      "type": "section-liquid",
+      "custom_css": [
+        "{font-family: sans-serif; justify-self: center; text-align: center; font-size: 12px; align-content: center;}"
+      ],
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "Follow our new Couture Performance Instagram <a href=\"https://www.instagram.com/thecoutureclub____performance/?utm_source=ig_web_button_share_sheet\" title=\"@thecoutureclub____performance\">\n<em><strong>@thecoutureclub____performance</strong></em>\n</a>"
+      }
+    },
+    "section_liquid_ChFpPn": {
+      "type": "section-liquid",
+      "custom_css": [
+        "{margin-bottom: 50px; justify-self: center;}"
+      ],
+      "name": "Custom Liquid",
+      "settings": {
+        "custom_liquid": "<a href='https://www.instagram.com/thecoutureclub____performance/'>\n<i class=\"icon icon--instagram\" aria-hidden=\"true\"></i>\n</a>"
+      }
+    },
+    "section_images_AVFEep": {
+      "type": "section-images",
+      "name": "Images",
+      "settings": {
+        "image_1": "shopify://shop_images/000099230010_1.jpg",
+        "image_2": "shopify://shop_images/000099270004_1.jpg",
+        "image_3": "shopify://shop_images/000099260003_1.jpg",
+        "image_4": "shopify://shop_images/000099260001_1.jpg",
+        "image_5": "shopify://shop_images/000099260005_1.jpg",
+        "image_6": "shopify://shop_images/WhatsApp_Image_2025-11-24_at_11.37.29_7.jpg",
+        "image_7": "shopify://shop_images/WhatsApp_Image_2025-11-24_at_11.37.31_2.jpg",
+        "image_8": "shopify://shop_images/000099270008_1.jpg",
+        "image_9": "shopify://shop_images/000099190009_1.jpg",
+        "image_10": "shopify://shop_images/WhatsApp_Image_2025-11-24_at_11.37.31_1.jpg",
+        "image_11": "shopify://shop_images/000099230009_1.jpg",
+        "image_12": "shopify://shop_images/WhatsApp_Image_2025-11-24_at_11.37.30_2.jpg",
+        "image_13": "shopify://shop_images/000099220004_1.jpg",
+        "image_14": "shopify://shop_images/WhatsApp_Image_2025-11-24_at_11.37.30_8.jpg",
+        "image_15": "shopify://shop_images/000099260008_1.jpg",
+        "image_16": "shopify://shop_images/WhatsApp_Image_2025-11-24_at_11.37.30_4.jpg"
+      }
+    }
+  },
+  "order": [
+    "shogun-helper",
+    "main",
+    "shogun-optimizer",
+    "section_liquid_niiXfn",
+    "section_custom_mGQxi4",
+    "section_liquid_V98Yjk",
+    "section_liquid_WBYcAm",
+    "section_liquid_ChFpPn",
+    "section_images_AVFEep"
+  ]
+}

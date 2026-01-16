@@ -1,0 +1,51 @@
+{%- assign page_url = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&'  -%}
+
+{% assign idList = page_url | split: 'prodid=' | last %}
+{% assign idList = idList | split: ',' %}
+
+
+<div id="wishlist-render">
+
+
+    {% for id in idList %}
+
+    {% render 'product-grid-item',
+        product: all_products[id],
+        swatchEnable: false,
+        page: 'recommendations',
+        nodrawer: false,
+        wishlistPage: true,
+        scroll_snap: false
+    %}
+
+    {% endfor %}
+
+</div>
+
+{% style %}
+    #wishlist-render {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    button.wishlist-remove {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        padding: 0px;
+        border: 0px;
+        background: transparent;
+        font-size: 13px;
+    }
+{% endstyle %}
+
+{% schema %}
+    {
+      "name": "Wishlist Render (Ignore)",
+      "settings": [],
+      "presets": [
+      {
+          "name": "Wishlist Render (Ignore)"
+      }
+      ]
+    }
+  {% endschema %} 

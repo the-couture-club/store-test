@@ -1,0 +1,194 @@
+<div id="job_post-container">
+  <div id="job_post-banner">
+      <div class="job_post-banner_content">
+        <div class="title">{{ metaobject.job_title.value }}</div>
+        <div class="subtitle">{{ metaobject.job_post_subtitle.value }}</div>
+      </div>
+      <img class="u-hidden@tab-down" src="{{ metaobject.job_post_image.value | image_url }}">
+      <img
+          class="u-hidden@tab-up collection__header-img collection__header-img--{{ section.id }}"
+          src="{{ metaobject.job_post_mobile_image.value | img_url: '600x' }}"
+          srcset="{% render 'bgset', image: metaobject.job_post_mobile_image.value %}"
+          width="600"
+          height="{{ 600 | divided_by: metaobject.job_post_mobile_image.value.aspect_ratio | round }}"
+          sizes="100vw"
+          alt="{{ metaobject.job_post_title.value }}"
+          loading="eager"
+      />
+  </div>
+  <div id="job_post-content">
+    <div aria-type="content">
+      <h1>{{ metaobject.job_title.value }}</h1>
+      <content>{{ metaobject.job_post_content_ | metafield_tag }}</content>
+    </div>
+    <div {% if metaobject.job_post_lock_form.value  == true %}disabled{% endif %} aria-type="form">
+      {% for block in section.blocks %}
+        {% render block %}
+      {% endfor %}
+    </div>
+  </div>
+  <div class="job_post-map">
+    <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q={{ metaobject.job_post_location.value | url_encode }}&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+  </div>
+</div>
+
+<style>
+
+#job_post-banner {
+  position: fixed;
+  height: calc(100vh - var(--header-section-height));
+  top: var(--header-section-height);
+  width: 100%
+}
+#job_post-banner img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  opacity: 20%;
+}
+#job_post-banner {
+  background: black;
+  z-index: -1;
+}
+
+announcement-bar { 
+    display: none;
+}
+
+body {
+    overflow: scroll;
+    height: 100vh;
+}
+
+#job_post-content {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  gap: 10%;
+  justify-content: center;
+  margin-bottom: 0px;
+  padding-top: 100vh;
+  background: white;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  margin-top: calc(100vh - var(--header-section-height));
+}
+
+#job_post-content [aria-type] {
+  position: sticky;
+  max-width: 30%;
+  display: block;
+  height: 100%;
+  top: 115px;
+}
+
+#job_post-content h1 {
+  font-weight: 600;
+}
+
+#job_post-content [aria-type="form"][disabled]:before {
+    align-content: center;
+    text-align: center;
+    content: 'Registration Closed';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    background: #ffffffc9;
+    backdrop-filter: blur(2px);
+    font-size: 26px;
+    font-weight: 600;
+}
+
+form-embed {
+  margin-top: -25px;
+}
+
+.job_post-map {
+  height: calc(100vh - var(--header-section-height));
+  width: 100%;
+  display:flex;
+}
+
+.job_post-banner_content {
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  text-shadow: 0px 0px 10px #000000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1.5;
+  width: 90%;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  text-transform: uppercase;
+}
+
+.job_post-banner_content .title {
+  font-size: 3vw;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.job_post-banner_content .subtitle {
+  font-size: 2vw;
+  font-weight: 300;
+}
+
+@media screen and (max-width: 767px) {
+  #job_post-content {
+    flex-direction: column;
+    padding: 60px 30px;
+    gap: 60px;
+  }
+  #job_post-content [aria-type] {
+    max-width: none;
+    position: relative;
+    top: 0px;
+  }
+  .job_post-banner_content .title {
+    font-size: 7vw;
+  }
+  .job_post-banner_content .subtitle {
+  font-size: 16px;
+}
+
+}
+
+</style>
+
+<script>
+    var docElement = document.querySelector('html');
+    docElement.classList.add("no-scroll");
+</script>
+
+{% schema %}
+    {
+      "name": "job_post Signup Page",
+      "settings": [
+        {
+            "type": "image_picker",
+            "id": "desktop",
+            "label": "Desktop Image"
+        },
+        {
+            "type": "image_picker",
+            "id": "mobile",
+            "label": "Mobile Image"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "@app"
+        }
+      ],
+      "presets": [
+          {
+              "name": "job_post Signup Page"
+          }
+      ]
+    }
+  {% endschema %}

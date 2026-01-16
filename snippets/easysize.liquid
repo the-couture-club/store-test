@@ -1,0 +1,292 @@
+<div class="easysize-container"></div>
+{% if content_for_header contains "previewBarInjector.init();" %}
+    <div class="easysize-container-debug"></div>
+{% endif %}
+
+<script async type="text/javascript" src="https://webapp.easysize.me/web_app_v1.0/js/easysize.js"></script>
+<script type="text/javascript" async>
+    function debug_easysize_product() {
+      setTimeout(() => {
+        var theme_debug_string = document.createElement("p");
+        theme_debug_string.innerHTML = " - This will only render in the theme editor - " + "<br />" + "This product is not supported by our FIT Quiz";
+        var debugContainer = document.querySelector(".easysize-container-debug");
+        if (window.EasySizeParametersDebug.product && !window.EasySizeParametersDebug.product.supported && debugContainer) {
+          debugContainer?.append(theme_debug_string);
+        } else {
+          theme_debug_string.remove();
+        }
+      }, 1000);
+    }
+  
+    function get_default_placeholder() {
+      var input_options = ["input", "option", "button", "div"];
+      var attribute_values = ["value", "data-value"];
+      var product_options_with_values = {{ product.options_with_values | json }}
+      var product_size_attributes = [];
+      for (product_option of product_options_with_values) {
+        if (size_option_titles.includes(product_option.name) || size_option_titles.includes(product_option.name.toLowerCase())) {
+          for (value of product_option.values) {
+            product_size_attributes.push(value);
+          }
+        }
+      }
+  
+      function get_search_string_for(tag, attribute_value) {
+        return product_size_attributes.map(value => tag + "[" + attribute_value + "=" + "'" + value + "'" + "]");
+      }
+  
+      for (tag of input_options) {
+        for (attribute_value of attribute_values) {
+          var search_string = get_search_string_for(tag, attribute_value);
+          var search_list = document.querySelectorAll(search_string);
+          if (search_list.length === product_size_attributes.length) {
+            return "." + search_list?.[0]?.parentElement?.parentElement?.parentElement?.classList[0].split(" ")?.[0];
+          } else {
+            continue;
+          }
+        }
+      }
+  
+      return ".easysize-container"
+    }
+  
+    var product_collections = {{ product.collections | json }};
+    var product_tags = {{ product.tags | json }};
+    var product_title = {{ product.title | json }};
+    var product_variants = {{ product.variants | json }};
+    var product_options = {{ product.options | json }};
+    try {
+      var size_option_titles = window.easysize_globals?.size_option_titles || ["taglia", "size", "misura", "talla", "størrelse", "maat", "größe", "storlek"];
+    } catch(e) {
+      var size_option_titles = ["taglia", "size", "misura", "talla", "størrelse", "maat", "größe", "storlek"];
+    }
+    var size_option_index = -1;
+    var sizes_in_stock = {};
+  
+    for (var i = 0; i < product_options.length; i++) {
+      var found = false;
+      for (var y = 0; y < size_option_titles.length; y++) {
+        if (product_options[i].toLowerCase() === size_option_titles[y].toLowerCase()) {
+          found = true;
+          swatch_index = i;
+          size_option_index = "option" + (++i);
+          break;
+        }
+      }
+  
+      if (found) break;
+    }
+  
+    for (var i = 0; i < product_variants.length; i++) {
+      var size = product_variants[i][size_option_index];
+      var stock = product_variants[i].available ? 1 : 0;
+  
+      if (sizes_in_stock.hasOwnProperty(size)) {
+        if (sizes_in_stock[size] < stock) {
+          sizes_in_stock[size] = stock;
+        }
+      } else {
+        sizes_in_stock[size] = stock;
+      }
+    }
+  
+    var missing_function = function() {
+      console.warn('Missing function in the settings')
+    }
+  
+    // --- dynamic settings ---
+    var placeholder = "{{ settings.easysize_placeholder }}" || window.easysize_globals?.placeholder || get_default_placeholder() || ".easysize-container";
+    var size_selector = "{{ settings.easysize_size_selector }}" || window.easysize_globals?.size_selector ||  get_default_placeholder() || ".easysize-container";
+    var shop_id = "{{ settings.easysize_shop_id }}" || window.easysize_globals?.shop_id || "";
+    var order_button_id = "{{ settings.easysize_order_button_id }}" || window.easysize_globals?.order_button_id || "";
+    var product_brand = "{{ settings.easysize_product_brand }}" || window.easysize_globals?.brand || "";
+    var language = "{{ settings.easysize_language }}" || window.easysize_globals?.language || "";
+    var one_click = "{{ settings.easysize_one_click_integration }}" || false;
+    {% if settings.mapped_genders %}
+      var mapped_genders = {{ settings.mapped_genders }}
+    {% else %}
+      var mapped_genders = window.easysize_globals?.mapped_genders || {}
+    {% endif %}
+  
+    {% if settings.easysize_size_update_function %}
+      var size_update_function = {{ settings.easysize_size_update_function }}
+    {% else %}
+      var size_update_function = window.easysize_globals?.size_update_function || missing_function
+    {% endif %}
+    // --- dynamic settings ---
+    // One click settings
+    const fit_options = ['Fit'];
+    const size_option_length_titles = ['Length', 'lengte'];
+  
+    const fit_option_index = -1;
+    const length_option_index = -1;
+  
+    const available_fits = [];
+    const available_lengths = [];
+  
+    let known_options = ['input', 'option', 'div', 'a', 'li'];
+    let known_option_attributes = ['value', 'data-value', 'aria-label'];
+    let option_type = undefined; 
+    let option_attribute = undefined;
+    let predicted_placeholder = '.es_placeholder';
+    let predicted_add_to_cart_button = 'form[action*="/cart/add"] button[type="submit"]';
+    
+      
+    known_options.forEach(option => {
+      known_option_attributes.forEach(attribute => {
+        let size_selector = document.querySelector(option + '[' + attribute + '="' + product_variants[0][size_option_index] + '"]');
+        if (size_selector) {
+          option_type = option;
+          option_attribute = attribute;
+          size_selector.parentElement.parentElement.classList.add(predicted_placeholder.split('.')[1]);
+        }
+      })
+    });
+      
+    // Get available fits and/or length index
+    for (var i = 0; i < product_options.length; i++) {
+      var found = false;
+      if (product_options[i].toLowerCase() === 'fit') {
+        fit_option_index = "option" + (++i);
+      }
+  
+      if (size_option_length_titles.includes(product_options[i].toLowerCase())) {
+        length_option_index = "option" + (++i);
+      }
+    }
+  
+    // Get the available lengths and/or fits
+    for (var i = 0; i < product_variants.length; i++) {
+      var fit = product_variants[i][fit_option_index];
+      var length = product_variants[i][length_option_index];
+  
+      if (available_fits.indexOf(fit) !== -1) {
+        available_fits.push(fit)
+      }
+  
+      if (available_lengths.indexOf(length) !== -1) {
+        available_lengths.push(length);
+      }
+    }
+    
+    function select_element(element) {
+      if (!element) { return; }
+      if (option_type === 'option') {
+        element.selected = true;
+        var select = element.parentNode;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      } else {
+        element.click();
+      }
+    }
+    
+    function one_click_size_update_function(size) {
+      if (size_update_function(size)) {
+        return true
+      }
+
+      let recommended_size = size.split('/')[0].trim()
+      size_element = document.querySelector(option_type + '[' + option_attribute + '="' + recommended_size + '"]')
+      if (size_element) {
+        select_element(size_element);
+        if (EasySizeParametersDebug.easysize.recommended_fit) {
+          recommended_fit = EasySizeParametersDebug.easysize.recommended_fit;
+          let fit_element = document.querySelector(option_type + '[' + option_attribute + '="' + recommended_fit + "']")
+          select_element(fit_element);
+        }
+        if (EasySizeParametersDebug.easysize.recommended_length) {
+          recommended_length = EasySizeParametersDebug.easysize.recommended_length;
+          let length_element = document.querySelector(option_type + '[' + option_attribute + '="' + recommended_length + "']")
+          select_element(length_element);
+        }
+        return true;
+      } 
+      return false;
+    }
+    // End of one click settings
+    
+    
+    
+    var product_type = product_tags?.find(tag => tag.includes("ES_CAT:"))?.split(":")?.[1];
+    var product_model = product_tags?.find(tag => tag.includes("ES_MODEL:"))?.split(":")?.[1];
+    
+    var mapped_collections = product_collections.map(col => "[Collection] " + col.title.toLowerCase());
+    var tags = product_tags.map(tag => "[Tag] " + tag);
+    var tags_and_colls = mapped_collections.concat(tags);
+    var is_male = tags_and_colls.filter(tc => mapped_genders?.maleMapping.length > 1 ?
+            mapped_genders?.maleMapping?.includes(tc) :
+            mapped_genders.maleMapping[0]?.split(', ').includes(tc)).length
+    var is_female =  tags_and_colls.filter(tc => mapped_genders?.femaleMapping.length > 1 ?
+            mapped_genders?.femaleMapping?.includes(tc) :
+            mapped_genders.femaleMapping[0]?.split(', ').includes(tc)).length
+  
+    var product_gender = is_male ? "m" : is_female ? "f" : mapped_genders?.defaultMapping?.[0] || 'u';
+    if (is_male && is_female) {
+      product_gender = 'u'
+    }
+
+    if (!document.querySelector(placeholder) && one_click == 'true' && document.querySelector(predicted_placeholder)) {
+      placeholder = predicted_placeholder
+    }
+
+    if (!document.querySelector(size_selector) && one_click == 'true' && document.querySelector(predicted_placeholder)) {
+      size_selector = predicted_placeholder
+    }
+
+  
+    var easysize_attributes = {
+      "placeholder": placeholder,
+      "size_selector": size_selector,
+      "shop_id": shop_id,
+      "order_button_id": one_click == 'true' && document.querySelector(predicted_add_to_cart_button) ? predicted_add_to_cart_button : order_button_id,
+      "product_brand": product_brand,
+      "language": language,
+      "size_update_function": one_click == 'true' ? one_click_size_update_function : size_update_function,
+      "product_type": product_type || "{{ product.type }}",
+      "product_model": product_model,
+      "product_title": product_title,
+      "product_gender": product_gender,
+      "product_tags": product_tags,
+      "product_id": "{{ product.id }}",
+      "user_id": "{% if customer %}{{ customer.id }}{% else %}{{ "-1" }}{% endif %}",
+      "image_url": "https:{{ product.featured_image.src | image_url: "large" }}",
+      "loaded": function() {
+        var forms = document.querySelectorAll('form[action*="/cart/add"]');
+        forms.forEach(function(form) {
+          var input = document.createElement("input");
+          input.type = "hidden";
+          input.id = "esid-input";
+          input.name = "properties[_esid]";
+          input.value = EasySizeParametersDebug.easysize.pageview_id;
+          form.append(input);
+        })
+      },
+      "sizes_in_stock": sizes_in_stock,
+      available_fits,
+      available_lengths
+    };
+    
+    try {
+      easysize_attributes = Object.assign(easysize_attributes, window.easysize_globals);
+    } catch (e) {
+      console.warn(e);
+    }
+
+    window.addEventListener("easysize_ready", function() {
+      window.easy_size = new EasySize(easysize_attributes);
+      window.easy_size.start();
+      debug_easysize_product();
+    });
+    document.addEventListener("shopify:section:load", () => {
+      window.easy_size.refresh();
+      debug_easysize_product();
+    });
+
+</script>
+
+<style>
+  .es-product_form__select-container {
+    display: flex;
+    height: fit-content !important;
+  }
+</style>

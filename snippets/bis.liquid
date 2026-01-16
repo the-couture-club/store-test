@@ -1,0 +1,177 @@
+<div id="bis" aria-override="{{override}}" data-id="{{product.id}}">
+    <content>
+        {% if override %}
+        {% else %}
+        <div class="bis_title">
+            {% if handle == 'restock' %}
+                {{ "custom.bis.restock.title" | t }}
+            {% elsif handle == 'launch' %}
+                {{ "custom.bis.launch.title" | t }}
+            {% else %}
+                {{ "custom.bis.title" | t }}
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% unless override %}
+
+        <div class="bis_text cc-fs2">
+
+        {% if handle == 'restock' %}
+            {{ "custom.bis.restock.text" | t }}
+        {% elsif handle == 'launch' %}
+            {{ "custom.bis.launch.text" | t }}
+        {% else %}
+            {{ "custom.bis.text" | t }}
+        {% endif %}
+
+        </div>
+
+        {% if handle == 'restock' %}
+            <div class="bis_text cc-fs2">{{ "custom.bis.restock.date" | t | replace: '[date]', product.metafields.global.coming_soon_eta_display }}</div>
+        {% elsif handle == 'launch' %}
+            <div class="bis_text cc-fs2">{{ "custom.bis.launch.date" | t | replace: '[date]', product.metafields.global.coming_soon_eta_display }}</div>
+        {% endif %}
+            
+        {% endunless %}
+
+        <div class="bis_prod-title cc-bold">{{product.title}}</div>
+        <div class="quick-shop-bis">
+            <input name="productID" value="{{product.id}}" required hidden>
+            <input name="id" required hidden>
+            <select id="bis-select">
+                <option selected disabled>{{ "custom.bis.size" | t | uppercase }}</option>
+                {% for variant in product.variants %}
+                <option test="{{handle}}" {% if handle != 'restock' and handle != 'launch' and variant.available == true %}disabled{% endif %} value="{{variant.id}}">{{variant.title}}</option>
+                {% endfor %}
+            </select>
+            <div class="quick-shop-bis__content">
+
+            <input
+            type="email"
+            placeholder="{{ "custom.bis.email" | t | uppercase }}"
+            {% if customer %}value="{{ customer.email }}"{% endif %}
+            pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$"
+            required
+        >
+
+            </div>
+
+
+            <button disabled onclick="BISGlobal(this)" name="add" class="c-btn c-btn--full product-form__add-btn js-product-add">
+                <span class="product-form__add-btn__text">
+                    <span class="js-product-add-text">
+
+                    {% if handle == 'restock' %}
+                        {{ "custom.bis.restock.cta" | t }}
+                    {% elsif handle == 'launch' %}
+                        {{ "custom.bis.launch.cta" | t }}
+                    {% else %}
+                        {{ "custom.bis.cta" | t }}
+                    {% endif %}
+
+                    </span>
+                </span>
+                <span class="product-form__add-btn__tick"><i class="icon icon--tick"></i></span>
+                <span class="product-form__add-btn__spinner">
+                    <div class="theme-spinner">
+                        <div class="theme-spinner__border"></div>
+                        <div class="theme-spinner__border"></div>
+                        <div class="theme-spinner__border"></div>
+                        <div class="theme-spinner__border"></div>
+                    </div>
+                </span>
+            </button>
+        </div>
+    </content>
+</div>
+
+<script>
+
+    function BISinit(elem) {
+
+        theme.mfpOpen("bis-popup-lookbook", elem)
+        console.log(elem)
+
+        var select = elem.querySelector('#bis-select');
+
+        select.addEventListener('change', (event) => {
+                elem.querySelector('[name="id"]').setAttribute('value', select.value);
+                elem.querySelector('[name="add"]').removeAttribute('disabled')
+        });
+    }
+
+    function BISGlobal(elem) {
+        var container = elem.closest('#bis');
+        console.log(container);
+        event.preventDefault();
+        var buttonContainer = container.querySelector('button.js-product-add');
+        var variantID = container.querySelector('input[name="id"]').value;
+        var prodID = container.querySelector('input[name="productID"]').value;
+        var emailInput = container.querySelector('[type="email"]');
+        var isMarketing = 'true';
+
+        console.log(emailInput.value, variantID, prodID);
+
+        if (emailInput.validity.valid) {
+            promise = BIS.create(emailInput.value, variantID, prodID, { accepts_marketing: isMarketing })
+            buttonContainer.classList.add('is-adding');
+            promise.then(function(data) {
+                buttonContainer.classList.remove('is-adding');
+                buttonContainer.classList.add('is-added');
+                setTimeout(() => { buttonContainer.classList.remove('is-added')
+                $.magnificPopup.close();
+                }, "1000");
+            })
+        } else {
+            emailInput.classList.add('denied')
+            setTimeout(() => { buttonContainer.classList.remove('is-added')
+                emailInput.classList.remove('denied')
+            }, "1000");
+        }
+    }
+
+</script>
+
+<style>
+    #bis {
+        display: none !important;
+        position: relative;
+        left: 50%;
+        transform: translate(-50%, 0px);
+        max-width: 400px;
+    }
+
+    .mfp-container #bis {
+        display: block !important;
+    }
+
+    #bis content {
+        display: block;
+        background: white;
+        padding: 20px;
+        width: 100%;
+        line-height: 1;
+        gap: 20px;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+    .denied {
+        transition: 0.3s;
+        border: red 1px solid;
+    }
+    #bis[aria-override="false"] .bis_prod-title {
+        padding-top: 20px;
+        border-top: 1px solid lightgray;
+    }
+    .bis_text {
+        line-height: 1.2;
+    }
+
+    @media screen and (max-width: 767px) {
+        #bis {
+        max-width: 80%;
+        }
+    }
+</style>

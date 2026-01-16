@@ -1,0 +1,70 @@
+<picture style="position: relative;">
+  {%- comment -%} Desktop (≥768px) – WebP {%- endcomment -%}
+  <source
+    media="(min-width: 768px)"
+    type="image/webp"
+    srcset="
+      {{ imageMobile | image_url: width: 360,  format: 'webp' }} 360w,
+      {{ imageMobile | image_url: width: 540,  format: 'webp' }} 540w,
+      {{ imageMobile | image_url: width: 720,  format: 'webp' }} 720w,
+      {{ imageMobile | image_url: width: 900,  format: 'webp' }} 900w,
+      {{ imageMobile | image_url: width: 1080, format: 'webp' }} 1080w,
+      {{ imageMobile | image_url: width: 1296, format: 'webp' }} 1296w,
+      {{ imageMobile | image_url: width: 1512, format: 'webp' }} 1512w"
+    sizes="{{ image_sizes }}"
+  />
+
+  {%- comment -%} Mobile (<768px) – WebP {%- endcomment -%}
+  <source
+    media="(max-width: 767.98px)"
+    type="image/webp"
+    srcset="
+      {{ imageDesktop | image_url: width: 180, format: 'webp' }} 180w,
+      {{ imageDesktop | image_url: width: 360, format: 'webp' }} 360w,
+      {{ imageDesktop | image_url: width: 540, format: 'webp' }} 540w,
+      {{ imageDesktop | image_url: width: 720, format: 'webp' }} 720w"
+    sizes="100vw"
+  />
+
+  {%- comment -%} Desktop (≥768px) – fallback JPEG/PNG {%- endcomment -%}
+  <source
+    media="(min-width: 768px)"
+    srcset="
+      {{ imageMobile | image_url: width: 360 }} 360w,
+      {{ imageMobile | image_url: width: 540 }} 540w,
+      {{ imageMobile | image_url: width: 720 }} 720w,
+      {{ imageMobile | image_url: width: 900 }} 900w,
+      {{ imageMobile | image_url: width: 1080 }} 1080w,
+      {{ imageMobile | image_url: width: 1296 }} 1296w,
+      {{ imageMobile | image_url: width: 1512 }} 1512w"
+    sizes="{{ image_sizes }}"
+  />
+
+  {%- comment -%} Mobile (<768px) – fallback JPEG/PNG {%- endcomment -%}
+  <source
+    media="(max-width: 767.98px)"
+    srcset="
+      {{ imageDesktop | image_url: width: 180 }} 180w,
+      {{ imageDesktop | image_url: width: 360 }} 360w,
+      {{ imageDesktop | image_url: width: 540 }} 540w,
+      {{ imageDesktop | image_url: width: 720 }} 720w"
+    sizes="100vw"
+  />
+
+      {%- comment -%} Fallback image (required) {%- endcomment -%}
+    <img
+
+        href=""
+        class="product-card__img js-img-modal"
+        src="{{ imageMobile | img_url: '300x' }}"
+        alt="Collection Banner Image"
+        loading="lazy"
+        width="100%"
+        height="auto"
+    >
+
+    {% if href != null %}
+        <a class="image-overlay" href="{{href}}"></a>
+    {% endif %}
+
+</picture>

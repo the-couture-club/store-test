@@ -1,0 +1,132 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "shogun-helper": {
+      "type": "shogun-helper",
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {}
+    },
+    "cde020c5-a849-4aa3-9e71-1f90c7710507": {
+      "type": "section-faq",
+      "blocks": {
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-category-1": {
+          "type": "category",
+          "settings": {
+            "title": "Returns | FAQ"
+          }
+        },
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-2": {
+          "type": "article",
+          "settings": {
+            "title": "How do i return UK?",
+            "text": "<ul><li>All UK returns/exchanges must be registered through our returns portal to be accepted at our warehouse. Failure to register your return on our portal will result in your return being rejected. Please note: once a return request has been submitted through the portal, this can not be amended.</li><li>UK customers can access our portal here: <a href=\"https://www.thecoutureclub.com/pages/return-portal\">https://www.thecoutureclub.com/pages/return-portal</a></li><li>When returning your item, please send this back in a sealed package and you must include your returns form. If you choose using your own return service we recommend sending your parcel back to us using a tracked service.</li><li>We ask to allow 14 working days for all returns/exchanges to be processed once received.</li></ul>"
+          }
+        },
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-1": {
+          "type": "article",
+          "settings": {
+            "title": "How do i return International?",
+            "text": "<ul><li>All International customers it is your responsibility to return to us within 28 days of receiving your parcel, please keep your tracking safe.</li><li>When returning your item, please send this back in a sealed package and you must include your returns form.</li><li>We ask to allow 14 working days for all returns to be processed once received. We currently do not offer exchanges for International customers.</li><li>International customers can not be provided with pre paid labels for returns, if the item is faulty, please note pre paid labels can not be provide however please contact our customer service team if you are experiencing issues with your order. </li></ul>"
+          }
+        },
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-3": {
+          "type": "article",
+          "settings": {
+            "title": "Can i cancel my order?",
+            "text": "<ul><li>Unfortunately we are unable to cancel or amend orders right now due to the speed we send your items out. This is something we are looking into providing in the future, but for now, please return any items you no longer wish to keep and contact the carrier for any address amendments you would like to make.</li></ul>"
+          }
+        },
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-4": {
+          "type": "article",
+          "settings": {
+            "title": "Voucher Codes",
+            "text": "<ul><li>The following Terms and Conditions apply to all promotion codes or discount code offers.</li><li>Discount Codes and offers are valid on full price items only unless otherwise advertised.</li><li>Offers exclude all gift cards and other selected items.</li><li>To take advantage of an offer, the relevant Promotion Code must be entered at the checkout.</li><li>No cash or any other alternative will be given</li><li>The discount codes cannot be used in conjunction with any other offer</li><li>All purchases made using a discount code will eligible for a refund</li><li>Your statutory rights as a consumer are not affected.</li><li>Discount codes cannot be used in our Stores.</li></ul>"
+          }
+        },
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-5": {
+          "type": "article",
+          "settings": {
+            "title": "What do I do if my item is faulty?",
+            "text": "<p>If you receive a faulty item please return to us within 30 days’ of receipt of the faulty goods. Please remember to get in touch with our Customer Service team prior to returning.</p>"
+          }
+        },
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-6": {
+          "type": "article",
+          "settings": {
+            "title": "What is our returns/exchange policy?",
+            "text": "<ul><li>All UK customers can return items within 14 days from date of delivery for a refund or exchange. Returned items must be delivered back to our Warehouse within the 14 day period. Failure to return your order back to us in the correct time frame will result in your return being rejected and returned back to you.</li><li>If you choose to exchange an item/items, Once your return item/items have been processed in our warehouse your exchange order will be sent back out to you on a free standard delivery service.</li><li>For all International customers, please return unsuitable items within 28 days of receiving your parcels.</li><li>Items must be unworn and unwashed.</li><li>Items must have all tags attached.</li><li>Socks and underwear are non-refundable due to hygiene reasons.</li><li>Items must be returned in their original packaging.</li><li>Purchases made at Full Price, In sale, or with a discount code will be refunded, purchases made with a gift card will have their balance returned.</li><li>All customers must insert the return slip when returning their items. If you have lost your return slip you can easily download another <a href=\"https://cdn.shopify.com/s/files/1/0242/6047/6980/files/RETURNS_FORM_WITH_QR.pdf?v=1695129764\">HERE</a></li><li>Please include the above form with any returns to ensure your refund/exchange can be processed as quickly as possible.</li><li>Any items purchased in an online sample sale are non refundable/ exchangeable due to nature of sample sale, a gift card will be issued.<br/></li><li>Customs and duties may apply on international shipments.</li><li>All items must be returned on a promotion (Buy1get1free - 3FOR2) to recieve a full refund. If the free item is not returned the value of the free item will be deducted from your refund.</li><li>A £4 return fee will be added if our return labels are used to cover the cost of the return back to us if chosen on our returns portal.</li></ul>"
+          }
+        },
+        "73e48998-c327-4b26-af90-c47d8615d7fe": {
+          "type": "article",
+          "settings": {
+            "title": "How long does it take to process my return?",
+            "text": "<p>We aim to process your return ASAP, but on occasions, it may take up to 14 working days for us to handle your return and a further 7 days for your refund to be processed.</p>"
+          }
+        },
+        "9f14347d-bbeb-4096-acf7-3309f32b43ff": {
+          "type": "article",
+          "settings": {
+            "title": "I purchased online, can i return my item to one of your retail stores?",
+            "text": "<p>Unfortunately not. All orders placed through our online store are required to be returned to the returns address below. And in turn, all purchases made in our Trafford store will need to be returned back to their original point of sale</p>"
+          }
+        },
+        "2900cd6b-0daa-4eaa-b67b-0caeb4c159e8": {
+          "type": "article",
+          "settings": {
+            "title": "What is our returns address?",
+            "text": "<p>The Couture Club<br/>40-42 Matthews St,<br/>Manchester,<br/>M12 5BB</p>"
+          }
+        },
+        "f4cb5346-5400-4fe2-8368-dc73a18409c2": {
+          "type": "article",
+          "settings": {
+            "title": "What is our customer service email?",
+            "text": "<p>Our customer service email is customer.services@thecoutureclub.co.uk Please allow up to 48 hours for us to respond to your requests. For the quickest response time please email us directly at the email address above rather than any social media platforms.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-category-1",
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-2",
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-1",
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-3",
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-4",
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-5",
+        "template--16086828089396__cde020c5-a849-4aa3-9e71-1f90c7710507-article-6",
+        "73e48998-c327-4b26-af90-c47d8615d7fe",
+        "9f14347d-bbeb-4096-acf7-3309f32b43ff",
+        "2900cd6b-0daa-4eaa-b67b-0caeb4c159e8",
+        "f4cb5346-5400-4fe2-8368-dc73a18409c2"
+      ],
+      "disabled": true,
+      "settings": {
+        "enable_sidebar": false,
+        "cta_link_title": "Contact us",
+        "cta_link": "",
+        "cta_style": "link"
+      }
+    },
+    "shogun-optimizer": {
+      "type": "shogun-optimizer",
+      "settings": {}
+    }
+  },
+  "order": [
+    "shogun-helper",
+    "main",
+    "cde020c5-a849-4aa3-9e71-1f90c7710507",
+    "shogun-optimizer"
+  ]
+}

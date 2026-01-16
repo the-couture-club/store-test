@@ -1,0 +1,296 @@
+<script id="CartTemplate" type="text/template">
+{% raw %}
+    {{#if gwpCampaigns}}
+      {{#each gwpCampaigns}}
+        {{#if enableGwp}}
+          <div data-gwp-qualified="{{hasGift}}" class="ajaxcart__gift mobile-draw__fixed mobile-draw__header" data-gwp-handle="{{handle}}">
+              {{#unless hasGift}}
+              <img src="{{ productImage }}">
+              <div class="ajaxcart__gift-content">
+                  <span class="ajaxcart__gift-content-text cc-uppercase">
+                      {{#if reached}}
+                      Congratulations, you've unlocked a free {{ productTitle }}
+                      {{else}}
+                      {{{gwpText}}}
+                      {{/if}}
+                  </span>
+                  <div class="ajaxcart__gift-content-left cc-uppercase">
+                      {{#if reached}}
+                          {{#if hasGift}}
+                              <div data-gwp-reached="true">✓ Item Claimed</div>
+                          {{else}}
+                              <button type="button" class="c-btn c-btn--ghost cc-uppercase js-gwp-add" data-gwp-reached="false" data-gwp-handle="{{handle}}">+ Add Free Item</button>
+                          {{/if}}
+                      {{else}}      
+                          <div data-gwp-reached="false">Spend {{{ differenceMoney }}} more to redeem</div>
+                      {{/if}}
+                  </div>
+                  <div class="ajaxcart-bar">
+                      <span class="ajaxcart__gift-content-text ajaxcart-bar__progress" style="width: {{percent}}%;" data-threshold="{{thresholdRaw}}" data-eligible="{{eligibleRaw}}"></span>
+                  </div>
+              </div>
+              {{else}}
+              <span class="ajaxcart__gift-content ajaxcart__gift-content-text cc-uppercase">
+                  ✓ YOU'VE CLAIMED YOUR {{#unless reached}}FREE{{/unless}} {{ productTitle }}{{#unless reached}} - Spend {{{ differenceMoney }}} to get this for free{{/unless}}
+              </span>
+              {{/unless}}
+          </div>
+        {{/if}}
+      {{/each}}
+    {{/if}}
+
+
+    <div class="ajaxcart__scroller">
+        <div class="ajaxcart__products">
+
+            {{#if isPreOrder}}
+                <div class="product-card__preorder cc-uppercase">
+                    <span class="date">Pickup at Manchester Pop-up</span>
+                </div>
+            {{/if}}
+
+            {{#items}}
+
+            <div data-id="{{id}}" {{#if gwp}}data-gwp="true"{{/if}} class="ajaxcart__product">
+                <div class="ajaxcart__row product-card" data-line="{{line}}">
+
+                    <div class="ajaxcart__product-top">
+                        <div class="o-layout o-layout--small u-flex u-flex--middle">
+                            <div class="o-layout__item">
+                                <a href="{{url}}" class="ajaxcart__product-image">
+                                    <div class="o-ratio o-ratio--3:4 o-ratio--bg-product">
+                                        <div class="o-ratio__content">
+                                            {% endraw %}{{img}}{% raw %}
+                                            {{#if img}}
+                                                <img src="{{img}}" class="o-ratio__content" alt="{{ name }}">
+                                            {{else}}
+                                                <img src="{% endraw %}{{ 'placeholder.png' | asset_img_url: '240x' }}{% raw %}" class="o-ratio__content" alt="{{ name }}">
+                                            {{/if}}
+                                        </div>
+                                        <div class="theme-spinner">
+                                            <div class="theme-spinner__border"></div>
+                                            <div class="theme-spinner__border"></div>
+                                            <div class="theme-spinner__border"></div>
+                                            <div class="theme-spinner__border"></div>
+                                        </div>
+
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="o-layout__item">
+
+                                <div class="product-card__details">
+
+                                    <a href="{{url}}" class="product-card__link js-product-link" title="{{name}}">
+                                        <h3 class="product-card__title f-family--body f-caps--false f-space--0">{{title}}</h3>
+                                    </a>
+                         
+                                    <div class="product-card__details__hover u-medium">
+                                        <div class="product-card__variants">
+                                            <p class="colour">
+                                                {{colour}}
+                                            </p>
+                                            <p class="variants">
+                                                {{variation}}
+                                            </p>
+                                            {{#if isStockMessage}}
+                                                <span class="last_stock cc-fs2 cc-uppercase" stock="{{stockMessage}}">
+                                                    <div class="ring-container">
+                                                        <div class="ringring"></div>
+                                                        <div class="circle"></div>
+                                                    </div>
+                                                    <div>{{stock}} {{stockLabel}} Left</div>
+                                                </span>
+                                            {{/if}}
+                                        </div>
+
+                                        {{#if gwp}}
+                                            <div class="ajaxcart_gwp-reached cc-uppercase cc-fs2">✓ Free Item</div>
+                                        {{/if}}
+                                        
+                                        <div class="ajaxcart_price price product-card__link">
+                                            {{#if lineDiscount}}
+        
+                                            <div class="ajaxcart-item__price--container">
+                                                {{#if hasComparePrice}}
+                                                <div class="ajaxcart-item__price ajaxcart-item__price--original"><s><span class="money">{{{comparePriceLine}}}</span></s></div>
+                                                {{else}}
+                                                <div class="ajaxcart-item__price ajaxcart-item__price--original"><s><span class="money">{{{originalLinePrice}}}</span></s></div>
+                                                {{/if}}
+                                                <div class="ajaxcart-item__price ajaxcart-item__price--sale price__number--sale"><span class="money">{{{lineDiscountedPrice}}}</span></div>
+                                            </div>
+        
+                                            <div class="ajaxcart-item__discount">
+                                                {{#each lineDiscounts}}
+                                                    <span class="ajaxcart-item__discount-icon">
+                                                        <svg class="icon icon--label" aria-hidden="true" focusable="false" role="presentation" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M23.03,14.545a.552.552,0,0,1-.249,1l-5.544,1.692L15.544,22.78a.551.551,0,0,1-1,.249L1.452,9.938A2.789,2.789,0,0,1,.744,8.231L.738,1.737a1,1,0,0,1,1-1H8.229a2.782,2.782,0,0,1,1.707.707Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="5.737" cy="5.737" r="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"></circle></svg>
+                                                    </span>
+                                                    <p class="ajaxcart-item__discount-text">
+                                                        {{ this.discount_application.title }} (-<span class="money">{{{ this.amount }}}</span>)
+                                                    </p>
+                                                {{/each}}
+                                            </div>
+
+                                            {{else}}
+                                            <div class='ajaxcart-item__price--container'>
+                                                {{#if hasComparePrice}}
+                                                <div><span class="money price__compare">{{{comparePriceLine}}}</span></div>
+                                                {{/if}}
+                                                <div><span class="money {{#if hasComparePrice}}price__number--sale{{/if}}">{{{linePrice}}}</span></div>
+                                            </div>
+                                            {{/if}}
+        
+                                            {{#if unitPriceExists}}
+                                            <div class="ajaxcart-item__price ajaxcart-item__price--unit">{{{ unitPrice }}}<span aria-hidden="true">/</span><span class="u-hidden-visually">{% endraw %}{{ 'products.general.unit_price_separator' | t }}{% raw %}&nbsp;</span>{{#ifnoteq unitReferenceValue "1"}}{{{ unitReferenceValue }}}{{/ifnoteq}}{{{ unitReferenceUnit }}}</div>
+                                            {{/if}}
+        
+                                        </div>           
+                                    </div>
+                                    
+                                </div>
+
+                                <div class="ajaxcart__qty">
+                                    <button type="button" class="ajaxcart__qty-adjust ajaxcart__qty--minus" data-id="{{key}}" data-qty="{{itemMinus}}" data-line="{{line}}">
+                                        <span aria-hidden="true">&minus;</span>
+                                        <span class="u-hidden-visually">{% endraw %}{{ 'cart.general.reduce_quantity' | t }}{% raw %}</span>
+                                    </button>
+                                    <input type="number" name="updates[]" class="ajaxcart__qty-num js-qty-input" value="{{itemQty}}" min="0" data-id="{{key}}" data-line="{{line}}" aria-label="quantity" pattern="[0-9]*" autocomplete="off">
+                                    <button type="button" class="ajaxcart__qty-adjust ajaxcart__qty--plus" data-id="{{key}}" data-line="{{line}}" data-qty="{{itemAdd}}">
+                                        <span aria-hidden="true">+</span>
+                                        <span class="u-hidden-visually">{% endraw %}{{ 'cart.general.increase_quantity' | t }}{% raw %}</span>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        <div class="ajaxcart__remove-wrapper">
+
+                            <button class="ajaxcart__remove" type="button" data-id="{{key}}" data-line="{{line}}" data-qty="0">{% endraw %}{% render 'icons', icon: 'icon-delete-bin', icon-color: settings.color_text %}{% raw %}<span class="u-hidden-visually">{% endraw%}{{ 'cart.general.remove' | t }}{% raw%}</span></button>
+                    
+                        </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            {{/items}}
+        </div>
+        <div aria-type="accessories_upsell" class="ajaxcart__recommendations">
+            <div class="cc-fs2 cc-uppercase ajaxcart__recommendations__heading">{% endraw %}{{ "custom.related_products_title" | t }}{% raw %}</div>
+            <div class="ajaxcart__recommendations--items"></div>
+        </div>
+        <div aria-type="dynamic" class="ajaxcart__recommendations">
+            <div class="cc-fs2 cc-uppercase ajaxcart__recommendations__heading">{% endraw %}{{ "custom.complementary_products_title" | t }}{% raw %}</div>
+            <div class="ajaxcart__recommendations--items"></div>
+        </div>
+    </div>
+
+		    <div aria-locale='{{locale}}' class="ajaxcart__footer">
+		        {{#if locale}}
+		        <span {% endraw %}{% unless settings.enable_threshold %}{% raw %} hidden {% endraw %}{% endunless %}{% raw %} class="ajaxcart__footer--delivery cc-fs2"> {{thresholdMessage}}</span>
+		        <span {% endraw %}{% unless settings.enable_tagged_threshold %}{% raw %} hidden {% endraw %}{% endunless %}{% raw %} class="ajaxcart__footer--delivery cc-fs2" data-tagged-threshold-success hidden></span>
+		        <span class="ajaxcart-bar">
+		            <span class="ajaxcart-bar__progress" data-threshold-progress="overall" style="width: {{thresholdPercentage}}%"></span>
+		        </span>
+		        {{/if}}
+
+        <div class="ajaxcart__button">
+            <button type="submit" class="c-btn c-btn--full cc-btn ajaxcart__checkout cc-uppercase{% endraw %}{% if settings.cart_terms %}{% raw %} js-cart-checkout-validate{% endraw %}{% endif %}{% raw %}" name="checkout">{% endraw %}{{ 'cart.general.checkout' | t }}{% raw %}: {{ totalPrice }}</button>
+        </div>
+
+    </div>
+{% endraw %}
+</script>
+
+<script id="NotificationTemplate" type="text/template">
+{% raw %}
+    <div class="ajaxcart__inner">
+
+        <div class="o-layout o-layout--tiny u-flex u-flex--middle">
+
+            <div class="o-layout__item u-1/1 u-3/5@mob">
+                <div class="ajaxcart__product">
+
+                    <div class="o-layout o-layout--small u-flex u-flex--middle">
+
+                        <div class="o-layout__item u-1/3">
+                            <div class="ajaxcart__product-image-wrapper">
+                                <div class="ajaxcart__product-image">
+                                    <div class="o-ratio o-ratio--bg-product">
+
+                                        {{#if thisItem.img}}
+                                            <img src="{{ thisItem.img }}" class="o-ratio__content" alt="{{ thisItem.name }}">
+                                        {{else}}
+                                            <img src="{% endraw %}{{ 'placeholder.png' | asset_img_url: '240x' }}{% raw %}" class="o-ratio__content" alt="{{ thisItem.name }}">
+                                        {{/if}}
+
+                                        <div class="theme-spinner theme-spinner--small theme-spinner--color-text">
+                                            <div class="theme-spinner__border"></div>
+                                            <div class="theme-spinner__border"></div>
+                                            <div class="theme-spinner__border"></div>
+                                            <div class="theme-spinner__border"></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="o-layout__item u-2/3">
+                            <p class="ajaxcart__product-name f-family--body">{{ thisItem.name }}</p>
+                            <p class="ajaxcart__product-meta">{{ thisItem.variation }}</p>
+                            <p class="ajaxcart__product-meta">{{ thisItem.sellingPlan }}</p>
+                            <p class="ajaxcart__product-meta">{{ thisItem.price }}</p>
+                            {{#if thisItem.unitPriceExists}}
+                                <div class="ajaxcart__product-meta ajaxcart-item__price--unit">{{{ thisItem.unitPrice }}}<span aria-hidden="true">/</span><span class="u-hidden-visually">{% endraw %}{{ 'products.general.unit_price_separator' | t }}{% raw %}&nbsp;</span>{{#ifnoteq thisItem.unitReferenceValue "1"}}{{{ thisItem.unitReferenceValue }}}{{/ifnoteq}}{{{ thisItem.unitReferenceUnit }}}</div>
+                            {{/if}}
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="o-layout__item u-1/1 u-2/5@mob">
+                <a href="{% endraw %}{{ routes.cart_url }}{% raw %}" class="c-btn c-btn--small c-btn--full c-btn--primary ajaxcart__checkout" name="checkout">{% endraw %}{{ 'cart.general.view_cart' | t }}{% raw %}</a>
+                <a href="{% endraw %}{% if settings.cart_continue_link %}{{ settings.cart_continue_link }}{% else %}{{ routes.root_url }}{% endif %}{% raw %}" class="c-btn c-btn--small c-btn--full c-btn--hollow {% endraw %}{% unless settings.cart_continue_link %}js-close-mfp{% endunless %}{% raw %} ajaxcart__continue">{% endraw %}{{ 'cart.general.continue_shopping' | t }}{% raw %}</a>
+            </div>
+
+        </div>
+    </div>
+{% endraw %}
+</script>
+
+<script id="AjaxQty" type="text/template">
+    {% raw %}
+    <div class="ajaxcart__qty">
+        <button type="button" class="ajaxcart__qty-adjust ajaxcart__qty--minus" data-id="{{key}}" data-qty="{{itemMinus}}">
+            <span aria-hidden="true">&minus;</span>
+            <span class="u-hidden-visually">{% endraw %}{{ 'cart.general.reduce_quantity' | t }}{% raw %}</span>
+        </button>
+        <input type="number" class="ajaxcart__qty-num js-qty-input" value="{{itemQty}}" min="0" data-id="{{key}}" aria-label="quantity" pattern="[0-9]*" autocomplete="off">
+        <button type="button" class="ajaxcart__qty-adjust ajaxcart__qty--plus" data-id="{{key}}" data-qty="{{itemAdd}}">
+            <span aria-hidden="true">+</span>
+            <span class="u-hidden-visually">{% endraw %}{{ 'cart.general.increase_quantity' | t }}{% raw %}</span>
+        </button>
+    </div>
+{% endraw %}
+</script>
+
+<script id="JsQty" type="text/template">
+{% raw %}
+    <div class="js-qty">
+        <button type="button" class="js-qty__adjust js-qty__adjust--minus icon-fallback-text" data-id="{{key}}" data-qty="{{itemMinus}}">
+            <span aria-hidden="true">&minus;</span>
+            <span class="u-hidden-visually">{% endraw %}{{ 'cart.general.reduce_quantity' | t }}{% raw %}</span>
+        </button>
+        <input type="number" class="js-qty__num js-qty-input" value="{{itemQty}}" min="1" data-id="{{key}}" aria-label="quantity" name="{{inputName}}" autocomplete="off" {{#if formId}}form="{{ formId }}"{{/if}}>
+        <button type="button" class="js-qty__adjust js-qty__adjust--plus" data-id="{{key}}" data-qty="{{itemAdd}}">
+            <span aria-hidden="true">+</span>
+            <span class="u-hidden-visually">{% endraw %}{{ 'cart.general.increase_quantity' | t }}{% raw %}</span>
+        </button>
+    </div>
+{% endraw %}
+</script>

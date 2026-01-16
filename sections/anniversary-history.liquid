@@ -1,0 +1,57 @@
+<script src="{{ 'anniversary-history.js' | asset_url }}" defer="defer"></script>
+<link href="{{ 'anniversary-history.css' | asset_url }}" rel="stylesheet">
+
+{% include 'anniversary-nav', title: 'HISTORY' %}
+
+<div id="anniversary-slideshow" class="anniversary-section">
+    <div class="splide" id="image-slider">
+        <div class="splide__track">
+            <ul class="splide__list">
+            {% for block in section.blocks %}
+            <li class="splide__slide">
+                <content>
+                    <div class="slide__title">{{block.settings.title}}</div>
+                    <div class="slide__timeline">
+                        <div class="slide__timeline-dot"></div>
+                        <div class="slide__timeline-line"></div>
+                    </div>
+                </content>
+                <div class="slide__text cc-fs2">{{block.settings.text}}</div>
+            </li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Anniversary History",
+	"class": "anniversary-template anniversary-history",
+    "settings": [],
+	"blocks": [
+		{
+          "type": "heading",
+          "name": "Timeline Milestone",
+		  "settings": [
+            {
+              "type": "text",
+              "id": "title",
+              "label": "Title"
+            },
+            {
+              "type": "richtext",
+              "id": "text",
+              "label": "Content"
+            }
+
+		  ]
+		}
+	],
+    "presets": [
+            {
+                "name": "Anniversary History"
+            }
+        ]
+  }
+{% endschema %}

@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "clubhouse_home_VW6FfJ": {
+      "type": "clubhouse-home",
+      "blocks": {
+        "url_gGYWgT": {
+          "type": "url",
+          "settings": {
+            "title": "Clubhouse Information",
+            "x_position": 45,
+            "y_position": 47,
+            "url": "",
+            "liquid": "<pop-up aria-active=\"false\">\n\n\n            \n            <span class=\"pop-up__content-title\">Clubhouse Noticeboard:</span>\n            <span class=\"pop-up__content\">\n\n            <div aria-type=\"discount\" class=\"item-event\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0242/6047/6980/files/332765714-0303317f-6782-4511-9b29-90c78456d81b.png?v=1716384231\">\n                        <div class=\"item-event_content\">\n                            \n                                <span style=\"display: flex;\" class=\"item-event_content--title\">\n                                    {% if codeUsed %}\n                                    <span class=\"content_code\">Clubhouse 15% Off Code is already used</span> <br><br>\n                                    {% else %}\n                                    <span class=\"content_code\">Grab 15% off your next order with code <b>'{{ settings.clubhouse_code }}'</b></span> <br><br>\n                                    {% endif %}\n                                </span>\n                        </div>\n                        \n                    </div>\n            \n\n                {% if settings.clubhouse_enable_sale_early_access %}\n\n                    <div aria-type=\"notice\" class=\"item-event\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0242/6047/6980/files/332765714-0303317f-6782-4511-9b29-90c78456d81b.png?v=1716384231\">\n                        <div class=\"item-event_content\">\n                            <span data-time=\"{{ settings.clubhouse_sale_early_access_countdown_timer }}\" data-content=\"{{ \"custom.clubhouse-signup.sale_early_access\" | t }}\" data-countdown-type=\"clubhouse\" class=\"inline--content_countdown countdown-container\">\n                                <div hidden data-loaded>\n                                    <span>{{ settings.clubhouse_sale_early_access_countdown_content }}</span>\n                                </div>\n                                <span class=\"item-event_content--title\" data-content></span>\n                                <div style=\"display: flex; gap: 10px;\">\n                                <span style=\"width: auto;\">Expires in: </span>\n                                <span style=\"width: auto;\" class=\"item-event_content--info\" data-countdown></span> \n                                </div>\n                            </span>\n                        </div>\n                        \n                    </div>\n\n                {% endif %}\n\n                {% if settings.clubhouse_enable_product_early_access %}\n\n                        <div aria-type=\"notice\" class=\"item-event\">\n                            <img src=\"https://cdn.shopify.com/s/files/1/0242/6047/6980/files/332765714-0303317f-6782-4511-9b29-90c78456d81b.png?v=1716384231\">\n                            <div class=\"item-event_content\">\n                                <span data-time=\"{{ settings.clubhouse_product_early_access_countdown_timer }}\" data-content=\"{{ \"custom.clubhouse-signup.product_early_access\" | t }}\" data-countdown-type=\"clubhouse\" class=\"inline--content_countdown countdown-container\">\n                                    <div hidden data-loaded>\n                                        <span>{{ settings.clubhouse_product_early_access_countdown_content }}</span>\n                                    </div>\n                                    <span class=\"item-event_content--title\" data-content></span>\n                                    <span class=\"item-event_content--info\" data-countdown></span> \n                                </span>\n                            </div>\n                            \n                        </div>\n\n\n\n                {% endif %}\n\n                {% if settings.clubhouse_enable_members_event %}\n\n                        <div aria-type=\"notice\" class=\"item-event\">\n                            <img src=\"https://cdn.shopify.com/s/files/1/0242/6047/6980/files/332765714-0303317f-6782-4511-9b29-90c78456d81b.png?v=1716384231\">\n                            <div class=\"item-event_content\">\n                                <span data-time=\"{{ settings.clubhouse_members_event_countdown_timer }}\" data-content=\"{{ \"custom.clubhouse-signup.members_event\" | t }}\" data-countdown-type=\"clubhouse\" class=\"inline--content_countdown countdown-container\">\n                                    <div hidden data-loaded>\n                                        <span>{{ settings.clubhouse_members_event_countdown_content }}</span>\n                                    </div>\n                                    <span class=\"item-event_content--title\" data-content></span>\n                                    <span class=\"item-event_content--info\" data-countdown></span> \n                                </span>\n                            </div>\n                            \n                        </div>\n                        \n                {% endif %}\n\n           {{ settings.noticeboard_content }}\n        </pop-up>"
+          }
+        },
+        "url_hL4qtr": {
+          "type": "url",
+          "settings": {
+            "title": "Events",
+            "x_position": 69,
+            "y_position": 50,
+            "url": "",
+            "liquid": "{% assign eventsAttended = 0 %}\n{% assign eventsUpcoming = 0 %}\n\n<div class=\"item-container\">\n    <div class=\"item-attended\">\n        {% for event in shop.metaobjects.clubhouse_events_list['clubhouse-events-list-jfm7bup7'].clubhouse_events_list.value %}\n            {% if customer.tags contains event['event_tag'] and event['event_completed'] == true %}\n                {% if eventsAttended == 0 %}\n                    <div class=\"item-title\">Events Attended</div>\n                {% endif %}\n                <div class=\"item-event\">\n                    <img src=\"https://cdn.shopify.com/s/files/1/0242/6047/6980/files/332765714-0303317f-6782-4511-9b29-90c78456d81b.png?v=1716384231\">\n                    <div class=\"item-event_content\">\n                        <span class=\"item-event_content--title\">{{ event['event_title'] }}</span>\n                        <div class=\"item-event_content--info\">\n                            <span class=\"material-symbols-outlined\">location_on</span>\n                            <span>{{ event['event_location'] }}</span>\n                        </div>\n                        <div class=\"item-event_content--info\">\n                            <span class=\"material-symbols-outlined\">schedule</span>\n                            <span>{{ event['event_date_time'] | date: \"%B %e at %l:%M %p %Z\" }}</span>\n                        </div>\n                    </div>\n                    <div class=\"item-event_content--cta\">Attended</div>\n                </div>\n                {% assign eventsAttended = eventsAttended | plus: 1 %}\n            {% endif %}\n        {% endfor %}\n    </div>\n    <div class=\"item-upcoming\">\n\n    {% for event in shop.metaobjects.clubhouse_events_list['clubhouse-events-list-jfm7bup7'].clubhouse_events_list.value %}\n        {% if event['event_completed'] == false %}\n            {% if eventsUpcoming == 0 %}\n                <div class=\"item-title\">Upcoming Events</div>\n            {% endif %}\n            <div class=\"item-event\">\n                <img src=\"https://cdn.shopify.com/s/files/1/0242/6047/6980/files/332765714-0303317f-6782-4511-9b29-90c78456d81b.png?v=1716384231\">\n                <div class=\"item-event_content\">\n                    <span class=\"item-event_content--title\">{{ event['event_title'] }}</span>\n                    <div class=\"item-event_content--info\">\n                        <span class=\"material-symbols-outlined\">location_on</span>\n                        <span>{{ event['event_location'] }}</span>\n                    </div>\n                    <div class=\"item-event_content--info\">\n                        <span class=\"material-symbols-outlined\">schedule</span>\n                        <span>{{ event['event_date_time'] | date: \"%B %e at %l:%M %p %Z\" }}</span>\n                    </div>\n                </div>\n              {% if event['event_signup_url'].value != null %} <a href=\"{{ event['event_signup_url'].value }}\" class=\"item-event_content--cta\">{{ event['cta_text'] }}</a> {% endif %}\n            </div>\n            {% assign eventsUpcoming = eventsUpcoming | plus: 1 %}\n        {% endif %}\n    {% endfor %}\n\n    {% if eventsUpcoming == 0 %}\n        <div>No Upcoming Events</div>\n    {%endif%}\n    </div>\n</div>"
+          }
+        },
+        "url_DnRVEx": {
+          "type": "url",
+          "settings": {
+            "title": "Coming Soon",
+            "x_position": 19,
+            "y_position": 71,
+            "url": "shopify://collections/coming-soon",
+            "liquid": ""
+          }
+        },
+        "url_49HXyt": {
+          "type": "url",
+          "settings": {
+            "title": "Spotify Playlist",
+            "x_position": 69,
+            "y_position": 60,
+            "url": "",
+            "liquid": "<div id=\"spotify-popup\">\n                        <iframe style=\"border-radius:12px\" src=\"https://open.spotify.com/embed/playlist/37i9dQZF1EIfB9xwEIufzv?utm_source=generator\" width=\"100%\" height=\"352\" frameBorder=\"0\" allowfullscreen=\"\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" loading=\"lazy\"></iframe>\n                    </div>"
+          }
+        },
+        "url_dLRN8z": {
+          "type": "url",
+          "settings": {
+            "title": "A Note From Ross & Scott",
+            "x_position": 55,
+            "y_position": 50,
+            "url": "",
+            "liquid": "<img src=\"https://cdn.shopify.com/s/files/1/0242/6047/6980/files/358267199-1b96115a-d13c-4a86-ac88-e531edd540cd.jpg?v=1723735384\" style=\"\n    width: 100%;\n\">"
+          }
+        },
+        "page_WfkeJr": {
+          "type": "page",
+          "settings": {
+            "title": "Enter Padel Court",
+            "x_position": 86,
+            "y_position": 43,
+            "url": "shopify://pages/clubhouse-padel-court",
+            "reverse": false
+          }
+        },
+        "url_PgMYUw": {
+          "type": "url",
+          "settings": {
+            "title": "Couture Uncut | Latest Episode",
+            "x_position": 9,
+            "y_position": 63,
+            "url": "https://www.youtube.com/@thecoutureclub2621/videos",
+            "liquid": ""
+          }
+        },
+        "url_tFn8VK": {
+          "type": "url",
+          "settings": {
+            "title": "Register VIP Card",
+            "x_position": 40,
+            "y_position": 25,
+            "url": "",
+            "liquid": "{% for block in section.blocks %}\n\n        {% case block.type %}\n            {% when '@app' %}\n{% if block.id contains 'LxyR7X' %}\n                <div class=\"form\">\n                    {% render block %}\n                </div>\n\n              {% endif %}  \n        {% endcase %}\n    {% endfor %}"
+          }
+        },
+        "url_HCqDbH": {
+          "type": "url",
+          "settings": {
+            "title": "FAQ",
+            "x_position": 78,
+            "y_position": 15,
+            "url": "",
+            "liquid": "<meta charset=\"utf-8\">\n<p data-title>How do I become a VIP member?&nbsp;</p>\n<p>By attending an event, or being selected by the Couture Club staff. Unless you receive the Black card, you will not become a VIP member.&nbsp;</p>\n<p>&nbsp;</p>\n<p data-title>How do I use my Black card?&nbsp;</p>\n<p>Black cards can only be used once you've registered them. Once you have they can be used online or our stores.&nbsp;</p>\n<p>&nbsp;</p>\n<p data-title>When do new areas become available?</p>\n<p>New areas become available when events are happening.&nbsp;</p>\n<p>&nbsp;</p>\n<p data-title>Will we still get early access?</p>\n<p>Yes, you still get early access to sales &amp; new releases. Keep an eye on the clubhouse for up to date information.&nbsp;</p>"
+          }
+        },
+        "forms_inline_GmQ8Td": {
+          "type": "shopify://apps/forms/blocks/inline/8744a304-fcb1-4347-b211-bb6b4759a76a",
+          "settings": {
+            "form_id": "113640",
+            "text_color": "#202020",
+            "button_background_color": "#202020",
+            "button_label_color": "#ffffff",
+            "links_color": "#1878b9",
+            "errors_color": "#e02229",
+            "text_alignment": "center",
+            "form_alignment": "center",
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "padding_right": 0,
+            "padding_left": 0
+          }
+        },
+        "forms_inline_LxyR7X": {
+          "type": "shopify://apps/forms/blocks/inline/8744a304-fcb1-4347-b211-bb6b4759a76a",
+          "settings": {
+            "form_id": "158655",
+            "text_color": "#202020",
+            "button_background_color": "#202020",
+            "button_label_color": "#ffffff",
+            "links_color": "#1878b9",
+            "errors_color": "#e02229",
+            "text_alignment": "center",
+            "form_alignment": "center",
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "padding_right": 0,
+            "padding_left": 0
+          }
+        }
+      },
+      "block_order": [
+        "url_gGYWgT",
+        "url_hL4qtr",
+        "url_DnRVEx",
+        "url_49HXyt",
+        "url_dLRN8z",
+        "page_WfkeJr",
+        "url_PgMYUw",
+        "url_tFn8VK",
+        "url_HCqDbH",
+        "forms_inline_GmQ8Td",
+        "forms_inline_LxyR7X"
+      ],
+      "custom_css": [
+        "[aria-container=\"spotify-playlist\"] custom {background: none; height: 50%;}",
+        "#spotify-popup {height: 100%; width: 100%;}",
+        "#spotify-popup iframe {height: 100%;}",
+        "[aria-name=\"spotify-playlist\"] {min-height: 75%;}",
+        "[aria-name=\"faq\"] {display: flex; flex-direction: column; color: white; line-height: 1.25; text-align: center;}",
+        "[aria-name=\"faq\"] [data-title] {font-weight: 600; letter-spacing: 1px; text-transform: uppercase;}"
+      ],
+      "settings": {
+        "background": "shopify://shop_images/240807_MEMBERS_ISO_UPDATE_3.jpg"
+      }
+    }
+  },
+  "order": [
+    "clubhouse_home_VW6FfJ"
+  ]
+}

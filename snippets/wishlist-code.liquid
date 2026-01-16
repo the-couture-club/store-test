@@ -1,0 +1,43 @@
+{%- capture contentForQuerystring -%}{{ content_for_header }}{%- endcapture -%}
+	{%- assign pageUrl = contentForQuerystring
+	  | split: '"pageurl":"'
+	  | last
+	  | split: '"'
+	  | first
+	  | split: '.myshopify.com'
+	  | last
+	  | replace: '\/', '/'
+	  | replace: '%20', ' '
+	  | replace: '\u0026', '&'
+	-%}
+	{% capture finalurl %}https://{{ pageUrl }}{% endcapture %}
+
+	<div id="wishlist-notice">
+		<div class="container">
+			<header>
+				<img src="https://www.thecoutureclub.com/cdn/shop/files/4_leaf_logo_100x.png?v=1695120513">
+			</header>
+			<content>
+				<span class="title cc-uppercase">Create Your Wishlist</span>
+				<span class="text">Log in to access your Wishlist</span>
+				<a href="/account/login?redirect={{finalurl}}" class="c-btn c-btn--full product-form__add-btn wishlist-login">
+					<span class="product-form__add-btn__text">
+						<span class="js-product-add-text">Log In</span>
+					</span>
+				</a>
+				<a href="/account/register" class="c-btn c-btn--full product-form__add-btn wishlist-signup">
+					<span class="product-form__add-btn__text">
+						<span class="js-product-add-text">Register</span>
+					</span>
+				</a>
+			</content>
+		</div>
+	</div>
+
+    <a href="/pages/wishlist" class="wishlist-notification">
+        <img src="//www.thecoutureclub.com/cdn/shop/files/4_leaf_logo_100x.png?v=1695120513">
+        <div class="content-container">
+            <span class="added-text cc-bold cc-fs1">Item Added to Wishlist</span>
+            <span class="cc-fs2">View Wishlist</span>
+        </div>
+    </a>

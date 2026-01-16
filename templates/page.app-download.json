@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+      }
+    },
+    "98f0e427-4e44-44ee-be23-f4b4e343b239": {
+      "type": "app-download",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "main",
+    "98f0e427-4e44-44ee-be23-f4b4e343b239"
+  ]
+}

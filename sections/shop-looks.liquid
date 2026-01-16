@@ -1,0 +1,247 @@
+<div id="shop-category">
+
+    {% for block in section.blocks %}
+
+    <category>
+            <a class="category-overlay" href="{{ block.settings.category_link }}"></a>
+
+            <div class="hero-image--content_cta btn-dropshadow">
+
+            <h5>{{block.settings.category_title}}</h5>
+            <span>{{block.settings.category_subtitle}}</span>
+
+            </div>
+            <img
+                src="{{ block.settings.image | img_url: '300x' }}"
+                srcset="{% render 'bgset', image: block.settings.image %}"
+                width="300"
+                height="{{ 300 | divided_by: block.settings.image.aspect_ratio | round }}"
+                alt="{{ block.settings.image.alt }}"
+                loading="lazy"
+            />
+    </category>
+
+    {% endfor %}
+
+</div>
+
+<style>
+
+#shop-category {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    scroll-snap-type: x mandatory;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    background: #efefed;
+}
+
+#shop-category .category-overlay {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+}
+
+#shop-category .icon {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#shop-category .icon.icon--left-t {
+    left: 5%;
+}
+
+#shop-category .icon.icon--right-t {
+    right: 5%;
+}
+
+#shop-category category {
+    width: 33.3%;
+    min-width: 33.3%;
+    margin: 64px 5px;
+    padding: 0px 5px;
+    scroll-snap-align: start;
+    position: relative;
+}
+
+#shop-category category:first-child {
+    padding-left: 10px;
+}
+
+#shop-category category img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+@media screen and (max-width: 981px) {
+    .shopify-section.shop-category-section {
+        scroll-margin-top: var(--header-height);
+        scroll-snap-align: start !important;
+    }
+    #shop-category {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+
+    }
+    #shop-category .hero-image--content_cta {
+        bottom: 25px;
+        gap: 5;
+    }
+
+    #shop-category .hero-image--content_cta h5 {
+        font-size: 1rem;
+    }
+
+    #shop-category .hero-image--content_cta span {
+        font-size: .75rem;
+    }
+
+    #shop-category category:first-child {
+        padding-left: 0px;
+    }
+
+    #shop-category category {
+        width: 100%;
+        min-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+}
+
+</style>
+
+<script>
+    (function () {
+        var MIN_DESKTOP_WIDTH = 980;
+        var desktopQuery = window.matchMedia ? window.matchMedia('(min-width: ' + MIN_DESKTOP_WIDTH + 'px)') : null;
+
+        function onReady(callback) {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', callback);
+            } else {
+                callback();
+            }
+        }
+
+        function isDesktop() {
+            if (desktopQuery) {
+                return desktopQuery.matches;
+            }
+            return window.innerWidth ? window.innerWidth >= MIN_DESKTOP_WIDTH : true;
+        }
+
+        function getViewportChecker() {
+            if (typeof window.isInViewport === 'function') {
+                return window.isInViewport;
+            }
+
+            return function (element) {
+                if (!element) {
+                    return false;
+                }
+                var rect = element.getBoundingClientRect();
+                var viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+                var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                return rect.top < viewportHeight &&
+                    rect.bottom > 0 &&
+                    rect.left < viewportWidth &&
+                    rect.right > 0;
+            };
+        }
+
+        onReady(function initShopLooksScroll() {
+            var container = document.querySelector('#shop-category');
+            if (container) {
+                var section = container.closest('.shopify-section');
+                if (section) {
+                    section.classList.add('shop-category-section');
+                }
+            }
+            var element = container ? container.querySelector('.hero-image--content_cta') : null;
+            var scrollRoot = document.querySelector('[data-scroll="snap"]');
+            var isElementInViewport = getViewportChecker();
+
+            if (!container || !element || !scrollRoot) {
+                return;
+            }
+
+            var scrollTimeout;
+
+            function smoothScroll(leftValue) {
+                if (typeof container.scrollTo === 'function') {
+                    container.scrollTo({ top: 0, left: leftValue, behavior: 'smooth' });
+                } else {
+                    container.scrollLeft = leftValue;
+                    container.scrollTop = 0;
+                }
+            }
+
+            function handleScrollEnd() {
+                if (!isDesktop()) {
+                    return;
+                }
+
+                if (isElementInViewport(element)) {
+                    smoothScroll(400);
+                    setTimeout(function () {
+                        smoothScroll(0);
+                    }, 750);
+                }
+            }
+
+            scrollRoot.addEventListener('scroll', function () {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(handleScrollEnd, 150);
+            });
+        });
+    })();
+</script>
+
+{% schema %}
+    {
+      "name": "Homepage Slideshow",
+      "settings": [],
+      "presets": [
+        {
+            "name": "Homepage Slideshow"
+        }
+      ],
+      "blocks": [
+        {
+            "type": "image",
+            "name": "category",
+            "settings": [
+                {
+                    "type": "url",
+                    "id": "category_link",
+                    "label": "Category link"
+                },
+                {
+                    "type": "text",
+                    "id": "category_title",
+                    "label": "Title",
+                    "default": "CATEGORY"
+                },
+                {
+                    "type": "text",
+                    "id": "category_subtitle",
+                    "label": "Subtitle",
+                    "default": "VIEW ALL"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Category Preview Image",
+                    "info": "9X16 Recommended"
+                }
+            ]
+        }
+    ]
+    }
+{% endschema %} 

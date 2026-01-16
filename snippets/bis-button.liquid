@@ -1,0 +1,63 @@
+{% unless product.tags contains 'bis-disable' %}
+        {% assign isBIS = 'true' %}
+    {% else %}
+        {% assign isBIS = 'false' %}
+{% endunless %}
+
+<div class="c-btn c-btn--full product-form__add-btn c-btn__dynamic {% if handle == 'restock' or handle == 'launch' or isBIS == 'true' %} js-product-notify {% else %} is-disabled {% endif %}">
+    <span class="product-form__add-btn__text">
+        {% case handle %}
+            {% when 'restock' %}
+                <span data-type="restock" class="js-product-add-text">
+                    {% if override %}
+                        {{ text | append: ' - Sign up' }}
+                    {% else %}
+                        {{ 'products.product.restock' | t | replace: '[date]', product.metafields.global.coming_soon_eta_display }}
+                    {% endif %}
+                </span>
+            {% when 'launch' %}
+                <span data-type="launch" class="js-product-add-text">
+                    {% if override %}
+                        {{ text | append: ' - Sign up' }}
+                    {% else %}
+                        {{ 'products.product.launch' | t | replace: '[date]', product.metafields.global.coming_soon_eta_display }}
+                    {% endif %}
+                </span>
+            {% else %}
+                {% if isBIS == 'true' %}
+                    <span data-type="bis" class="js-product-add-text">{{ 'products.product.notify_me' | t }}</span>
+                {% else %}
+                    <span data-type="oos" class="js-product-add-text">{{ 'products.product.sold_out' | t }}</span>
+                {% endif %}
+        {% endcase %}
+    </span>
+</div>
+
+<div class="c-btn c-btn--full product-form__add-btn c-btn__dynamic {% if handle == 'restock' or handle == 'launch' or isBIS == 'true' %} js-product-notify {% else %} is-disabled {% endif %} js-product-scroll">
+    <span class="product-form__add-btn__text">
+        {% case handle %}
+            {% when 'restock' %}
+                <span data-type="restock" class="js-product-add-text">
+                    {% if override %}
+                        {{ text | append: ' - Sign up' }}
+                    {% else %}
+                        {{ 'products.product.restock' | t | replace: '[date]', product.metafields.global.coming_soon_eta_display }}
+                    {% endif %}
+                </span>
+            {% when 'launch' %}
+                <span data-type="launch" class="js-product-add-text">
+                    {% if override %}
+                        {{ text | append: ' - Sign up' }}
+                    {% else %}
+                        {{ 'products.product.launch' | t | replace: '[date]', product.metafields.global.coming_soon_eta_display }}
+                    {% endif %}
+                </span>
+            {% else %}
+                {% if isBIS == 'true' %}
+                    <span data-type="bis" class="js-product-add-text">{{ 'products.product.notify_me' | t }}</span>
+                {% else %}
+                    <span data-type="oos" class="js-product-add-text">{{ 'products.product.sold_out' | t }}</span>
+                {% endif %}
+        {% endcase %}
+    </span>
+</div>

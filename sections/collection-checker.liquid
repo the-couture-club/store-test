@@ -1,0 +1,42 @@
+<div class="container">
+{% paginate collections.all.products by 1000 %}
+	{% for product in collections.all.products %}
+		{% assign productType = product.type | downcase | handle | prepend: "[" | append: "]"  %}
+        {% assign productTypeNoHandle = product.type %}
+        {% if product.type != '' %}
+            {% unless typeList contains productType %}
+                {% assign typeList = typeList | append: productType |  append: ','  %}
+                {% assign typeListNoHandle = typeListNoHandle | append: productTypeNoHandle |  append: ','  %}
+            {% endunless %}
+        {% endif %}
+	{% endfor %}
+{% endpaginate %}
+
+<h2>Index - Collection Checker</h2>
+
+{% assign typeArray = typeList | split: ','%}
+{% assign typeArrayNoHandle = typeListNoHandle | split: ','%}
+
+
+{% for type in typeArray %}
+    {% assign typeIndex = type | append: '-index' | remove: "[" | remove: "]" %}
+    {% assign index = forloop.index | minus: 1 %}
+    {% unless collections[typeIndex].products.size > 0 and type != '[]' %}
+        {{ typeArrayNoHandle[index] }} ({{ typeArray[index] | remove: "[" | remove: "]" }}-index) ❌<br>
+        {% else %}
+        {{ typeArrayNoHandle[index] }} ✅ <br>
+    {% endunless %}
+{% endfor %}
+</div>
+
+{% schema %}
+    {
+      "name": "COLLECTIONS [BACKEND]",
+      "settings": [],
+      "presets": [
+      {
+          "name": "COLLECTIONS [BACKEND]"
+      }
+      ]
+    }
+{% endschema %}

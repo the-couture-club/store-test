@@ -1,0 +1,131 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "shogun-helper": {
+      "type": "shogun-helper",
+      "disabled": true,
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
+    "shogun-optimizer": {
+      "type": "shogun-optimizer",
+      "disabled": true,
+      "settings": {}
+    },
+    "anniversary_history_EmQtbP": {
+      "type": "anniversary-history",
+      "blocks": {
+        "heading_8L8rq9": {
+          "type": "heading",
+          "settings": {
+            "title": "2015",
+            "text": "<p>We founded The Couture Club as a passion project, launching on Instagram and releasing our first collection of signature t-shirts. It was the start of a community-driven brand built on style and ambition.</p>"
+          }
+        },
+        "heading_ke6yxz": {
+          "type": "heading",
+          "settings": {
+            "title": "2016",
+            "text": "<p>We launched our first website and unveiled our debut global campaign - major steps in building our digital presence and expanding our audience worldwide.</p>"
+          }
+        },
+        "heading_3nzyRr": {
+          "type": "heading",
+          "settings": {
+            "title": "2017",
+            "text": "<p>We opened our first flagship store at The Trafford Centre, launched our first womenswear collection, and ran international campaigns - evolving from a side project into a growing global business.</p>"
+          }
+        },
+        "heading_PgJ38q": {
+          "type": "heading",
+          "settings": {
+            "title": "2018",
+            "text": "<p>Couture Menswear launched on ASOS. We shot Spring/Summer in LA and Autumn/Winter in Tokyo. YouTube content began, and pop-ups in Dublin, Newcastle, and Dubai expanded our reach and in-person brand experiences.</p>"
+          }
+        },
+        "heading_7zqzzj": {
+          "type": "heading",
+          "settings": {
+            "title": "2019",
+            "text": "<p>Couture Women went live on ASOS. We opened our Westfield Stratford store, launched our mobile app, and introduced The Club, our loyalty program, to reward and connect with our growing community.</p>"
+          }
+        },
+        "heading_t7N3Gf": {
+          "type": "heading",
+          "settings": {
+            "title": "2020",
+            "text": "<p>We introduced activewear and kidswear collections. During the pandemic, comfort was key - everyday fits and jersey became essential. We stayed connected and kept evolving through uncertain times.</p>"
+          }
+        },
+        "heading_77TCzA": {
+          "type": "heading",
+          "settings": {
+            "title": "2021",
+            "text": "<p>We collaborated with Ellesse for a special collection. It was a year of reflection - a chance to realign and redefine our position in the market as we looked ahead.</p>"
+          }
+        },
+        "heading_FUfNKn": {
+          "type": "heading",
+          "settings": {
+            "title": "2022",
+            "text": "<p>We rebranded, moving away from our Script logo. Our elevation strategy began, setting the foundation for growth. We also introduced CTRE, representing a bold new direction for The Couture Club.</p>"
+          }
+        },
+        "heading_jwQTFq": {
+          "type": "heading",
+          "settings": {
+            "title": "2023",
+            "text": "<p>The elevation strategy came to life. We shot SS23 in Milos and AW23 in Iceland. We closed our Trafford Centre store, and our Fluffy Knit launch supported our elevated brand image.</p>"
+          }
+        },
+        "heading_cgfeeM": {
+          "type": "heading",
+          "settings": {
+            "title": "2024",
+            "text": "<p>A record-breaking year. Campaigns like Laundered Classics and The Runway led the way. We launched in Selfridges, ran pop-ups in London and Amsterdam, and introduced The Clubhouse loyalty refresh with key community events.</p>"
+          }
+        },
+        "heading_xEa86E": {
+          "type": "heading",
+          "settings": {
+            "title": "2025",
+            "text": "<p>We’re celebrating 10 years of The Couture Club. Filming began on our anniversary documentary. SS25 campaigns were shot in Barcelona and Port De Soller, with more community events and exciting projects underway.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_8L8rq9",
+        "heading_ke6yxz",
+        "heading_3nzyRr",
+        "heading_PgJ38q",
+        "heading_7zqzzj",
+        "heading_t7N3Gf",
+        "heading_77TCzA",
+        "heading_FUfNKn",
+        "heading_jwQTFq",
+        "heading_cgfeeM",
+        "heading_xEa86E"
+      ],
+      "name": "Anniversary History",
+      "settings": {}
+    }
+  },
+  "order": [
+    "shogun-helper",
+    "main",
+    "shogun-optimizer",
+    "anniversary_history_EmQtbP"
+  ]
+}

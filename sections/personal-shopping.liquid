@@ -1,0 +1,242 @@
+<div id="personal-shopping">
+    <div class="landing-page">
+        <div class="landing-page_header">
+            <div class="header-text"></div>
+            <div class="header-text_book">BOOK YOUR APPOINTMENT</div>
+            <img src="https://cdn.shopify.com/s/files/1/0242/6047/6980/files/personal_shopping_footballer_desktop.jpg?v=1712486498">
+        </div>
+        <div class="landing-page_content">
+            <div class="landing-page_content--text"></div>
+            <div class="landing-page_content--form">
+                {% for block in section.blocks %}
+                    {% render block %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    #personal-shopping {
+        height: calc(100dvh - 89px);
+    }
+
+    .loading-text {
+        display: flex;
+        background: #efefed;
+        height: 100%;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+    }
+    .loading-text h1 {
+        font-family: serif;
+        font-weight: 300;
+        max-width: 75%;
+    }
+
+    .landing-page {
+        display: block;
+        flex-direction: column;
+        background: #efefed;
+        height: 100%;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+        overflow: scroll;
+        scroll-snap-type: y mandatory;
+    }
+
+    .landing-page img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+    }
+
+    .landing-page_content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 5% 0;
+        scroll-snap-align: start;
+        overflow: scroll;
+        justify-content: space-around;
+        gap: 5%;
+    }
+
+    .landing-page_content--text {
+        width: 80%;
+        line-height: 1.5;
+        font-family: serif;
+        font-size: 18px;
+        justify-self: center;
+        text-align: center;
+        align-content: center;
+    }
+
+    .landing-page_content--form {
+        opacity: 0;
+        align-content: center;
+    }
+
+    .landing-page_header {
+        scroll-snap-align: start;
+        height: 100%;
+        position: relative;
+    }
+
+    .header-text {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 800px;
+        max-width: 90%;
+        transform: translate(-50%, -50%);
+        font-family: serif;
+        font-size: 55px;
+        color: white;
+        line-height: 1;
+        z-index: 2;
+    }
+
+    .header-text_book {
+        position: absolute;
+        opacity: 0;
+        left: 50%;
+        top: 90%;
+        width: 100%;
+        max-width: 90%;
+        transform: translate(-50%, -50%);
+        font-family: serif;
+        font-size: 15px;
+        color: white;
+        text-shadow: 0 0 20px black;
+        z-index: 2;
+    }
+
+    form-embed {
+        text-align: left !important;
+    }
+
+    footer {
+        display: none;
+    }
+
+    @media screen and (max-width: 1080px) {
+        .loading-text h1 {
+            font-size: 14px;
+        }
+        .landing-page {
+            display: block;
+            position: relative;
+        }
+        .landing-page_content {
+            padding: 8%;
+            gap: 8%;
+            justify-content: initial;
+        } 
+        .header-text {
+            font-size: 40px;
+            max-width: 85%;
+        }
+        .landing-page_content--text {
+            width: 90%;
+            font-size: 14px;
+        }
+        
+    }
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js"></script>
+
+<script>
+
+ document.addEventListener("DOMContentLoaded", (event) => {
+
+    var container = document.getElementById('personal-shopping');
+    var announcement = document.querySelector('.js-section__announcement');
+    var header = document.querySelector('.js-section__header');
+
+    container.classList.add('loaded');
+    container.style.height = 'calc(100dvh - ' + (announcement.clientHeight +  header.clientHeight) + 'px )';
+
+  gsap.registerPlugin(ScrollTrigger,TextPlugin)
+
+  gsap.to(".header-text_book", {opacity: 1, delay: 7.5, duration: 1});
+
+
+  gsap.to(".landing-page_header img", {
+    duration: 1,
+    delay: 1,
+    opacity: 1,
+    ease: "true",
+  });
+
+  gsap.to(".header-text", {
+    delay: 2,
+    duration: 5,
+    ease: "none",
+    text: {
+        value: "A NEW LUXURY EXPERIENCE.<br>EXCLUSIVE TO OUR FOOTBALL COMMUNITY."
+    },
+  });
+
+    gsap.to(".landing-page_content--text", {
+        scrollTrigger: {
+            trigger: ".landing-page_content",
+            start: "top top",
+            end: "bottom bottom",
+            scroller: '.landing-page'
+        },
+        duration: 10,
+        ease: "none",
+        text: {
+            value: "As an exclusive member of our football community, we're introducing a new personalised shopping experience in our Manchester showroom.<br>1-1 experiences are with our founders & close knit team, you'll have the opportunity to try-on & shop product from upcoming releases before the general public."
+        },
+    });
+
+    gsap.to(".landing-page_content--form", {
+        scrollTrigger: {
+            trigger: ".landing-page_content",
+            start: "top top",
+            end: "bottom bottom",
+            scroller: '.landing-page'
+        },
+        duration: 1,
+        delay: 10.5,
+        ease: "none",
+        opacity: 1
+    });
+
+ 
+  });
+
+
+</script>
+
+{% schema %}
+    {
+      "name": "Personal Shopping Page",
+      "settings": [],
+      "blocks": [
+      {
+        "type": "@app"
+      }
+    ],
+      "presets": [
+        {
+            "name": "Personal Shopping Page"
+        }
+      ]
+    }
+{% endschema %} 

@@ -1,0 +1,34 @@
+{%- assign page_url = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&'  -%}
+
+{% assign idList = page_url | split: 'prodid=' | last %}
+{% assign idList = idList | split: ',' %}
+
+
+<div id="recently-viewed-render">
+
+
+    {% for id in idList %}
+
+    {% render 'product-grid-item',
+        product: all_products[id],
+        swatchEnable: false,
+        page: 'recommendations',
+        nodrawer: false,
+        scroll_snap: false
+    %}
+
+    {% endfor %}
+
+</div>
+
+{% schema %}
+    {
+      "name": "Recently Viewed Render",
+      "settings": [],
+      "presets": [
+      {
+          "name": "Recently Viewed Render"
+      }
+      ]
+    }
+  {% endschema %} 

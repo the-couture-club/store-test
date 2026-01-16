@@ -1,0 +1,55 @@
+{
+  "sections": {
+    "shogun-helper": {
+      "type": "shogun-helper",
+      "settings": {
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {
+      }
+    },
+    "shogun-optimizer": {
+      "type": "shogun-optimizer",
+      "settings": {
+      }
+    },
+    "section_collection_b9R7cx": {
+      "type": "section-collection",
+      "blocks": {
+        "collection_xCKiBm": {
+          "type": "collection",
+          "settings": {
+            "heading": "",
+            "heading_color": "rgba(0,0,0,0)",
+            "collection": "knitwear",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "collection_xCKiBm"
+      ],
+      "settings": {
+        "title": "Shop Knitwear",
+        "text_alignment": "center",
+        "section_width": "wide",
+        "link_title": "View all",
+        "link": "shopify:\/\/collections\/knitwear",
+        "divider": false,
+        "maximum_products": 48,
+        "grid": 4,
+        "enable_carousel_desktop": true,
+        "grid_mobile": "1",
+        "enable_carousel_mobile": true
+      }
+    }
+  },
+  "order": [
+    "shogun-helper",
+    "main",
+    "shogun-optimizer",
+    "section_collection_b9R7cx"
+  ]
+}

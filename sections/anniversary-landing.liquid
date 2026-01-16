@@ -1,0 +1,150 @@
+<script src="{{ 'anniversary-home.js' | asset_url }}" defer="defer"></script>
+<link href="{{ 'anniversary-home.css' | asset_url }}" rel="stylesheet">
+
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+{% include 'anniversary-nav', title: 'LEGACY OF LUXURY' %}
+
+<div id="anniversary-title" class="anniversary-section">
+    <span>
+        {{ section.settings.title }}
+    </span>
+</div>
+
+<div id="anniversary-content" class="anniversary-section">
+    {%  case section.settings.content_type %}
+        {% when 'image' %}
+            <img src="{{ section.settings.image | img_url: 'master' }}">
+        {% when 'video' %}
+            <video autoplay muted loop src="{{ section.settings.video | video_url }}"></video>
+    {% endcase %}
+</div>
+
+<div id="anniversary-signup" class="anniversary-section">
+    <span class="anniversary-section__content">{{ section.settings.signup_header }}</span>
+    <div class="klaviyo-form-{{ section.settings.signup }}"></div>
+</div>
+
+<div id="anniversary-content" class="anniversary-section">
+    <span class="anniversary-section__content">{{ section.settings.signup_content }}</span>
+</div>
+
+<div id="anniversary-slideshow" class="anniversary-section">
+    <div class="splide" id="image-slider">
+        <div class="splide__track">
+            <ul class="splide__list">
+            {% for block in section.blocks %}
+                <li class="splide__slide">
+                    <img src="{{ block.settings.image | image_url }}" />
+                </li>
+            {% endfor %}  
+            </ul>
+        </div>
+
+        <div class="slider-controls">
+            <button id="prevBtn" aria-label="Previous">
+                <svg viewBox="0 0 24 24" stroke="#333" fill="none">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+
+            <span id="slide-counter">1 - 6</span>
+
+            <button id="nextBtn" aria-label="Next">
+                <svg viewBox="0 0 24 24" stroke="#333" fill="none">
+                    <polyline points="9 6 15 12 9 18" />
+                </svg>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Anniversary Home",
+	"class": "anniversary-template anniversary-home",
+    "settings": [
+        {
+            "type": "header",
+            "content": "Title"
+        },
+        {
+            "type": "richtext",
+            "id": "title",
+            "label": "Title",
+            "default": "<p>Insert Text Here</p>"
+        },
+        {
+            "type": "header",
+            "content": "Image/Video"
+        },
+        {
+            "type": "select",
+            "id": "content_type",
+            "label": "Text color",
+            "options": [
+            {
+                "value": "image",
+                "label": "Image"
+            },
+            {
+                "value": "video",
+                "label": "Video"
+            }
+            ],
+            "default": "image"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+        },
+        {
+            "type": "video",
+            "id": "video",
+            "label": "Video"
+        },
+        {
+            "type": "header",
+            "content": "Signup"
+        },
+        {
+            "type": "richtext",
+            "id": "signup_header",
+            "label": "Header",
+            "default": "<p>Insert Text Here</p>"
+        },
+        {
+            "type": "text",
+            "id": "signup",
+            "label": "Form ID"
+        },
+        {
+            "type": "richtext",
+            "id": "signup_content",
+            "label": "Content",
+            "default": "<p>Insert Text Here</p>"
+        }
+    ],
+	"blocks": [
+        {
+            "name": "Slideshow Image",
+            "type": "slide",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                }
+            ]
+        }   
+    ],
+    "presets": [
+            {
+                "name": "Anniversary Home"
+            }
+        ]
+  }
+{% endschema %}

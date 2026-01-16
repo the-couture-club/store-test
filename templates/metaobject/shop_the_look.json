@@ -1,0 +1,12 @@
+{
+  "sections": {
+    "looks_page_nRANUY": {
+      "type": "looks-page",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "looks_page_nRANUY"
+  ]
+}

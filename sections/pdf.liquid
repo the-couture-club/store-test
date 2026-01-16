@@ -1,0 +1,39 @@
+<div id="adobe-dc-view"></div>
+<script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
+<script type="text/javascript">
+	document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
+		var adobeDCView = new AdobeDC.View({clientId: "0ad3e0108f814b09a81da895b69077e1", divId: "adobe-dc-view"});
+		adobeDCView.previewFile({
+			content:{location: {url: "{{ section.settings.url }}"}},
+			metaData:{fileName: "Couture Club"}
+		}, {});
+	});
+</script>
+
+<style>
+  #adobe-dc-view {
+    
+    width: 100%;
+    height: calc(var(--window-height) - var(--announcement-height) - var(--header-section-height));
+    margin-bottom: -10px;
+    
+  }
+</style> 
+
+{% schema %}
+  {
+    "name": "PDF Embed",
+    "settings": [
+      {
+      "type": "text",
+      "id": "url",
+      "label": "PDF URL"
+      },
+    ],
+    "presets": [
+      {
+        "name": "PDF Embed"
+      }
+    ]
+  }
+{% endschema %}

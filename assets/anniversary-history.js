@@ -1,0 +1,1 @@
+var splide=new Splide("#image-slider",{type:"slide",trimSpace:!1,focus:"center",autoWidth:!0,updateOnMove:!0,pagination:!1,arrows:!1,flickMaxPages:1,flickPower:10,throttle:300}).mount();document.querySelectorAll("#image-slider .splide__slide").forEach(((e,i)=>{e.addEventListener("click",(()=>{splide.go(i)}))}));

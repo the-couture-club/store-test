@@ -1,0 +1,197 @@
+<script>
+  theme.setHeaderHeightVars = () => {
+    const headerSection = document.querySelector('.js-section__header');
+    const header = document.querySelector('.js-header');
+    const announcement = document.querySelector('announcement-bar .announcement__wrapper');
+    document.documentElement.style.setProperty('--window-height', `${window.innerHeight}px`);
+    document.documentElement.style.setProperty('--announcement-height', `${announcement ? announcement.offsetHeight : 0}px`);
+    //header section (zero height if transparent)
+    if (headerSection) document.documentElement.style.setProperty('--header-section-height', `${headerSection.offsetHeight}px`);
+    //header element (has height if transparent)
+    if (header) document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+    const plpHeader = document.querySelector('.product_container__content-header');
+    document.documentElement.style.setProperty('--plp-header-height', `${plpHeader.offsetHeight}px`);
+  }
+  theme.setHeaderLogoVars = () => {
+      //header logo width
+      const logoLink = document.querySelector('.header__logo-link');
+      if (logoLink) document.documentElement.style.setProperty('--header-logo-width', `${logoLink.offsetWidth}px`);
+  }
+  theme.setHeaderStyle = () => {
+    const header = document.querySelector('.js-header');
+    if (!header) return;
+    //get element width witout padding
+    const getElementContentWidth = (element) => {
+      const styles = window.getComputedStyle(element);
+      const padding =
+        parseFloat(styles.paddingLeft) +
+        parseFloat(styles.paddingRight);
+      return element.clientWidth - padding;
+    }
+    const iconsNavDisplayStyle = (style, element) => {
+      if (!element) return;
+      element.style.display = style;
+    }
+    const headerNavs = header.querySelector('.js-heaver-navs');
+    const mobileDraw = header.querySelector('.js-mobile-draw-icon');
+    const searchDraw = header.querySelector('.js-search-draw-icon');
+    const cartDraw = header.querySelector('.js-cart-draw-icon');
+    const primaryNav = header.querySelector('.js-primary-nav');
+    const primaryNavItems = header.querySelector('.js-primary-nav-items');
+    const secondaryNav = header.querySelector('.js-secondary-nav');
+    const logoImg = header.querySelector('.js-main-logo');
+    const mobileBrkp = 768;
+    //set sizes
+    const winWidth = window.innerWidth;
+    const navsWidth = getElementContentWidth(headerNavs);
+    const secondaryWidth = getElementContentWidth(secondaryNav);
+    const logoWidth = getElementContentWidth(logoImg);
+    const primaryWidth = getElementContentWidth(primaryNavItems);
+    if (header.dataset.headerStyle == 'icons') {
+      iconsNavDisplayStyle('flex', mobileDraw);
+      iconsNavDisplayStyle('flex', cartDraw);
+      iconsNavDisplayStyle('flex', searchDraw);
+    } else if (winWidth >= mobileBrkp) {
+      if (header.dataset.headerStyle !== 'center') {
+        //inline style logic
+        if (header.dataset.headerStyle === 'left') {
+          const availableLeftSpace = (winWidth - logoWidth) / 2;
+          if (availableLeftSpace - primaryWidth < 40) {
+            header.classList.remove('header--left');
+            header.classList.add('header--center');
+          } else {
+            header.classList.add('header--left');
+            header.classList.remove('header--center');
+          }
+        }
+        //logo left style logic
+        if (header.dataset.headerStyle === 'logo-left') {
+          const availableCenterSpace = winWidth - logoWidth;
+          if (availableCenterSpace - primaryWidth - secondaryWidth < 100) {
+            header.classList.remove('header--logo-left');
+            header.classList.add('header--center');
+          } else {
+            header.classList.add('header--logo-left');
+            header.classList.remove('header--center');
+          }
+        }
+      }
+//      iconsNavDisplayStyle('none', mobileDraw);
+      iconsNavDisplayStyle('none', cartDraw);
+      iconsNavDisplayStyle('none', searchDraw);
+    } else {
+      iconsNavDisplayStyle('flex', mobileDraw);
+      iconsNavDisplayStyle('flex', cartDraw);
+      iconsNavDisplayStyle('flex', searchDraw);
+    }
+  }
+  theme.setUpHeaderResizeObservers = () => {
+    const debounce = (f, delay) => {
+      let timer = 0;
+      return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => f.apply(this, args), delay);
+      };
+    }
+    const headerSection = document.querySelector('.js-section__header');
+    const header = document.querySelector('header');
+    const logo = document.querySelector('.header__logo-link');
+    document.documentElement.style.setProperty('--screen-height', `${window.innerHeight}px`);
+    theme.setHeaderHeightVars();
+    const headerSectionObserver = new ResizeObserver(debounce(theme.setHeaderHeightVars, 50));
+    headerSectionObserver.observe(headerSection);
+    theme.setHeaderLogoVars();
+    const headerLogoObserver = new ResizeObserver(debounce(theme.setHeaderLogoVars, 50));
+    headerLogoObserver.observe(logo);
+    theme.setHeaderStyle();
+    const headerObserver = new ResizeObserver(debounce(theme.setHeaderStyle, 50));
+    headerObserver.observe(header);
+  }
+
+  {% comment %} <'  Start of Custom Code '>  {% endcomment %}
+
+  window.KlarnaThemeGlobals={};{%case template.name%} {%when"product"%} {% if product.first_available_variant.price %}window.KlarnaThemeGlobals.data_purchase_amount = {{ product.first_available_variant.price }};{% endif %}window.KlarnaThemeGlobals.productVariants={{product.variants|json}};window.KlarnaThemeGlobals.documentCopy=document.cloneNode(true);{%when"cart"%} window.KlarnaThemeGlobals.data_purchase_amount={{cart.total_price}};window.KlarnaThemeGlobals.documentCopy=document.cloneNode(true);{%endcase%}
+
+</script>
+
+<script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=L7EvZY"></script>
+
+{% comment %} Product Page Splide Init {% endcomment %}
+
+{% if template contains 'product' %}
+	<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const el = document.querySelector('.splide');
+		if (!el) return; // nothing to mount
+
+		const splide = new Splide(el, {
+			arrows: true,
+			autoWidth: true,
+			pagination: true,
+			focus: 'center',
+			type: 'loop',
+			flickPower: 10,
+		});
+
+		splide.on('mounted', () => {
+			theme.setHeaderHeightVars();
+		});
+
+		splide.mount();
+	});
+	</script>
+{% endif %}
+
+{% comment %} Collection Page Init {% endcomment %}
+
+{% if template contains 'collection' or template contains 'search' %}
+<script>
+  // Avoid browser restoring an old scroll position
+  if (window.history && 'scrollRestoration' in history) {
+    const isDesktop =
+      matchMedia('(pointer: fine)').matches &&
+      matchMedia('(hover: hover)').matches;
+
+    if (isDesktop) {
+      history.scrollRestoration = 'manual';
+    }
+  }
+
+  function scrollToProduct() {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('product');
+    if (!id) return;
+
+    const el = document.querySelector(`[data-product-id="${CSS.escape(id)}"]`);
+    if (!el) return;
+
+    // Wait for layout to settle
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.scrollIntoView({ block: 'center' });
+        console.log('Scrolled to:', el);
+      });
+    });
+  }
+
+  // Fast path: run after parse (deferred script executes before DOMContentLoaded)
+  scrollToProduct();
+
+  // Safety net: if content is injected later (SPA/lazy render), observe and try once
+  const mo = new MutationObserver((muts, obs) => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('product');
+    if (!id) return;
+    const el = document.querySelector(`[data-product-id="${CSS.escape(id)}"]`);
+    if (el) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.scrollIntoView({ block: 'center' });
+          obs.disconnect();
+        });
+      });
+    }
+  });
+  mo.observe(document.documentElement, { childList: true, subtree: true });
+</script>
+{% endif %}

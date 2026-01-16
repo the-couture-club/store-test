@@ -1,0 +1,141 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "shogun-helper": {
+      "type": "shogun-helper",
+      "disabled": true,
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
+    "shogun-optimizer": {
+      "type": "shogun-optimizer",
+      "disabled": true,
+      "settings": {}
+    },
+    "anniversary_bts_VKKLKJ": {
+      "type": "anniversary-bts",
+      "blocks": {
+        "image_UqyPKe": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036392-9b683bde-cea7-411f-9dcf-047045ba9d0f.jpg"
+          }
+        },
+        "image_rhzgpT": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036391-db3fcb4c-21a2-4556-a99d-93dcf89a522f.jpg"
+          }
+        },
+        "image_8Yg6ng": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036180-578ec1d1-9051-4122-b45c-67adbab8ee72.jpg"
+          }
+        },
+        "image_Nx4dzi": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036167-dabe4cbd-f016-4367-bac3-671875a0967d.jpg"
+          }
+        },
+        "image_GhhXdF": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036175-71ce4d2e-b0db-4077-85d4-8cb78de5e561.jpg"
+          }
+        },
+        "image_qDCqLg": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036170-cba52c56-894c-470f-8b3e-716a1ebe2fab.jpg"
+          }
+        },
+        "image_qVFfjq": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036171-2c335780-3c38-47e0-a26b-45625365eff3.jpg"
+          }
+        },
+        "image_8Gagzn": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036172-2585d174-4485-4aad-8961-911cc33b1fba.jpg"
+          }
+        },
+        "image_AWkYC8": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036166-b7205eb3-f855-4941-a03b-be8a58cf493c.jpg"
+          }
+        },
+        "image_xiViQY": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036173-3cb23b76-627f-4319-a62a-95dd2e0605a7.jpg"
+          }
+        },
+        "image_x6qJBj": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036174-f2d21d7c-9419-4966-933a-4f7ff55e013c.jpg"
+          }
+        },
+        "image_xmDg4B": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036177-bdd4287f-6dcb-4745-b8b1-ea5c4f302be4.jpg"
+          }
+        },
+        "image_dJhaRb": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036169-aa581d66-d53f-4134-a343-0d8550e27f47.jpg"
+          }
+        },
+        "image_kxWQC9": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/475036168-490d48bc-7e79-431e-9a10-1bbe44fd462d.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "image_UqyPKe",
+        "image_rhzgpT",
+        "image_8Yg6ng",
+        "image_Nx4dzi",
+        "image_GhhXdF",
+        "image_qDCqLg",
+        "image_qVFfjq",
+        "image_8Gagzn",
+        "image_AWkYC8",
+        "image_xiViQY",
+        "image_x6qJBj",
+        "image_xmDg4B",
+        "image_dJhaRb",
+        "image_kxWQC9"
+      ],
+      "name": "Anniversary BTS",
+      "settings": {}
+    }
+  },
+  "order": [
+    "shogun-helper",
+    "main",
+    "shogun-optimizer",
+    "anniversary_bts_VKKLKJ"
+  ]
+}

@@ -1,0 +1,27 @@
+<link href="{{ 'anniversary-doc.css' | asset_url }}" rel="stylesheet">
+
+{% include 'anniversary-nav', title: 'THE DOCUMENTARY' %}
+
+<div id="anniversary-title" class="anniversary-section">
+    <span>
+        THE DOCUMENTARY
+    </span>
+</div>
+
+<div id="anniversary-doc" class="anniversary-section">
+    <iframe width="1206" height="678" src="https://www.youtube.com/embed/77PbPdrB2iU" title="Legacy of Luxury" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+
+{% schema %}
+  {
+    "name": "Anniversary Documentary",
+	"class": "anniversary-template anniversary-documentary",
+    "settings": [],
+	"blocks": [],
+    "presets": [
+            {
+                "name": "Anniversary Documentary"
+            }
+        ]
+  }
+{% endschema %}

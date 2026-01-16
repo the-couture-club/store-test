@@ -1,0 +1,197 @@
+{% capture menuID %}{% if parentMenu != blank %}{{parentMenu | downcase}} > {%endif%}{{menuLink.title | downcase}}{% endcapture %}
+{% capture navigation %}{{menuCount}}{%if subMenuCount != null %}-{{subMenuCount}}{% endif %}{% endcapture %}
+<div data-name="{{ menuLink.title | handleize }}" {% if navigation == '1' %}data-menu="active" style="left: 0%;"{% endif %} data-level="{%if subMenuCount == null %}1{%else%}2{% endif %}" data-navigation="{{navigation}}" class="mobile-draw__wrapper">
+    {%if subMenuCount != null %}
+    <div class="mobile-draw__fixed mobile-draw__header">
+        <a class="cc-fs1 cc-uppercase cc-pointer js-back-mfp"><i class="icon icon--left" aria-hidden="true"></i>{{ 'layout.drawers.back' | t }}</a>
+    </div>
+    {% endif %}
+    <nav class="mobile-draw__nav {% if subMenuCount != null %} mobile-draw__nav--sub {% endif %} mobile-nav">
+        {% if subMenuCount != null %}<span class="mobile-draw__nav--title cc-fs1 cc-uppercase">{{menuLink.title}}</span>{% endif %}
+        <ul class="mobile-nav__items o-list-bare">
+            <div class="mobile-nav-fade"></div>
+            <li class="cc-fs2 cc-opacity cc-bold mobile-nav__item--spacer"></li>
+
+            {% for menu in shop.metaobjects['content_spots'].values %}
+                {% assign metafieldID = menu['title'] | downcase %}
+                {% if menuID == metafieldID %}
+                    {% assign headerImage = menu['main_banner'].value %}
+                    {% if headerImage != null %}
+                    <div class="mobile-nav__item-image">
+                        <a data-route="{{ menu['title'] }} > {{ headerImage.title }}" href="{{ headerImage.url }}">
+                            <div class="navigation__collections--item-content cc-fs1 cc-uppercase">
+                                <span>{{ headerImage.title }}</span>
+                                <span>{{ headerImage.subtitle }}</span>
+                            </div>
+
+                            <img
+                                class=""
+                                src="{{ headerImage.image | image_url }}"
+                                srcset="{{ headerImage.image | image_url: width: 180 }} 180w {{ 180 | divided_by: headerImage.image.aspect_ratio | round }}h, {{ headerImage.image | image_url: width: 360 }} 360w {{ 360 | divided_by: headerImage.image.aspect_ratio | round }}h, {{ headerImage.image | image_url: width: 540 }} 540w {{ 540 | divided_by: headerImage.image.aspect_ratio | round }}h, {{ headerImage.image | image_url: width: 720 }} 720w {{ 720 | divided_by: headerImage.image.aspect_ratio | round }}h, {{ headerImage.image | image_url: width: 900 }} 900w {{ 900 | divided_by: headerImage.image.aspect_ratio | round }}h, {{ headerImage.image | image_url: width: 1080 }} 1080w {{ 1080 | divided_by: headerImage.image.aspect_ratio | round }}h, {{ headerImage.image | image_url: width: 1296 }} 1296w {{ 1296 | divided_by: headerImage.image.aspect_ratio | round }}h, {{ headerImage.image | image_url }} 2512w {{ 2512 | divided_by: headerImage.image.aspect_ratio | round }}h"
+                                alt="{{ headerImage.image.alt }}"
+                                loading="lazy"
+                                sizes="10vw"
+                            />
+                        </a>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {%for link in menuLink.links %}
+
+                {% for highlight in shop.metaobjects['navigation_highlight'].values %}{%if link.title == highlight['nav_title'] %}{% assign metafield = highlight %}{% assign highlighted = true %}{%endif%}{% endfor %}
+                {% assign linkIndex = forloop.index %}
+                
+                    {%  if first == null and link.links != blank %} <li class="cc-fs2 cc-opacity cc-bold mobile-nav__item--spacer">{{ 'layout.navigation.shop' | t }}</li> {%  assign first  = false  %} {% endif %}
+                    <li {% if link.links != blank and link.title == autoDropQuery %}href="#load"{% endif %} aria-title="{{ link.title }}" {% if link.links == blank %}data-route="{{ menuID | upcase }} > {{ link.title }}"{% endif %} {% if highlighted %}style="background: {{metafield['background_colour'].value}}; color: {{metafield['text_colour'].value}};"{% endif %} class="{% if highlighted %}highlighted__item {% endif %}mobile-nav__item{% if link.active %} mobile-nav__item--active{% endif %}{% if link.links != blank %} mobile-nav__item--sub{% endif %} {% if subMenuCount != null %}cc-opacity {%endif%} {%if highlighted %}mobile-nav__link--highlighted{% endif %}"{% if link.links != blank %} aria-has-popup="true" aria-expanded="true" aria-controls="mobile-sub-{{ forloop.index }}"{% endif %}>
+                        <a {% if link.links != blank %}data-child="{{menuCount}}-{{linkIndex}}"{% endif %} href="{% if link.links != blank %}#mobile-sub-{{ forloop.index }}{% else %}{{ link.url }}{% endif %}" class="cc-fs1 mobile-nav__link{% if link.links != blank %} mobile-nav__link--sub js-toggle-trigger{% endif %} {% if link.links != blank and link.title == autoDropQuery %}js-active{% endif %}">
+                            {% if highlighted and metafield['navigation_image'].value != null %}
+                            <img class="mobile-nav__link--sub-image" src="{{ metafield['navigation_image'].value | image_url }}">
+                            {% endif %}
+                            <span class="mobile-nav__link--sub-title">{{ link.title }}</span>
+                            {% if highlighted and metafield['navigation_tag'].value != null %}
+                            <span style="color: {{metafield['navigation_tag_colour'].value}};" class="mobile-nav__link--sub-tag">{{metafield['navigation_tag']}}</span>
+                            {% endif %}
+                         </a>
+                        {% if link.links != blank %}
+                        <div data-menu="{{menuCount}}-{{linkIndex}}" class="mobile-nav_submenu cc-fs1" href="#mobile-sub-{{ forloop.index }}">
+                            {% for sublink in link.links %}
+                                
+                                {% for highlight in shop.metaobjects['navigation_highlight'].values %}{%if sublink.title == highlight['nav_title'] %}{% assign metafield = highlight %}{% assign highlighted = true %}{%endif%}{% endfor %}
+
+                                <a class="cc-fs1 mobile-nav__link" data-route="{{ menuID | upcase }} > {{link.title}} > {{sublink.title}}" href="{{ sublink.url }}">
+                                    {% if highlighted and metafield['navigation_image'].value != null %}
+                                    <img class="mobile-nav__link--sub-image" src="{{ metafield['navigation_image'].value | image_url }}">
+                                    {% endif %}
+                                    <span class="mobile-nav__link--sub-title">{{ sublink.title }}</span>
+                                    {% if highlighted and metafield['navigation_tag'].value != null %}
+                                    <span style="color: {{metafield['navigation_tag_colour'].value}};" class="mobile-nav__link--sub-tag">{{metafield['navigation_tag']}}</span>
+                                    {% endif %}
+                                </a>
+
+                                {% assign highlighted = false %}
+
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </li>
+                {% assign highlighted = false %}
+            {% endfor %}
+                {% assign first = null %}
+
+            <li class="cc-fs2 cc-opacity cc-bold mobile-nav__item--spacer">{{ 'layout.navigation.explore' | t }}</li>
+
+            {% for link in exploreLink.links %}
+        
+                {% for highlight in shop.metaobjects['navigation_highlight'].values %}{%if link.title == highlight['nav_title'] %}{% assign metafield = highlight %}{% assign highlighted = true %}{%endif%}{% endfor %}
+
+                {%  if link.links != blank %}
+                    <li class="mobile-nav__item mobile-nav__item--sub" aria-has-popup="true" aria-expanded="false" aria-controls="mobile-sub-{{ forloop.index }}">
+                        <a href="#mobile-sub-explore-{{ forloop.index }}" class="cc-fs1 mobile-nav__link mobile-nav__link--sub js-toggle-trigger">{{ link.title }}</a>
+                        <div class="mobile-nav_submenu cc-fs1" href="#mobile-sub-explore-{{ forloop.index }}">
+                            {% for sublink in link.links %}
+                                {% for highlight in shop.metaobjects['navigation_highlight'].values %}{%if sublink.title == highlight['nav_title'] %}{% assign metafield = highlight %}{% assign highlighted = true %}{%endif%}{% endfor %}
+                                <a class="cc-fs1 mobile-nav__link" data-route="EXPLORE > {{link.title}} > {{sublink.title}}" href="{{ sublink.url }}">
+                                    {% if highlighted and metafield['navigation_image'].value != null %}
+                                    <img class="mobile-nav__link--sub-image" src="{{ metafield['navigation_image'].value | image_url }}">
+                                    {% endif %}
+                                    <span class="mobile-nav__link--sub-title">{{ sublink.title }}</span>
+                                    {% if highlighted and metafield['navigation_tag'].value != null %}
+                                    <span style="color: {{metafield['navigation_tag_colour'].value}};" class="mobile-nav__link--sub-tag">{{metafield['navigation_tag']}}</span>
+                                    {% endif %}
+                                </a>
+                                {% assign highlighted = false %}
+                            {% endfor %}
+                        </div>
+                    </li>
+                {% else %}
+                    <li data-route="EXPLORE > {{link.title}}" class="mobile-nav__item">
+                        <a href="{{link.url}}" class="cc-fs1 mobile-nav__link">
+                        {% if highlighted and metafield['navigation_image'].value != null %}
+                        <img class="mobile-nav__link--sub-image" src="{{ metafield['navigation_image'].value | image_url }}">
+                        {% endif %}
+                        <span class="mobile-nav__link--sub-title">{{ link.title }}</span>
+                        {% if highlighted and metafield['navigation_tag'].value != null %}
+                        <span style="color: {{metafield['navigation_tag_colour'].value}};" class="mobile-nav__link--sub-tag">{{metafield['navigation_tag']}}</span>
+                        {% endif %}
+                        </a>     
+                    </li>
+                {% endif %}
+
+                {% assign highlighted = false %}
+
+            {% endfor %}
+
+            <li class="cc-fs2 cc-opacity cc-bold mobile-nav__item--spacer">{{ 'layout.navigation.account.title' | t }}</li>
+
+            {% if customer %}
+
+            <li data-route="ACCOUNT > MY ORDERS" class="mobile-nav__item">
+                <a href="/account" class="cc-fs1 mobile-nav__link">{{ 'layout.navigation.account.orders' | t }}</a>     
+            </li>
+
+            <li data-route="ACCOUNT > MANAGE ADDRESSES" class="mobile-nav__item">
+                <a href="/account/addresses" class="cc-fs1 mobile-nav__link">{{ 'layout.navigation.account.addresses' | t }}</a>     
+            </li>
+
+            <li data-route="ACCOUNT > MY WISHLIST" class="mobile-nav__item">
+                <a href="/pages/wishlist" class="cc-fs1 mobile-nav__link">{{ 'layout.navigation.account.wishlist' | t }}<span wishlist-count></span></a>     
+            </li>
+
+            <li data-route="ACCOUNT > SIGN OUT" class="mobile-nav__item">
+                <a href="/account/logout" class="cc-fs1 mobile-nav__link">{{ 'layout.navigation.account.log_out' | t }}</a>     
+            </li>
+
+            {% else %}
+
+            <li data-route="ACCOUNT > SIGN-IN" class="mobile-nav__item ">
+                <a href="/account/login" class="cc-fs1 mobile-nav__link">{{ 'layout.navigation.account.log_in' | t }}</a>     
+            </li>
+
+            <li data-route="ACCOUNT > SIGN-UP" class="mobile-nav__item ">
+                <a href="/account/register" class="cc-fs1 mobile-nav__link">{{ 'layout.navigation.account.create' | t }}</a>
+            </li>
+
+            {% endif %}
+
+            <li class="cc-fs2 cc-opacity cc-bold klaviyo-form--nav mobile-nav__item--spacer">{{ 'layout.navigation.subscribe' | t }}</li>
+            <div class="klaviyo-form klaviyo-form-VyawKe"></div>
+
+            <li class="cc-fs2 cc-opacity cc-bold mobile-nav__item--spacer">{{ 'layout.navigation.location' | t }}</li>
+            <div class="localize nav-localize footer-localize footer__bottom__left-item{% if both_selectors %} localize--double{% else %} localize--single{% endif %}">
+                    {%- form 'localization', id: 'FooterLocalizeForm', class: 'localize__form' -%}
+
+                            <div class="localize__item__wrapper js-localize-wrapper">
+                                <h2 class="u-hidden-visually" id="country-heading-footer">
+                                {{ 'general.country.dropdown_label' | t }}
+                                </h2>
+
+                                <button type="button" class="localize__toggle mobile-nav__link--sub js-localize-trigger" aria-expanded="false" aria-controls="country-list-footer" aria-describedby="country-heading-footer">{{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})</button>
+
+                                <div id="country-list-footer" class="localize__items localize__items--country js-localize-box o-list-bare">
+                                    <ul class="localize__items-wrapper">
+                                        {%- for country in localization.available_countries -%}
+                                            <li class="localize__item">
+                                                <a class="localize__item__link js-localize-item{% if country.iso_code == localization.country.iso_code %} selected{% endif %}" href="#" {% if country.iso_code == localization.country.iso_code %}aria-current="true"{% endif %} data-value="{{ country.iso_code }}">{{ country.name }} <span class="localization-form__country">({{ country.currency.iso_code }} {{ country.currency.symbol }})</span></a>
+                                            </li>
+                                        {%- endfor -%}
+                                    </ul>
+                                </div>
+
+                                <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}" data-disclosure-input>
+                            </div>
+
+                    {%- endform -%}
+                </div>
+
+        </ul>
+        {% for menu in shop.metaobjects['content_spots'].values %}
+            {% assign metafieldID = menu['title'] | downcase %}
+            {% if menuID == metafieldID %}
+            {% include 'navigation-collections', menu: menu['content_spots'], main: menuID %}
+            {% endif %}
+        {% endfor %}
+    </nav>
+
+</div>

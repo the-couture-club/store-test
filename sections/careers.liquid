@@ -1,0 +1,476 @@
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js"></script>
+
+<!-- The following plugins are only available for Club GSAP members.--> 
+<script src="{{ 'ScrollSmoother.min.js' | asset_url }}"></script>
+<script src="{{ 'SplitText.min.js' | asset_url }}"></script>
+
+{% assign active_vacancies = 0 %}
+
+{% for metaobject in shop.metaobjects['job_post'].values %}
+    {% assign active_vacancies = active_vacancies |  plus: 1 %}
+{% endfor %}
+
+<div id="careers-container">
+
+  <div id="careers-banner">
+      <div class="careers-banner_content">
+        <h1 class="title">Careers</h1>
+        <div class="subtitle">Join The Couture Club and shape the future of fashion. We’re looking for passionate, creative minds to grow with us in a fast-paced, style-led environment.</div>
+        <div class="ctas">
+            <a href="mailto:careers@thecoutureclub.co.uk" class="c-btn c-btn--full cc-btn cc-uppercase">Contact Us</a>
+            <a class="c-btn js-scroll-vacancies c-btn--full cc-btn cc-uppercase">View Job Openings ({{ active_vacancies }})</a>
+        </div>
+      </div>
+      <img class="u-hidden@tab-down" src="{{ section.settings.desktop | image_url }}">
+      <img
+          class="u-hidden@tab-up collection__header-img collection__header-img--{{ section.id }}"
+          src="{{ section.settings.mobile | image_url }}"
+          srcset="{% render 'bgset', image: metaobject.careers_mobile_image.value %}"
+          width="600"
+          height="{{ 600 | divided_by: metaobject.careers_mobile_image.value.aspect_ratio | round }}"
+          sizes="100vw"
+          alt="{{ metaobject.careers_title.value }}"
+          loading="eager"
+      />
+  </div>
+
+  <div data-block="two-block" class="block-stack" id="careers-content">
+    <div aria-type="content">
+      <div class="block-image"></div>
+      <div class="block-content gsap">
+        <h2>About Us</h2>
+          <p> The Couture Club, founded in 2015, is a Manchester based fashion brand. Every garment is designed in house at The Couture Club Headquarters with passion, care & attention to detail. We make Luxury fashion accessible to all, creating a community where everyone can look and feel their best, effortlessly & affordably. We are obsessed about being Courageous, Curious and Resilient in our pursuit to bring people together, through not only our clothes, but our culture itself.</p>
+          <div class="block-content__highlight">
+            <div class="block-content__highlight--container">
+              <h2 class="block-content__highlight--title">2015</h2>
+              <div class="block-content__highlight--subtitle">Founded</div>
+            </div>
+            <div class="block-content__highlight--container">
+              <h2 class="block-content__highlight--title">1M+</h2>
+              <div class="block-content__highlight--subtitle">Orders Shipped</div>
+            </div>
+            <div class="block-content__highlight--container">
+              <h2 class="block-content__highlight--title">50+</h2>
+              <div class="block-content__highlight--subtitle">Staff</div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-block="two-block" class="block-split" id="careers-content">
+    <div aria-type="content">
+      <div class="block-content gsap">
+        <h2>Benefits</h2>
+          <p class="benefits_content">
+            25 days holiday + bank holidays <br>
+            Company bonus scheme <br>
+            Staff discount <br>
+            Company pension plan <br>
+            Flexible working hours <br>
+            Free on-site Parking <br>
+            Birthday Day Off
+          </p>     
+      </div>
+      <div class="block-image_container">
+          <div class="block-image"></div>
+      </div>
+    </div>
+  </div>
+
+  <div data-block="vacancies" id="careers-content">
+    <div class="gsap" aria-type="content">
+      <h2>Current Vacancies</h2>
+      <div class="block_vacancies">
+        {% for metaobject in shop.metaobjects['job_post'].values %}
+          <div class="block_vacancies--post">
+            <div class="block_vacancies--post-title">
+              <span>{{ metaobject['job_title'].value }}</span>
+              <span>{{ metaobject['job_post_subtitle'].value }}</span>
+            </div>
+            <p class="block_vacancies--post-content">{{ metaobject.job_post_content_ | metafield_tag | strip_html |  remove: 'Job Overview'  | truncatewords: 20 }}</p>
+            <a href="{{metaobject.system.url}}" class="block_vacancies--post-cta c-btn c-btn--full cc-btn cc-uppercase">Read More</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+
+#careers-container p {
+font-weight: 500; 
+margin: 0;
+}
+
+#careers-banner img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  opacity: 20%;
+}
+#careers-banner {
+    background: black;
+    height: 66vh;
+    position: relative;
+}
+#careers-banner .ctas {
+    width: 100%;
+    gap: 20px;
+    display: flex;
+    flex-direction: row;
+    filter: invert(1);
+}
+
+announcement-bar { 
+    display: none;
+}
+
+#careers-content {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 0px;
+  background: white;
+}
+
+#careers-content [aria-type] {
+  gap: 20px;
+  flex-direction: column;
+  position: sticky;
+  max-width: 800px;
+  width: 90%;
+  display: grid;
+}
+
+#careers-content h1 {
+  font-weight: 600;
+  font-size: 5rem;
+}
+
+#careers-content h2 {
+  font-size: 3rem;
+  letter-spacing: -1px;
+  justify-content: center;
+  display: flex;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0px;
+}
+
+#careers-content.block-split h2 {
+  justify-content: left;
+}
+
+#careers-content [aria-type="form"][disabled]:before {
+    align-content: center;
+    text-align: center;
+    content: 'Registration Closed';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    background: #ffffffc9;
+    backdrop-filter: blur(2px);
+    font-size: 26px;
+    font-weight: 600;
+}
+
+form-embed {
+  margin-top: -25px;
+}
+
+.careers-map {
+  height: calc(100vh - var(--header-section-height));
+  width: 100%;
+  display:flex;
+}
+
+.careers-banner_content {
+  max-width: 600px;
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  text-shadow: 0px 0px 10px #000000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1.5;
+  width: 100%;
+  padding: 0px 2.5rem;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.careers-banner_content .title {
+    font-size: 3rem;
+    letter-spacing: -1px;
+    font-weight: 700;
+    line-height: 1;
+    color: white;
+    margin: 0px;
+    padding: 0px;
+    text-transform: uppercase;
+}
+
+.careers-banner_content .subtitle, .careers-banner_content.cc-btn {
+  font-weight: 500;
+}
+
+.block_vacancies {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+  line-height: 1.5;
+  justify-content: center;
+}
+
+.block_vacancies--post {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 20px;
+  border: 1px solid #bababa;
+  padding: 20px;
+  text-align: center;
+  width: calc(50% - 10px);
+}
+
+.block_vacancies--post-title {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+
+.block_vacancies--post-title span:first-child {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.block_vacancies--post-title span:last-child {
+  opacity: 0.5;
+}
+
+#careers-content[data-block="two-block"] {
+  width: 100%;
+  padding: 0px;
+}
+
+#careers-content[data-block="two-block"] [aria-type="content"] {
+  width: 100%;
+  max-width: none;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0px;
+}
+
+#careers-content[data-block="two-block"] .block-image {
+  height: 100%;
+  width: 100%;
+  background: url(https://cdn.shopify.com/s/files/1/0242/6047/6980/files/DSC05719_1.jpg?v=1749032498);
+  background-position: center !important;
+  background-size: cover !important;
+}
+#careers-content[data-block="two-block"].block-split .block-image {
+  background: url(https://cdn.shopify.com/s/files/1/0242/6047/6980/files/DSC08535_1.jpg?v=1749043746);
+}
+
+#careers-content[data-block="two-block"] .block-content {
+  max-width: 800px;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+#careers-content[data-block="two-block"].block-split {
+  margin: auto;
+  max-width: 800px;
+  justify-self: center;
+}
+#careers-content.block-split[data-block="two-block"] .block-content {
+  padding: 2.5rem 0px;
+  width: 100%;
+  text-align: left;
+}
+
+#careers-content[data-block="two-block"].block-stack {
+  height: auto;
+}
+
+#careers-content[data-block="two-block"].block-stack [aria-type="content"] {
+  grid-template-columns: auto;
+  grid-template-rows: 1fr 1fr;
+}
+
+.block-content__highlight {
+  display: flex;
+  justify-content: space-evenly;
+  text-align: center;
+  width: 50%;
+  align-self: center;
+}
+
+.block-content__highlight--container {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+
+.block-content__highlight--title {
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.block-content__highlight--subtitle {
+  font-weight: 500;
+}
+
+.block-stack[data-block="two-block"] .block-content, .block-split[data-block="two-block"], [data-block="vacancies"] {
+  padding-top: 5rem !important;
+  padding: 0px 2.5rem;
+}
+
+[data-block="vacancies"] {
+  padding-bottom: 5rem !important;
+}
+
+.gsap {
+  transform: translateY(100px);
+  opacity: 0;
+  transition: 1s;
+}
+
+.main-tool-bar--scrolled {
+    transform: translateY(0px);
+    opacity: 1;
+}
+
+@media screen and (max-width: 767px) {
+    #careers-content {
+        flex-direction: column;
+    }
+    #careers-content [aria-type] {
+        width: 100%;
+        max-width: none;
+        position: relative;
+        top: 0px;
+    }
+    #careers-banner .ctas {
+        flex-direction: column;
+    }
+    .block_vacancies {
+      grid-template-columns: auto;
+    }
+    .block_vacancies--post {
+      width: 100%;
+    }
+    #careers-content[data-block="two-block"] {
+      height: auto;
+    }
+    #careers-content[data-block="two-block"] [aria-type="content"] {
+      grid-template-columns: auto;
+    }
+    #careers-content[data-block="two-block"] .block-image {
+      height: 300px;
+    }
+    #careers-content[data-block="two-block"].block-split .block-image {
+      order: 1;
+    }
+    #careers-content[data-block="two-block"].block-split .block-content {
+      order: 2;
+      padding: 5rem 0px 0px 0px;
+      text-align: center;
+      align-items: center;
+    }
+    #careers-content[data-block="two-block"].block-stack [aria-type="content"] {
+      grid-template-rows: auto 1fr;
+    }
+    [data-block="vacancies"] {
+      padding-top: 0px;
+    }
+    .block-content__highlight {
+      width: 100%;
+    }
+    .careers-banner_content .title {
+      font-size: 3rem;
+    }
+    #careers-content h2 {
+      font-size: 2rem;
+    }
+
+}
+
+</style>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", (event) => {
+
+    gsap.registerPlugin(ScrollTrigger,TextPlugin);
+
+    var scrollBtn = document.querySelector('.js-scroll-vacancies');
+    var scrollElem = document.querySelector('[data-block="vacancies"]')
+
+    scrollBtn.addEventListener('click', function() {
+      scrollElem.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    });
+
+    var gsapElems = document.querySelectorAll('.gsap');
+
+    gsapElems.forEach((elem) => {
+              
+      ScrollTrigger.create({
+        trigger: elem,
+        start: `top ` + (window.innerHeight * 0.90) + 'px',
+        toggleClass: {className: 'main-tool-bar--scrolled', targets: elem}
+      });
+        
+
+    });
+
+  });
+
+  
+    
+</script>
+
+{% schema %}
+    {
+      "name": "Careers Page",
+      "settings": [
+        {
+            "type": "image_picker",
+            "id": "desktop",
+            "label": "Desktop Image"
+        },
+        {
+            "type": "image_picker",
+            "id": "mobile",
+            "label": "Mobile Image"
+        }
+      ],
+      "blocks": [
+        {
+          "type": "@app"
+        }
+      ],
+      "presets": [
+          {
+              "name": "Careers Page"
+          }
+      ]
+    }
+  {% endschema %}

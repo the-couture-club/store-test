@@ -1,0 +1,25 @@
+ <div class="navigation__collections search-draw__heading">
+  <div class="navigation__collections--container">
+    <div class="navigation__collections--items">
+
+    {% for item in menu.value %}
+
+      <a data-route="{{main | upcase }} > {{ item['title'] | upcase }}" class="navigation__collections--item cc-pointer" href="{{ item['url'].value.url }}">
+        <div class="navigation__collections--item-content cc-fs1 cc-uppercase">
+          <span>{{ item['title'] }}</span>
+          <span>{{ item['subtitle'] }}</span>
+        </div>
+        <img
+          class="navigation__collections--image"
+          src="{{ item['image'] | image_url: width: 700 }}"
+          alt="{{ item['title'] }}"
+          width="100%"
+          loading="lazy"
+        >
+      </a>
+      
+    {% endfor %}
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,183 @@
+<section class="app-download-sec">
+  
+  <div class="banner-sec">
+    <img src="https://cdn.shopify.com/s/files/1/0242/6047/6980/files/app-hero.jpg?v=1763458250" alt="banner image" class="img-fluid desk-img">
+    <img src="https://cdn.shopify.com/s/files/1/0242/6047/6980/files/app-hero-mobile.jpg?v=1763458464" alt="banner image" class="img-fluid mob-img">
+    <div class="banner-sec-overlay">
+      <h1>The Couture Club App</h1>
+      <h3>Download for App Exclusive Offers</h3>
+    </div>
+  </div>
+  
+  <div class="overlay-img">
+    <img src="https://cdn.shopify.com/s/files/1/0242/6047/6980/files/IPHONES_57c326b4-b306-4a0f-b34e-dae90cfce74e.png?v=1692099552" alt="overlay image" class="img-fluid">
+    
+  </div>
+  
+
+    <div class="text-content">
+      <p class="intro_header">Introducing the perfect Couture Club shopping experience with our very own app</p> 
+      <p>Download now and keep on top of all things Couture Club</p>
+      <p>The app provides you with:</p>
+      <ul>
+        <li>- Early access to new releases</li>
+        <li>- App exclusive product launches</li>
+        <li>- App exclusive discounts</li>
+        <li>- Smoother shopping experience</li>
+        <li>- Up to date alerts and notifications</li>
+        <li>- Checkout with Apple Pay</li>
+      </ul>
+    </div>
+  
+  <div class="download-sec">
+    <h1>Download The App</h1>
+    <div class="btn-holder">
+      <div class="btn-sec btn-app-store">
+        <a href="https://apps.apple.com/us/app/the-couture-club/id1482034648" target="_blank"><img src="https://cdn.shopify.com/s/files/1/0242/6047/6980/files/APPLE-BADGE.png?v=1654667831" alt="img" class="img-fluid"></a>
+      </div>
+      <div class="btn-sec btn-play-store">
+        <a href="https://play.google.com/store/apps/details?id=co.tapcart.app.id_P35DnMmRpS&amp;hl=en_GB&amp;gl=US" target="_blank"><img src="https://cdn.shopify.com/s/files/1/0242/6047/6980/files/GOOGLE-BADGE.png?v=1654667831" alt="img" class="img-fluid"></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% schema %}
+  {
+    "name": "App Download",
+    "settings": [],
+    "presets": [
+            {
+                "name": "App Download"
+            }
+        ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}
+
+
+<style>
+.intro_header{
+  margin-bottom:0px !important;
+}
+  .mob-img{
+    display:none;
+  }
+  .overlay-img{
+    position:relative;
+    margin-top:-20vw;
+    width:100%;
+    text-align:center;
+  }
+  
+  .overlay-img img{
+     width:40%;
+  } 
+  
+  .banner-sec{
+    position:relative;
+  }
+  .banner-sec img{
+    width:100%;
+  }
+  .banner-sec-overlay{
+    position:absolute;
+    top:21%;
+    width:100%;
+    text-align:center;
+    text-transform:uppercase;
+    filter: drop-shadow(5px 5px 10px #000000);
+    
+  }
+  .banner-sec-overlay h1{
+    color:#fff;
+    font-weight:800;
+    letter-spacing:0;
+    margin-bottom:5px;
+    line-height:normal;
+  }
+  .banner-sec-overlay h3{
+    color:#fff;
+    font-weight:400;
+    letter-spacing:0;
+    font-size:12px;
+  }
+  
+  .text-content{
+     width:60%;
+     margin:30px auto;
+     text-align:center;
+  }
+  .download-sec{
+    background-color:#f5f5f5;
+    padding:80px;
+    text-align:center;
+  }
+  .download-sec h1{
+    font-size:30px;
+    font-weight:800;
+    
+  }
+  .btn-holder {
+    display: flex;
+    justify-content: center;
+    margin-top:10px;
+  }
+  
+  .btn-holder .btn-sec{
+    margin:0 5px;
+  }
+  .text-content ul li{
+    list-style:none;
+    font-size:20px;
+    margin-bottom:0px;
+  }
+  
+  .text-content p{
+    font-size:20px;
+    margin-bottom:30px;
+  }
+  
+  .btn-holder .btn-sec a img{
+    width:160px;
+  }
+  
+  @media (max-width:990px){
+    .desk-img{
+      display:none;
+    }
+    .mob-img{
+      display:block;
+    }
+    .overlay-img{
+      margin-top:-36vw;
+    }
+    .overlay-img img{
+      width:70%;
+    }
+    .text-content{
+      width:90%;
+    }
+    .text-content p{
+      font-size:18px;
+    }
+    .text-content ul li{
+      font-size:18px;
+    }
+    .download-sec{
+      padding:50px 15px;
+    }
+    .download-sec h1{
+      font-size:24px;
+    }
+    .btn-holder .btn-sec a img{
+      width:130px;
+    }
+  }
+</style>

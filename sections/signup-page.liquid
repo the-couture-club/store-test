@@ -1,0 +1,151 @@
+<div id="signup-page">
+  <img src="{{section.settings.background_image | img_url:"master"}}" alt="image" class="signup-background u-hidden@tab-down">
+  <img src="{{section.settings.background_image_mob | img_url:"master"}}" alt="image" class="signup-background u-hidden@tab-up">
+  <div id="form">
+    <div class="signup-content__form">
+      <div class="signup-content__form--content">
+        <h1 class="cc-uppercase">{{ section.settings.heading }}</h1>
+        <p>{{section.settings.copy-text}}</p>
+      </div>
+      <div class="klaviyo-form-{{ section.settings.klaviyo_form_code }}"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener('DOMContentLoaded', function(event) {
+      var container = document.getElementById('signup-page');
+      var announcement = document.querySelector('.js-section__announcement');
+      var header = document.querySelector('.js-section__header');
+
+      setTimeout(function() {
+        container.classList.add('loaded');
+      }, 500);
+      container.style.height = 'calc(100dvh - ' + (announcement.clientHeight +  header.clientHeight) + 'px )';
+  }, true);
+</script>
+
+<style>
+
+  #signup-page {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    top: 0;
+    overflow: hidden;
+  }
+
+  #signup-page .signup-background {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    object-fit: cover; 
+    animation: backgroundScale 0s;
+  }
+
+  #signup-page #form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background: #0000005e;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    place-content: center;
+  }
+
+  .signup-content__form {
+    opacity: 0;
+    transition: 1s;
+  }
+
+  .loaded .signup-content__form {
+    opacity: 1;
+  }
+
+  .signup-content__form--content {
+    display: flex;
+    color: white !important;
+    flex-direction: column;
+    text-align: center;
+    max-width: 780px;
+  }
+
+  .signup-content__form--content * {
+    margin: 0;
+  }
+
+  .signup-content__form--content h1 {
+    color: white;
+    font-weight: 900;
+  }
+
+  @keyframes backgroundScale {
+    from {
+      scale: 1.5;
+    }
+
+    to {
+      scale: 1.1;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+</style>
+
+{% schema %}
+  {
+    "name": "Signup Content",
+    "settings": [
+        {
+        "type": "header",
+        "content": "Banner Section"
+        },
+        {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading"
+        },
+        {
+        "type":  "textarea",
+        "id":    "copy-text",
+        "label": "Text",
+        "default": "An excludive 15 piece collection<br/>Sign up to keep updated"
+        },
+        {
+        "type": "text",
+        "id": "klaviyo_form_code",
+        "label": "Form Code",
+        "default": "VyawKe",
+        "info": "Enter only the code, e.g. VyawKe"
+        },
+        {
+        "type": "image_picker",
+        "id": "background_image",
+        "label": "Background Image Desktop"
+        },
+        {
+        "type": "image_picker",
+        "id": "background_image_mob",
+        "label": "Background Image Mobile"
+        }
+    ],
+    "presets": [
+        {
+            "name": "AW22 PAGE"
+        }
+    ]
+  }
+{% endschema %}

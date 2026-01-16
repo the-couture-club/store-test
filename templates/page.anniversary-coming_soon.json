@@ -1,0 +1,103 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "shogun-helper": {
+      "type": "shogun-helper",
+      "disabled": true,
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {}
+    },
+    "shogun-optimizer": {
+      "type": "shogun-optimizer",
+      "disabled": true,
+      "settings": {}
+    },
+    "anniversary_coming_soon_xHwt3B": {
+      "type": "anniversary-coming_soon",
+      "blocks": {
+        "list_PcHkby": {
+          "type": "list",
+          "settings": {
+            "list": [
+              "c-script-embroidered-oversized-emblem-jumper-cocoa",
+              "c-script-embroidered-oversized-emblem-jumper-pink",
+              "cable-knit-embroidered-emblem-jumper-grey-marl",
+              "cable-knit-embroidered-emblem-jumper-oat",
+              "cable-knit-zip-through-hoodie-grey",
+              "cable-knit-zip-through-hoodie-stone",
+              "contrast-emblem-scarf-brown",
+              "contrast-emblem-scarf-off-white",
+              "distressed-leather-bomber-jacket-brown",
+              "emblem-applique-knitted-crew-brown",
+              "emblem-applique-knitted-crew-grey",
+              "emblem-applique-knitted-crew-off-white"
+            ]
+          }
+        },
+        "list_8VqnVf": {
+          "type": "list",
+          "settings": {
+            "list": [
+              "emblem-applique-knitted-joggers-brown",
+              "emblem-applique-knitted-joggers-grey",
+              "emblem-applique-knitted-joggers-off-white",
+              "emblem-applique-knitted-polo-top-brown",
+              "emblem-applique-knitted-polo-top-grey",
+              "emblem-applique-knitted-polo-top-off-white",
+              "emblem-cord-cap-black",
+              "emblem-cord-cap-brown",
+              "emblem-cord-cap-forest-green",
+              "fluffy-knit-pin-badge-beanie-brown",
+              "fluffy-knit-pin-badge-beanie-grey",
+              "fluffy-knit-pin-badge-beanie-off-white",
+              "legacy-of-luxury-hoodie-black",
+              "legacy-of-luxury-t-shirt-black"
+            ]
+          }
+        },
+        "list_cwiTXr": {
+          "type": "list",
+          "settings": {
+            "list": [
+              "legacy-of-luxury-t-shirt-off-white",
+              "legacy-of-luxury-t-shirt-white",
+              "metal-monogram-pin-badge-silver",
+              "script-embroidered-oversized-emblem-jumper-black",
+              "shadow-print-emblem-t-shirt-washed-black",
+              "shadow-print-emblem-t-shirt-washed-pink",
+              "vintage-wash-mid-rise-emblem-straight-leg-jeans-blue-wash",
+              "vintage-washed-emblem-straight-leg-jeans-blue-wash"
+            ]
+          }
+        }
+      },
+      "block_order": [
+        "list_PcHkby",
+        "list_8VqnVf",
+        "list_cwiTXr"
+      ],
+      "name": "Anniversary Coming Soon",
+      "settings": {
+        "title": ""
+      }
+    }
+  },
+  "order": [
+    "shogun-helper",
+    "main",
+    "shogun-optimizer",
+    "anniversary_coming_soon_xHwt3B"
+  ]
+}

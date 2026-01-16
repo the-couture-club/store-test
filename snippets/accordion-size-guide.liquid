@@ -1,0 +1,17 @@
+<accordion-group>
+    <details data-type="size-guide" id="product-accordion-1">
+        <summary>
+            <h6 class="cc-fs2 cc-uppercase">{{ "custom.find_your_size" | t }}</h6>
+            <summary-icon>
+                <i class="icon icon--plus" aria-hidden="true"></i>
+            </summary-icon>
+        </summary>
+        <details-content>
+            <div class="product-single__accordion__item-wrap cc-fs2 rte">
+                {% if product.metafields.custom.product_additional_sizing_info %}<p>{{ product.metafields.custom.product_additional_sizing_info | newline_to_br }}</p>{% endif %}
+                {% render block %}
+                <span class="js-size-guide cc-fs2 cc-pointer cc-uppercase cc-underline">SIZE GUIDE</span>
+            </div>
+        </details-content>
+    </details>
+</accordion-group>

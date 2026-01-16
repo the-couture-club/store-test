@@ -1,0 +1,1 @@
+document.querySelectorAll(".anniversary-template [href]").forEach((e=>{e.addEventListener("click",(t=>{t.ctrlKey||t.metaKey||"_blank"===e.target||(t.preventDefault(),document.documentElement.setAttribute("data-transitioning","true"),setTimeout((()=>{window.location.href=e.href}),600))}))}));

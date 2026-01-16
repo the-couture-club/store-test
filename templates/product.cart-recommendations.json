@@ -1,0 +1,370 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "vendor",
+          "settings": {
+            "vendor_size": 2,
+            "vendor_style": "body"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "title_size": 3,
+            "title_size_mobile": 3
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "price_label_discount": true,
+            "price_label_discount_type": "text",
+            "price_label_discount_color": "#c00000"
+          }
+        },
+        "db48bf56-e904-4604-9f21-89d04e9bf249": {
+          "type": "spacer",
+          "settings": {
+            "top": "small",
+            "bottom": "small",
+            "border": true
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "product_variant_style": "swatches-buttons",
+            "popup_enable": false,
+            "popup_trigger": "Size\nGröße\nTaille\nTaglia\nTalla",
+            "popup_label": "Size guide",
+            "popup_content": ""
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {
+          }
+        },
+        "inventory_notice": {
+          "type": "inventory_notice",
+          "settings": {
+            "inventory_limit": 3,
+            "align": "left",
+            "show_qty": true
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_gift_card_recipient": true,
+            "enable_payment_button": true
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "align": "center"
+          }
+        },
+        "db48bf56-e904-4604-9f21-89d04e9bf241": {
+          "type": "spacer",
+          "settings": {
+            "top": "small",
+            "bottom": "small",
+            "border": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+          }
+        },
+        "4bf5c6b5-c743-4fa5-9f87-5e810c16cffa": {
+          "type": "tab",
+          "settings": {
+            "title": "Collapsible tab",
+            "text": "",
+            "image_width": 200,
+            "align": "center",
+            "link": "",
+            "tab_content": "",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "price",
+        "db48bf56-e904-4604-9f21-89d04e9bf249",
+        "variant_picker",
+        "quantity_selector",
+        "inventory_notice",
+        "buy_buttons",
+        "share",
+        "db48bf56-e904-4604-9f21-89d04e9bf241",
+        "description",
+        "4bf5c6b5-c743-4fa5-9f87-5e810c16cffa"
+      ],
+      "disabled": true,
+      "settings": {
+        "container": "large",
+        "show_breadcrumbs": true,
+        "enable_zoom": true,
+        "enable_sticky_gallery": true,
+        "enable_video_looping": false,
+        "product_image_ratio": "1:1",
+        "enable_product_image_rounded_corners": false,
+        "thumbnails_position": "bottom",
+        "thumbnails_ratio": "1:1",
+        "thumbnails_show_border": false
+      }
+    },
+    "89fe701f-9e18-4fe6-bc58-be66e1d0041f": {
+      "type": "section-multi-column-icons",
+      "blocks": {
+        "template--16580692508926__89fe701f-9e18-4fe6-bc58-be66e1d0041f-1666784018e508fd69-0": {
+          "type": "text",
+          "settings": {
+            "icon": "icon-love-it",
+            "color_icon": "rgba(0,0,0,0)",
+            "title": "Column heading",
+            "sub_title": "",
+            "desc": "<p>Describe the main features of your brand or products using a few lines of text and an icon.<\/p>",
+            "link_title": "Learn more",
+            "link": ""
+          }
+        },
+        "template--16580692508926__89fe701f-9e18-4fe6-bc58-be66e1d0041f-1666784018e508fd69-1": {
+          "type": "text",
+          "settings": {
+            "icon": "icon-sea-transport-boat",
+            "color_icon": "rgba(0,0,0,0)",
+            "title": "Column heading",
+            "sub_title": "",
+            "desc": "<p>Describe the main features of your brand or products using a few lines of text and an icon.<\/p>",
+            "link_title": "Learn more",
+            "link": ""
+          }
+        },
+        "template--16580692508926__89fe701f-9e18-4fe6-bc58-be66e1d0041f-1666784018e508fd69-2": {
+          "type": "text",
+          "settings": {
+            "icon": "icon-conversation-chat-text",
+            "color_icon": "rgba(0,0,0,0)",
+            "title": "Column heading",
+            "sub_title": "",
+            "desc": "<p>Describe the main features of your brand or products using a few lines of text and an icon.<\/p>",
+            "link_title": "Learn more",
+            "link": ""
+          }
+        },
+        "template--16580692508926__89fe701f-9e18-4fe6-bc58-be66e1d0041f-1666784018e508fd69-3": {
+          "type": "text",
+          "settings": {
+            "icon": "icon-clothes-design-sewing-machine",
+            "color_icon": "rgba(0,0,0,0)",
+            "title": "Column heading",
+            "sub_title": "",
+            "desc": "<p>Describe the main features of your brand or products using a few lines of text and an icon.<\/p>",
+            "link_title": "Learn more",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "template--16580692508926__89fe701f-9e18-4fe6-bc58-be66e1d0041f-1666784018e508fd69-0",
+        "template--16580692508926__89fe701f-9e18-4fe6-bc58-be66e1d0041f-1666784018e508fd69-1",
+        "template--16580692508926__89fe701f-9e18-4fe6-bc58-be66e1d0041f-1666784018e508fd69-2",
+        "template--16580692508926__89fe701f-9e18-4fe6-bc58-be66e1d0041f-1666784018e508fd69-3"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "",
+        "container": "small",
+        "link_title": "Learn more",
+        "link": "",
+        "divider": false,
+        "section-bottom-margin": false,
+        "grid": 2,
+        "spacing": 3,
+        "alignment": "center",
+        "link_style": "body",
+        "heading_size": 3,
+        "icon_size": 30,
+        "icon_padding": 0,
+        "bg_color": "rgba(0,0,0,0)",
+        "color_text": "rgba(0,0,0,0)",
+        "text_heading_color": false,
+        "grid_mobile": "1",
+        "mobile_layout": "carousel"
+      }
+    },
+    "99bde67f-dd84-4723-9680-449735062b9b": {
+      "type": "section-image-text-banner",
+      "blocks": {
+        "template--16580692508926__99bde67f-dd84-4723-9680-449735062b9b-16667840140c07a9cc-0": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Offer some insight into your brand and history. Use images, text and video to describe your value proposition.<\/p>",
+            "text_size": 6,
+            "text_width": 65,
+            "text_size_mobile": 3,
+            "text_style": "body"
+          }
+        },
+        "b0ca8c62-a7fc-42e3-80ca-4b09e93ed3a0": {
+          "type": "link",
+          "settings": {
+            "link_title": "Shop all",
+            "link": "",
+            "link_style": "c-btn c-btn--hollow"
+          }
+        }
+      },
+      "block_order": [
+        "template--16580692508926__99bde67f-dd84-4723-9680-449735062b9b-16667840140c07a9cc-0",
+        "b0ca8c62-a7fc-42e3-80ca-4b09e93ed3a0"
+      ],
+      "disabled": true,
+      "settings": {
+        "section_height": "medium",
+        "section_height_mobile": "medium",
+        "section_width": "contained",
+        "content_alignment": "center",
+        "content_color": "#ffffff",
+        "content_heading_color": false,
+        "bg_color": "rgba(0,0,0,0)",
+        "overlay_color": "#000000",
+        "overlay_strength": 10,
+        "section-bottom-margin": false
+      }
+    },
+    "9904a28f-6381-41fe-96eb-d4a73d60f0a0": {
+      "type": "section-testimonials",
+      "blocks": {
+        "template--16580692508926__9904a28f-6381-41fe-96eb-d4a73d60f0a0-1666784019a14d8867-0": {
+          "type": "text",
+          "settings": {
+            "media": "quote",
+            "image_round": true,
+            "text": "<p>Use these testimonials to share what customers are saying about your products and your brand.<\/p>",
+            "name": "Customer name",
+            "source": "Source"
+          }
+        },
+        "template--16580692508926__9904a28f-6381-41fe-96eb-d4a73d60f0a0-1666784019a14d8867-1": {
+          "type": "text",
+          "settings": {
+            "media": "instagram",
+            "image_round": true,
+            "text": "<p>Use these testimonials to share what customers are saying about your products and your brand.<\/p>",
+            "name": "Customer name",
+            "source": "Source"
+          }
+        },
+        "template--16580692508926__9904a28f-6381-41fe-96eb-d4a73d60f0a0-1666784019a14d8867-2": {
+          "type": "text",
+          "settings": {
+            "media": "twitter",
+            "image_round": true,
+            "text": "<p>Use these testimonials to share what customers are saying about your products and your brand.<\/p>",
+            "name": "Customer name",
+            "source": "Source"
+          }
+        }
+      },
+      "block_order": [
+        "template--16580692508926__9904a28f-6381-41fe-96eb-d4a73d60f0a0-1666784019a14d8867-0",
+        "template--16580692508926__9904a28f-6381-41fe-96eb-d4a73d60f0a0-1666784019a14d8867-1",
+        "template--16580692508926__9904a28f-6381-41fe-96eb-d4a73d60f0a0-1666784019a14d8867-2"
+      ],
+      "disabled": true,
+      "settings": {
+        "title": "Testimonials",
+        "style_desktop": "featured-grid",
+        "style_mobile": "carousel",
+        "link_title": "Shop now",
+        "link": ""
+      }
+    },
+    "5a818a60-e694-4eac-a33f-5ce701e894b0": {
+      "type": "section-image-with-text",
+      "blocks": {
+        "template--16580692508926__5a818a60-e694-4eac-a33f-5ce701e894b0-1666784018a0003e2f-0": {
+          "type": "image",
+          "settings": {
+            "title": "Image with text",
+            "desc": "<p>Use these blocks to share your brand's story. You can focus on a particular collection, a product detail, or even embed a video.<\/p>",
+            "horizontal_align": "left",
+            "link_title": "Learn more",
+            "link": "",
+            "bg_color_block": "rgba(0,0,0,0)",
+            "bg_color_content": "#ffffff",
+            "color_text": "#212121",
+            "text_heading_color": false
+          }
+        },
+        "template--16580692508926__5a818a60-e694-4eac-a33f-5ce701e894b0-1666784018a0003e2f-1": {
+          "type": "image",
+          "settings": {
+            "title": "Image with text",
+            "desc": "<p>Use these blocks to share your brand's story. You can focus on a particular collection, a product detail, or even embed a video.<\/p>",
+            "horizontal_align": "left",
+            "link_title": "Learn more",
+            "link": "",
+            "bg_color_block": "rgba(0,0,0,0)",
+            "bg_color_content": "#ffffff",
+            "color_text": "#212121",
+            "text_heading_color": false
+          }
+        }
+      },
+      "block_order": [
+        "template--16580692508926__5a818a60-e694-4eac-a33f-5ce701e894b0-1666784018a0003e2f-0",
+        "template--16580692508926__5a818a60-e694-4eac-a33f-5ce701e894b0-1666784018a0003e2f-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "container": "large",
+        "block_spacing": 2,
+        "section-bottom-margin": false,
+        "image_ratio": "4:3",
+        "block_layout": "2\/3",
+        "block_align": "left",
+        "vertical_align": "top",
+        "heading_size": 3,
+        "link_style": "hollow"
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "disabled": true,
+      "settings": {
+        "related_title": "You may also like",
+        "section_width": "large",
+        "related_mobile_layout": "carousel",
+        "related_grid_num": 3,
+        "grid_mobile": "1",
+        "related_grid_row": 1
+      }
+    },
+    "e4a9e2a8-ea48-454f-87f9-df0a4f5eb6cd": {
+      "type": "cart-recommendations",
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "main",
+    "89fe701f-9e18-4fe6-bc58-be66e1d0041f",
+    "99bde67f-dd84-4723-9680-449735062b9b",
+    "9904a28f-6381-41fe-96eb-d4a73d60f0a0",
+    "5a818a60-e694-4eac-a33f-5ce701e894b0",
+    "product-recommendations",
+    "e4a9e2a8-ea48-454f-87f9-df0a4f5eb6cd"
+  ]
+}

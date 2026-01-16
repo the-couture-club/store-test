@@ -1,0 +1,263 @@
+<div id="gift-card-form">
+    <div class="container">
+        <div class="gift-card-form-close cc-pointer">
+            <i class="icon icon--plus js-close-mfp" aria-hidden="true"></i>
+        </div>
+        <h3 class="cc-fs1 cc-uppercase">Gift Card Details</h3>
+        <recipient-form
+            class="recipient-form cc-fs2"
+            data-section-id="{{ section.id }}"
+            data-product-variant-id="{{ product.selected_or_first_available_variant.id }}"
+        >
+            <input
+            id="Recipient-checkbox-{{ section.id }}"
+            class="recipient-checkbox"
+            type="checkbox"
+            name="{{ gift_card_recipient_control_flag }}"
+            >
+            <label class="recipient-checkbox" for="Recipient-checkbox-{{ section.id }}">
+            <span>{{ 'recipient.form.checkbox' | t }}</span>
+            </label>
+            <div
+            class="product-form__recipient-error-message-wrapper"
+            role="alert"
+            {% unless form.errors %}
+                hidden
+            {% endunless %}
+            >
+            <h2 class="form__message" tabindex="-1" autofocus>
+                
+                <span class="error-message">{{ 'templates.contact.form.error_heading' | t }}</span>
+            </h2>
+
+            <ul>
+                {%- if form.errors -%}
+                {%- for field in form.errors -%}
+                    <li>
+                    {%- if field == 'form' -%}
+                        {{ form.errors.messages[field] }}
+                    {%- else -%}
+                        <a href="#Recipient-{{ field }}-{{ section.id }}">
+                        {{ form.errors.messages[field] }}
+                        </a>
+                    {%- endif -%}
+                    </li>
+                {%- endfor -%}
+                {%- endif -%}
+            </ul>
+            </div>
+            <p
+            id="Recipient-fields-live-region-{{ section.id }}"
+            class="visually-hidden"
+            role="status"
+            ></p>
+            {%- assign recipient_min_time = 'now' | date: '%s' -%}
+            {%- assign recipient_max_time = 'now' | date: '%s' | plus: 7776000 -%}
+            {%- assign recipient_min_date = recipient_min_time | date: '%Y-%m-%d' -%}
+            {%- assign recipient_max_date = recipient_max_time | date: '%Y-%m-%d' -%}
+            <div class="recipient-fields">
+            <hr>
+            <div class="recipient-fields__field disabled">
+                <div class="field">
+                <label class="field__label" for="Recipient-email-{{ section.id }}">
+                    <span class="recipient-email-label required">{{ 'recipient.form.email_label' | t }}</span>
+                    <span class="recipient-email-label optional">
+                    </span>
+                </label>
+                <input
+                    class="field__input"
+                    id="Recipient-email-{{ section.id }}"
+                    type="email"
+                    placeholder="{{ 'recipient.form.email' | t }}"
+                    name="properties[Recipient email]"
+                    value="{{ form.email }}"
+                    {% if form.errors contains 'email' %}
+                    aria-invalid="true"
+                    aria-describedby="RecipientForm-email-error-{{ section.id }}"
+                    {% endif %}
+                    disabled
+                    required
+                >
+                </div>
+
+                <div
+                id="RecipientForm-email-error-{{ section.id }}"
+                class="form__message{% unless form.errors contains 'email' %} hidden{% endunless %}"
+                >
+                
+                <span class="error-message">
+                    {%- if form.errors contains 'email' -%}
+                    {{ form.errors.messages.email }}.
+                    {%- endif -%}
+                </span>
+                </div>
+            </div>
+
+            <div class="recipient-fields__field disabled">
+                <div class="field">
+                <label class="field__label" for="Recipient-name-{{ section.id }}">
+                    {{- 'recipient.form.name_label' | t -}}
+                </label>
+                <input
+                    class="field__input"
+                    autocomplete="name"
+                    type="text"
+                    id="Recipient-name-{{ section.id }}"
+                    name="properties[Recipient name]"
+                    placeholder="{{ 'recipient.form.name' | t }}"
+                    value="{{ form.name }}"
+                    {% if form.errors contains 'name' %}
+                    aria-invalid="true"
+                    aria-describedby="RecipientForm-name-error-{{ section.id }}"
+                    {% endif %}
+                    disabled
+                    required
+                >
+                </div>
+
+                <div
+                id="RecipientForm-name-error-{{ section.id }}"
+                class="form__message{% unless form.errors contains 'name' %} hidden{% endunless %}"
+                >
+                
+                <span class="error-message">
+                    {%- if form.errors contains 'name' -%}
+                    {{ form.errors.messages.name }}.
+                    {%- endif -%}
+                </span>
+                </div>
+            </div>
+
+            <div class="recipient-fields__field disabled">
+                {%- assign max_chars_message = 200 -%}
+                {%- assign max_chars_message_rendered = 'recipient.form.max_characters' | t: max_chars: max_chars_message -%}
+                {%- assign message_label_rendered = 'recipient.form.message_label' | t -%}
+                <div class="field">
+                <label class="form__label field__label" for="Recipient-message-{{ section.id }}">
+                    {{ message_label_rendered }}
+                </label>
+                <textarea
+                    rows="5"
+                    id="Recipient-message-{{ section.id }}"
+                    class="text-area field__input"
+                    name="properties[Message]"
+                    maxlength="{{ max_chars_message }}"
+                    placeholder="{{ 'recipient.form.message' | t }}"
+                    aria-label="{{ message_label_rendered }} {{ max_chars_message_rendered }}"
+                    {% if form.errors contains 'message' %}
+                    aria-invalid="true"
+                    aria-describedby="RecipientForm-message-error-{{ section.id }}"
+                    {% endif %}
+                    disabled
+                    required
+                >{{ form.message }}</textarea>
+                </div>
+
+                <div
+                id="RecipientForm-message-error-{{ section.id }}"
+                class="form__message{% unless form.errors contains 'message' %} hidden{% endunless %}"
+                >
+                
+                <span class="error-message">
+                    {%- if form.errors contains 'message' -%}
+                    {{ form.errors.messages.message }}.
+                    {%- endif -%}
+                </span>
+                </div>
+            </div>
+
+            <div class="recipient-fields__field disabled">
+                <div class="field">
+                <label class="form__label field__label" for="Recipient-send-on-{{ section.id }}">
+                    Send On (Max 90 days)
+                </label>
+                <input
+                    class="field__input text-body"
+                    autocomplete="send_on"
+                    type="date"
+                    id="Recipient-send-on-{{ section.id }}"
+                    name="properties[Send on]"
+                    min="{{ recipient_min_date }}"
+                    max="{{ recipient_max_date }}"
+                    placeholder="{{ 'recipient.form.send_on' | t }}"
+                    pattern="\d{4}-\d{2}-\d{2}"
+                    value="{{ form.send_on }}"
+                    {% if form.errors contains 'send_on' %}
+                    aria-invalid="true"
+                    aria-describedby="RecipientForm-send_on-error-{{ section.id }}"
+                    {% endif %}
+                    disabled
+                    required
+                >
+                </div>
+
+                <div
+                id="RecipientForm-send_on-error-{{ section.id }}"
+                class="form__message{% unless form.errors contains 'send_on' %} hidden{% endunless %}"
+                >
+                
+                <span class="error-message">
+                    {%- if form.errors contains 'send_on' -%}
+                    {{ form.errors.messages.send_on }}.
+                    {%- endif -%}
+                </span>
+                </div>
+            </div>
+            </div>
+            <input
+            type="hidden"
+            name="{{ gift_card_recipient_control_flag }}"
+            value="if_present"
+            id="Recipient-control-{{ section.id }}"
+            >
+            <button type="submit" name="add" class="c-btn c-btn--full product-form__add-btn js-gift-card-submit">
+                <div class="product-form__add-btn__text">
+                    <div class="js-product-add-text">
+                        <a data-type="add">{{ 'products.product.add_to_cart' | t }}</a>
+                    </div>
+                </div>
+            </button>
+        </recipient-form>
+    </div>
+</div>
+
+<style>
+
+    #gift-card-form {
+        max-width: 90vw;
+        width: 450px;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        position: absolute;
+        max-height: 80vh;
+    }
+
+    #gift-card-form .gift-card-form-close {
+        position: absolute;
+        display: block;
+        right: 30px;
+        top: 26px;
+    }
+
+    #gift-card-form .gift-card-form-close .icon--plus:before {
+        transform: rotate(45deg);
+    }
+
+    #gift-card-form .container {
+        position: relative;
+        background: white;
+        padding: 30px;
+        overflow: scroll;
+    }
+
+    #gift-card-form .recipient-fields__field.disabled {
+        opacity: 0.25;
+    }
+
+    #gift-card-form [type=checkbox] {
+        border-radius: 0px;
+    }
+    #gift-card-form label {
+        font-size: inherit !important;
+    }
+</style>

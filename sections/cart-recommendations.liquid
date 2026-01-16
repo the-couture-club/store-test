@@ -1,0 +1,24 @@
+{% render 'product-grid-item',
+    product: product,
+    swatchEnable: false,
+    page: 'collection',
+    image_sizes: '10vw',
+    small_buttons_on_mobile: small_buttons_on_mobile,
+    cart_recommendations: true,
+    type: 'cart-recommendations',
+    hide_labels: true,
+    hide_colours: true,
+    hide_discount: true
+%}
+
+{% schema %}
+  {
+    "name": "Cart recommendations",
+    "settings": [],
+    "presets": [
+    {
+        "name": "[DO NOT DELETE]"
+    }
+    ]
+  }
+{% endschema %}

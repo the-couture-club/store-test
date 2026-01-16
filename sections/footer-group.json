@@ -1,0 +1,138 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "Footer group",
+  "type": "footer",
+  "sections": {
+    "footer-promo": {
+      "type": "footer-promo",
+      "blocks": {
+        "20cfde5e-f254-4dd6-a7c0-0c7555269f26": {
+          "type": "text",
+          "settings": {
+            "title": "Promotion heading",
+            "desc": "<p>Use these blocks to tell your brand story or promote your products above the footer of your whole store.</p>",
+            "link_title": "Learn more",
+            "link": ""
+          }
+        },
+        "985e5bef-dca9-4ffc-987e-7079de14a341": {
+          "type": "text",
+          "settings": {
+            "title": "Promotion heading",
+            "desc": "<p>Use these blocks to tell your brand story or promote your products above the footer of your whole store.</p>",
+            "link_title": "Learn more",
+            "link": ""
+          }
+        },
+        "107997c6-3dea-478b-8ce1-8674d19be68d": {
+          "type": "text",
+          "settings": {
+            "title": "Promotion heading",
+            "desc": "<p>Use these blocks to tell your brand story or promote your products above the footer of your whole store.</p>",
+            "link_title": "Learn more",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "20cfde5e-f254-4dd6-a7c0-0c7555269f26",
+        "985e5bef-dca9-4ffc-987e-7079de14a341",
+        "107997c6-3dea-478b-8ce1-8674d19be68d"
+      ],
+      "disabled": true,
+      "settings": {
+        "footer_promo_home": false,
+        "container": "large",
+        "divider": true,
+        "grid": 3,
+        "spacing": 3,
+        "alignment": "center",
+        "link_style": "hollow",
+        "heading_size": 3,
+        "image_toggle": true,
+        "image_size": 100,
+        "image_padding": 0,
+        "image_ratio": "16:9",
+        "image_fit": false,
+        "bg_color": "rgba(0,0,0,0)",
+        "color_image": "rgba(0,0,0,0)",
+        "color_text": "rgba(0,0,0,0)",
+        "text_heading_color": false,
+        "grid_mobile": "1",
+        "mobile_layout": "carousel"
+      }
+    },
+    "footer-newsletter": {
+      "type": "section-newsletter",
+      "disabled": true,
+      "settings": {
+        "divider": true,
+        "section-bottom-margin": true,
+        "section_width": "full",
+        "newsletter_bg": "#ffffff",
+        "newsletter_style": "dark",
+        "default_title_color": false,
+        "section_newsletter_title": "Newsletter",
+        "section_newsletter_desc": "<p>Let your customers know what to expect if they sign up to your mailing list. A discount code or the latest news from your brand.</p>"
+      }
+    },
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "57431536-fa07-4757-a9a6-2b44f101f593": {
+          "type": "newsletter",
+          "settings": {}
+        },
+        "f58ac740-bb9f-42d4-bf28-e224a9c7a5c5": {
+          "type": "linklist",
+          "settings": {
+            "title": "BRAND",
+            "linklist": "brand"
+          }
+        },
+        "0d728555-98b6-4f94-a11b-099fcd6f15fb": {
+          "type": "linklist",
+          "settings": {
+            "title": "CUSTOMER SERVICES",
+            "linklist": "customer-services"
+          }
+        },
+        "a4201d49-19d8-4914-be3b-ed15d2ba1be3": {
+          "type": "linklist",
+          "settings": {
+            "title": "TERMS & PRIVACY",
+            "linklist": "terms-service"
+          }
+        }
+      },
+      "block_order": [
+        "57431536-fa07-4757-a9a6-2b44f101f593",
+        "f58ac740-bb9f-42d4-bf28-e224a9c7a5c5",
+        "0d728555-98b6-4f94-a11b-099fcd6f15fb",
+        "a4201d49-19d8-4914-be3b-ed15d2ba1be3"
+      ],
+      "settings": {
+        "footer_bg": "#ffffff",
+        "footer_style": "dark",
+        "footer_heading_color": false,
+        "show_payment_icons": true,
+        "divider": true,
+        "enable_country_selector": true,
+        "enable_language_selector": true
+      }
+    }
+  },
+  "order": [
+    "footer-promo",
+    "footer-newsletter",
+    "footer"
+  ]
+}

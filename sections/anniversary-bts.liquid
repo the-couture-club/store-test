@@ -1,0 +1,36 @@
+<script src="{{ 'anniversary-bts.js' | asset_url }}" defer="defer"></script>
+<link href="{{ 'anniversary-bts.css' | asset_url }}" rel="stylesheet">
+
+{% include 'anniversary-nav', title: 'BTS' %}
+
+<div id="anniversary-bts" class="anniversary-section">
+    {% for block in section.blocks %}
+        <img src="{{ block.settings.image |  image_url }}" alt="">
+    {% endfor %}
+</div>
+
+{% schema %}
+  {
+    "name": "Anniversary BTS",
+	"class": "anniversary-template anniversary-bts",
+    "settings": [],
+	"blocks": [
+		{
+          "type": "image",
+          "name": "Image",
+		  "settings": [
+            {
+              "type": "image_picker",
+              "id": "image",
+              "label": "Image"
+            }
+		  ]
+		}
+	],
+    "presets": [
+            {
+                "name": "Anniversary BTS"
+            }
+        ]
+  }
+{% endschema %}

@@ -1,0 +1,91 @@
+/*
+* ------------------------------------------------------------
+* IMPORTANT: The contents of this file are auto-generated.
+*
+* This file may be updated by the Shopify admin theme editor
+* or related systems. Please exercise caution as any changes
+* made to this file may be overwritten.
+* ------------------------------------------------------------
+*/
+{
+  "sections": {
+    "event_page_VeHTeM": {
+      "type": "event-page",
+      "settings": {
+        "desktop": "shopify:\/\/shop_images\/pop-up-mock-up-17.jpg",
+        "mobile": "shopify:\/\/shop_images\/pop-up-mock-up-17.jpg"
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "custom_css": [
+        "section {margin-bottom: 0px; padding-top: 100vh; background: white; padding-top: 60px; margin-top: calc(100vh - var(--header-section-height));}",
+        ".section__title {margin-bottom: 0px;}",
+        "* {z-index: 1;}",
+        ".rte > div:last-child {margin-bottom: 0px; padding-bottom: 1rem;}"
+      ],
+      "settings": {
+      }
+    },
+    "section_liquid_iHwqhh": {
+      "type": "section-liquid",
+      "custom_css": [
+        "#button-container {padding-bottom: 60px; background: white; display: flex; justify-content: center;}",
+        "a {width: auto;}"
+      ],
+      "settings": {
+        "custom_liquid": "<div id='button-container'>\n\n<a href='https:\/\/www.thecoutureclub.com\/products\/london-pop-up-early-access' class=\"c-btn c-btn--full product-form__add-btn\">\n                                        <span class=\"product-form__add-btn__text\">\n                                            <span class=\"js-product-add-text\">\n                                                <div data-type=\"add\">Purchase Ticket<\/div>\n                                             \n                                           \n                                     \n                                        <\/span>\n                                    <\/a><\/div>"
+      }
+    },
+    "171137304492f0c313": {
+      "type": "apps",
+      "blocks": {
+        "forms_inline_f4KYW4": {
+          "type": "shopify:\/\/apps\/forms\/blocks\/inline\/8744a304-fcb1-4347-b211-bb6b4759a76a",
+          "settings": {
+            "form_id": "87027",
+            "text_color": "#202020",
+            "button_background_color": "#202020",
+            "button_label_color": "#ffffff",
+            "links_color": "#1878b9",
+            "errors_color": "#e02229",
+            "text_alignment": "center",
+            "form_alignment": "center",
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "padding_right": 0,
+            "padding_left": 0
+          }
+        }
+      },
+      "block_order": [
+        "forms_inline_f4KYW4"
+      ],
+      "disabled": true,
+      "custom_css": [
+        "* {z-index: 0; background: white; margin-bottom: 0px;}",
+        "section {padding-bottom: 60px;}"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "section_liquid_3iiQk4": {
+      "type": "section-liquid",
+      "disabled": true,
+      "custom_css": [
+        "* {z-index: 0;}"
+      ],
+      "settings": {
+        "custom_liquid": "<div style=\"height: calc(100vh - var(--header-section-height)); width: 100%; display:flex;\">\n\n\n                            <iframe class=\"gmap_iframe\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"https:\/\/maps.google.com\/maps?width=600&amp;height=400&amp;hl=en&amp;q=59 Greek St London W1D 3DZ&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed\"><\/iframe>\n\n\n<\/div>"
+      }
+    }
+  },
+  "order": [
+    "event_page_VeHTeM",
+    "main",
+    "section_liquid_iHwqhh",
+    "171137304492f0c313",
+    "section_liquid_3iiQk4"
+  ]
+}
